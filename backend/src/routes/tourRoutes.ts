@@ -147,22 +147,17 @@ router.post("/end", (req, res) => {
     endedAt: session.endedAt
   });
 });
+
 router.post("/location", (req, res) => {
   const { sessionId, latitude, longitude } = req.body;
 
-  if (
-    !sessionId ||
-    latitude === undefined ||
-    longitude === undefined
-  ) {
+  if (!sessionId || latitude === undefined || longitude === undefined) {
     return res.status(400).json({
-      error: "sessionId, latitude and longitude are required"
+      error: "sessionId, latitude, and longitude are required"
     });
   }
 
-  const session = sessions.find(
-    session => session.sessionId === sessionId
-  );
+  const session = sessions.find(s => s.sessionId === sessionId);
 
   if (!session) {
     return res.status(404).json({
@@ -170,23 +165,35 @@ router.post("/location", (req, res) => {
     });
   }
 
-  const nextStop = session.stops[session.currentStopIndex];
+  const currentStop = session.stops[session.currentStopIndex];
 
   const distance = getDistanceInMeters(
-    {
-      latitude,
-      longitude
-    } as CampusLocation,
-    nextStop
+    { latitude, longitude },
+    currentStop
   );
 
   const ARRIVAL_RADIUS_METERS = 30;
+  const arrived = distance <= ARRIVAL_RADIUS_METERS;
+
+  let advancedToNextStop = false;
+
+  if (arrived && session.currentStopIndex < session.stops.length - 1) {
+    session.currentStopIndex += 1;
+    advancedToNextStop = true;
+  }
 
   res.json({
-    currentStop: nextStop.name,
-    distance,
-    arrived: distance <= ARRIVAL_RADIUS_METERS,
-    playAudio: distance <= ARRIVAL_RADIUS_METERS
+    sessionId,
+    arrived,
+    playAudio: arrived,
+    distanceMeters: Math.round(distance),
+    completedStop: arrived ? currentStop : null,
+    advancedToNextStop,
+    currentStopIndex: session.currentStopIndex,
+    currentStop: session.stops[session.currentStopIndex],
+    totalStops: session.stops.length,
+    isComplete: session.currentStopIndex === session.stops.length - 1
   });
 });
+
 export default router;

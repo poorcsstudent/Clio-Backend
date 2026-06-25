@@ -1,9 +1,9 @@
-import express from "express";
 import cors from "cors";
+import express from "express";
 
-import campusRoutes from "./routes/campuses";
-import tourRoutes from "./routes/tours";
-import aiRoutes from "./routes/ai";
+import aiRoutes from "./routes/aiRoutes";
+import campusRoutes from "./routes/campusRoutes";
+import tourRoutes from "./routes/tourRoutes";
 
 const app = express();
 
