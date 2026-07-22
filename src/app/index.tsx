@@ -50,6 +50,7 @@ import {
 import {
   addWakePhraseCommandListener,
   addWakePhraseDetectedListener,
+  addWakePhraseDiagnosticListener,
   addWakePhraseStateListener,
   getWakePhraseState,
   initialWakePhraseState,
@@ -79,27 +80,47 @@ type Phase =
 type SpeechPlaybackProps = {
   source: AudioSource;
   route: WakePhrasePlaybackRoute | null;
+  onDiagnostic: (message: string) => void;
   onStatus: (message: string) => void;
   onSettled: (result: 'complete' | 'error' | 'timeout', error?: string) => void;
 };
 
-function SpeechPlayback({ source, route, onStatus, onSettled }: SpeechPlaybackProps) {
+function SpeechPlayback({
+  source,
+  route,
+  onDiagnostic,
+  onStatus,
+  onSettled,
+}: SpeechPlaybackProps) {
   const player = useAudioPlayer(source, { downloadFirst: true });
   const playerStatus = useAudioPlayerStatus(player);
   const playbackStartedRef = useRef(false);
+  const playingLoggedRef = useRef(false);
   const settledRef = useRef(false);
+  const onDiagnosticRef = useRef(onDiagnostic);
   const onStatusRef = useRef(onStatus);
   const onSettledRef = useRef(onSettled);
+  onDiagnosticRef.current = onDiagnostic;
   onStatusRef.current = onStatus;
   onSettledRef.current = onSettled;
+
+  useEffect(() => {
+    onDiagnosticRef.current('Answer audio player created; downloading speech audio');
+  }, []);
 
   useEffect(() => {
     if (settledRef.current) return;
 
     if (playerStatus.error) {
       settledRef.current = true;
+      onDiagnosticRef.current(`Answer audio player error: ${playerStatus.error}`);
       onSettledRef.current('error', playerStatus.error);
       return;
+    }
+
+    if (playerStatus.playing && !playingLoggedRef.current) {
+      playingLoggedRef.current = true;
+      onDiagnosticRef.current('Answer audio is actively playing');
     }
 
     const reachedEnd =
@@ -109,6 +130,7 @@ function SpeechPlayback({ source, route, onStatus, onSettled }: SpeechPlaybackPr
 
     if (playbackStartedRef.current && (playerStatus.didJustFinish || reachedEnd)) {
       settledRef.current = true;
+      onDiagnosticRef.current('Answer audio playback completed');
       onSettledRef.current('complete');
       return;
     }
@@ -116,6 +138,9 @@ function SpeechPlayback({ source, route, onStatus, onSettled }: SpeechPlaybackPr
     if (playerStatus.isLoaded && !playbackStartedRef.current) {
       try {
         playbackStartedRef.current = true;
+        onDiagnosticRef.current(
+          `Answer audio loaded (${playerStatus.duration.toFixed(1)} seconds); requesting playback`,
+        );
         player.play();
         const outputNames = route?.outputs.filter(Boolean).join(', ');
         onStatusRef.current(
@@ -127,9 +152,11 @@ function SpeechPlayback({ source, route, onStatus, onSettled }: SpeechPlaybackPr
         );
       } catch (error) {
         settledRef.current = true;
+        const message = error instanceof Error ? error.message : 'Audio playback could not start';
+        onDiagnosticRef.current(`Answer playback request failed: ${message}`);
         onSettledRef.current(
           'error',
-          error instanceof Error ? error.message : 'Audio playback could not start',
+          message,
         );
       }
     }
@@ -152,6 +179,11 @@ function SpeechPlayback({ source, route, onStatus, onSettled }: SpeechPlaybackPr
     const timeout = setTimeout(() => {
       if (settledRef.current) return;
       settledRef.current = true;
+      onDiagnosticRef.current(
+        playerStatus.isLoaded
+          ? 'Answer audio timed out after loading'
+          : 'Answer audio timed out before loading',
+      );
       onSettledRef.current('timeout');
     }, timeoutMs);
     return () => clearTimeout(timeout);
@@ -176,10 +208,20 @@ export default function HomeScreen() {
   const [wakeEnabled, setWakeEnabled] = useState(false);
   const [appIsActive, setAppIsActive] = useState(true);
   const [speechSource, setSpeechSource] = useState<AudioSource | null>(null);
+  const [voiceDiagnostics, setVoiceDiagnostics] = useState<string[]>([]);
   const playbackRouteRef = useRef<WakePhrasePlaybackRoute | null>(null);
 
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(recorder);
+
+  function addVoiceDiagnostic(message: string) {
+    const timestamp = new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    setVoiceDiagnostics(current => [`${timestamp}  ${message}`, ...current].slice(0, 10));
+  }
 
   useEffect(() => {
     let active = true;
@@ -272,14 +314,28 @@ export default function HomeScreen() {
     const stateSubscription = addWakePhraseStateListener(nextState => {
       if (!active) return;
       setWakeState(nextState);
-      if (nextState.error) setStatus(nextState.error);
+      if (nextState.error) {
+        setStatus(nextState.error);
+        addVoiceDiagnostic(`Wake listener error: ${nextState.error}`);
+      }
     });
     const detectedSubscription = addWakePhraseDetectedListener(() => {
       if (!active || !paired) return;
-      setStatus('Hey Clio heard — ask your campus question');
+      addVoiceDiagnostic('Wake phrase event reached React Native');
+      setStatus('Hey Clio heard - local "Hey User" acknowledgement queued; ask your question');
+    });
+    const diagnosticSubscription = addWakePhraseDiagnosticListener(event => {
+      if (!active) return;
+      const outputs = event.outputs.filter(Boolean).join(', ') || 'no output route';
+      addVoiceDiagnostic(
+        `${event.message} Output: ${outputs}; Bluetooth: ${
+          event.bluetoothSelected ? 'selected' : 'not selected'
+        }`,
+      );
     });
     const commandSubscription = addWakePhraseCommandListener(event => {
       if (!active || !paired || !event.command.trim()) return;
+      addVoiceDiagnostic(`Command captured: "${event.command}"`);
       setStatus(`Heard: “${event.command}”`);
       void submitQuestion(event.command);
     });
@@ -288,6 +344,7 @@ export default function HomeScreen() {
       active = false;
       stateSubscription.remove();
       detectedSubscription.remove();
+      diagnosticSubscription.remove();
       commandSubscription.remove();
     };
   }, [paired]);
@@ -443,12 +500,17 @@ export default function HomeScreen() {
 
   async function playAnswer(text: string) {
     try {
+      addVoiceDiagnostic('Requesting synthesized answer audio from the backend');
       const source = await createSpeechSource(text);
+      addVoiceDiagnostic('Backend returned an answer audio source');
       setSpeechSource(source);
       setPhase('speaking');
       setStatus('Loading the spoken answer…');
       return true;
     } catch (error) {
+      addVoiceDiagnostic(
+        `Answer TTS source failed: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
       playbackRouteRef.current = null;
       setSpeechSource(null);
       setStatus(
@@ -465,6 +527,7 @@ export default function HomeScreen() {
     if (!cleaned || !paired) return;
 
     await stopWakePhraseListening().catch(() => undefined);
+    addVoiceDiagnostic(`Sending question to Clio: "${cleaned}"`);
     setPhase('thinking');
     setQuestion(cleaned);
     setTranscript(cleaned);
@@ -472,6 +535,7 @@ export default function HomeScreen() {
     let speaking = false;
     try {
       const result = await askCampusQuestion(cleaned);
+      addVoiceDiagnostic('Text answer received from the backend');
       setAnswer(result.answer);
       setSources(result.sources);
       setQuestion('');
@@ -481,10 +545,23 @@ export default function HomeScreen() {
         interruptionMode: 'doNotMix',
         shouldRouteThroughEarpiece: false,
       });
+      addVoiceDiagnostic('Expo audio mode configured for spoken output');
       playbackRouteRef.current = await prepareWakePhrasePlaybackRoute().catch(() => null);
+      const route = playbackRouteRef.current;
+      addVoiceDiagnostic(
+        route
+          ? `Answer route ready: ${route.outputs.filter(Boolean).join(', ') || 'no output'}; Bluetooth ${
+              route.bluetoothSelected ? 'selected' : 'not selected'
+            }`
+          : 'Native answer route preparation failed',
+      );
       await setIsAudioActiveAsync(true);
+      addVoiceDiagnostic('Expo audio session activated');
       speaking = await playAnswer(result.answer);
     } catch (error) {
+      addVoiceDiagnostic(
+        `Question pipeline failed: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
       if (error instanceof ApiError && error.status === 401) setPaired(false);
       setStatus(error instanceof Error ? error.message : 'Clio could not answer');
     } finally {
@@ -512,6 +589,7 @@ export default function HomeScreen() {
         throw new Error('This iPhone does not currently support private on-device wake listening.');
       }
       setWakeEnabled(true);
+      addVoiceDiagnostic('Hey Clio foreground listener enabled');
       setStatus('Active listening is on — say “Hey Clio” while this screen is open');
     } catch (error) {
       setWakeEnabled(false);
@@ -604,6 +682,11 @@ export default function HomeScreen() {
   }
 
   function handleSpeechSettled(result: 'complete' | 'error' | 'timeout', error?: string) {
+    addVoiceDiagnostic(
+      result === 'error'
+        ? `Answer playback settled with error: ${error ?? 'unknown error'}`
+        : `Answer playback settled: ${result}`,
+    );
     playbackRouteRef.current = null;
     setSpeechSource(null);
     setPhase('ready');
@@ -658,6 +741,7 @@ export default function HomeScreen() {
             }
             source={speechSource}
             route={playbackRouteRef.current}
+            onDiagnostic={addVoiceDiagnostic}
             onStatus={setStatus}
             onSettled={handleSpeechSettled}
           />
@@ -751,6 +835,39 @@ export default function HomeScreen() {
               <Text style={styles.metaSdkText}>Meta Wearables DAT Core {metaState.sdkVersion}</Text>
             ) : null}
           </View>
+
+          {paired ? (
+            <View style={styles.debugCard}>
+              <View style={styles.debugHeader}>
+                <View style={styles.debugHeaderCopy}>
+                  <Text style={styles.debugEyebrow}>VOICE DEBUG</Text>
+                  <Text style={styles.debugTitle}>Wake, route, and playback checkpoints</Text>
+                </View>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Clear voice debug log"
+                  hitSlop={10}
+                  onPress={() => setVoiceDiagnostics([])}>
+                  <Text style={styles.debugClear}>Clear</Text>
+                </Pressable>
+              </View>
+              <Text style={styles.debugHelp}>
+                "Hey User" is generated locally before Clio contacts the backend. If you hear it in
+                the glasses, wake detection and the iOS Bluetooth output route are working.
+              </Text>
+              {voiceDiagnostics.length > 0 ? (
+                <View style={styles.debugLog}>
+                  {voiceDiagnostics.map((entry, index) => (
+                    <Text key={`${entry}-${index}`} style={styles.debugEntry} selectable>
+                      {entry}
+                    </Text>
+                  ))}
+                </View>
+              ) : (
+                <Text style={styles.debugEmpty}>Enable Hey Clio to begin collecting checkpoints.</Text>
+              )}
+            </View>
+          ) : null}
 
           {!paired ? (
             <View style={styles.pairingCard}>
@@ -1001,6 +1118,33 @@ const styles = StyleSheet.create({
   },
   metaRefreshText: { color: '#BFD0C8', fontSize: 12, fontWeight: '700' },
   metaSdkText: { color: '#667B71', fontSize: 9 },
+  debugCard: {
+    backgroundColor: '#0B211B',
+    borderWidth: 1,
+    borderColor: '#376B59',
+    borderRadius: 18,
+    padding: 16,
+    gap: 11,
+  },
+  debugHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  debugHeaderCopy: { flex: 1 },
+  debugEyebrow: { color: '#F6D77A', fontSize: 9, fontWeight: '800', letterSpacing: 1.5 },
+  debugTitle: { color: '#F5F3EB', fontSize: 15, fontWeight: '800', marginTop: 4 },
+  debugClear: { color: '#7EE2AE', fontSize: 11, fontWeight: '800' },
+  debugHelp: { color: '#A6B3AC', fontSize: 11, lineHeight: 16 },
+  debugLog: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#285343',
+    paddingTop: 8,
+    gap: 6,
+  },
+  debugEntry: { color: '#BFD0C8', fontSize: 10, lineHeight: 15, fontFamily: 'Courier' },
+  debugEmpty: { color: '#667B71', fontSize: 10, fontStyle: 'italic' },
   disabledButton: { opacity: 0.45 },
   pairingCard: { backgroundColor: '#F3F0E6', borderRadius: 24, padding: 20, gap: 14 },
   cardTitle: { color: '#102A22', fontSize: 22, fontWeight: '800' },

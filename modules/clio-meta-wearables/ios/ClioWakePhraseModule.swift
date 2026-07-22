@@ -5,6 +5,7 @@ import Speech
 
 public final class ClioWakePhraseModule: Module, @unchecked Sendable {
   private let audioEngine = AVAudioEngine()
+  private let diagnosticSpeechSynthesizer = AVSpeechSynthesizer()
   private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
   private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
   private var recognitionTask: SFSpeechRecognitionTask?
@@ -23,7 +24,12 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
   public func definition() -> ModuleDefinition {
     Name("ClioWakePhrase")
 
-    Events("onWakePhraseState", "onWakePhraseDetected", "onWakePhraseCommand")
+    Events(
+      "onWakePhraseState",
+      "onWakePhraseDetected",
+      "onWakePhraseCommand",
+      "onWakePhraseDiagnostic"
+    )
 
     AsyncFunction("getState") { () -> [String: Any] in
       self.snapshot()
@@ -111,11 +117,17 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
 
     let audioSession = AVAudioSession.sharedInstance()
     try audioSession.setCategory(
-      .record,
-      mode: .measurement,
-      options: [.allowBluetoothHFP]
+      .playAndRecord,
+      mode: .voiceChat,
+      options: [.allowBluetoothHFP, .defaultToSpeaker]
     )
     try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+
+    if let bluetoothInput = audioSession.availableInputs?.first(where: { input in
+      input.portType == .bluetoothHFP
+    }) {
+      try audioSession.setPreferredInput(bluetoothInput)
+    }
 
     let request = SFSpeechAudioBufferRecognitionRequest()
     request.shouldReportPartialResults = true
@@ -156,6 +168,10 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       throw error
     }
     isListening = true
+    emitDiagnostic(
+      stage: "listenerStarted",
+      message: "Wake listener started on the active iOS audio route."
+    )
     emitState()
   }
 
@@ -175,17 +191,12 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       try audioSession.setPreferredInput(bluetoothInput)
     }
 
-    let route = audioSession.currentRoute
-    let outputNames = route.outputs.map(\.portName)
-    let bluetoothSelected = route.outputs.contains { output in
-      output.portType == .bluetoothHFP || output.portType == .bluetoothA2DP
-    }
-    return [
-      "bluetoothAvailable": bluetoothInput != nil,
-      "bluetoothSelected": bluetoothSelected,
-      "input": route.inputs.first?.portName ?? "",
-      "outputs": outputNames
-    ]
+    let route = routeSnapshot()
+    emitDiagnostic(
+      stage: "answerRoutePrepared",
+      message: "Prepared the iOS route for answer playback."
+    )
+    return route
   }
 
   private func handleRecognition(transcript: String?, isFinal: Bool, hasError: Bool) {
@@ -196,6 +207,11 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
         wakeDetected = true
         mode = "awaitingCommand"
         sendEvent("onWakePhraseDetected", ["phrase": wakePhrase])
+        emitDiagnostic(
+          stage: "wakeDetected",
+          message: "Detected Hey Clio on-device."
+        )
+        speakDiagnosticAcknowledgement()
         emitState()
         scheduleWakeTimeout()
       }
@@ -241,7 +257,13 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       if words[index] == "hey", ["clio", "cleo"].contains(words[index + 1]) {
         let commandStart = index + 2
         guard commandStart < words.count else { return "" }
-        return words[commandStart...].joined(separator: " ")
+        var commandWords = Array(words[commandStart...])
+        if commandWords.starts(with: ["hey", "user"]) {
+          commandWords.removeFirst(2)
+        } else if commandWords.first == "user" {
+          commandWords.removeFirst()
+        }
+        return commandWords.joined(separator: " ")
       }
     }
     return ""
@@ -252,6 +274,46 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       .lowercased()
       .components(separatedBy: CharacterSet.alphanumerics.inverted)
       .filter { !$0.isEmpty }
+  }
+
+  private func speakDiagnosticAcknowledgement() {
+    if diagnosticSpeechSynthesizer.isSpeaking {
+      diagnosticSpeechSynthesizer.stopSpeaking(at: .immediate)
+    }
+
+    let utterance = AVSpeechUtterance(string: "Hey User")
+    utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+    utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.9
+    utterance.volume = 1
+    diagnosticSpeechSynthesizer.speak(utterance)
+    emitDiagnostic(
+      stage: "acknowledgementQueued",
+      message: "Queued the local Hey User acknowledgement."
+    )
+  }
+
+  private func routeSnapshot() -> [String: Any] {
+    let audioSession = AVAudioSession.sharedInstance()
+    let route = audioSession.currentRoute
+    let bluetoothAvailable = audioSession.availableInputs?.contains { input in
+      input.portType == .bluetoothHFP
+    } == true
+    let bluetoothSelected = route.outputs.contains { output in
+      output.portType == .bluetoothHFP || output.portType == .bluetoothA2DP
+    }
+    return [
+      "bluetoothAvailable": bluetoothAvailable,
+      "bluetoothSelected": bluetoothSelected,
+      "input": route.inputs.first?.portName ?? "",
+      "outputs": route.outputs.map(\.portName)
+    ]
+  }
+
+  private func emitDiagnostic(stage: String, message: String) {
+    var event = routeSnapshot()
+    event["stage"] = stage
+    event["message"] = message
+    sendEvent("onWakePhraseDiagnostic", event)
   }
 
   private func scheduleCommandCompletion() {

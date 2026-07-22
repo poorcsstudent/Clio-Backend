@@ -1,6 +1,7 @@
 export {
   addWakePhraseCommandListener,
   addWakePhraseDetectedListener,
+  addWakePhraseDiagnosticListener,
   addWakePhraseStateListener,
   getWakePhraseState,
   initialWakePhraseState,
@@ -9,6 +10,7 @@ export {
   startWakePhraseListening,
   stopWakePhraseListening,
   type WakePhraseMode,
+  type WakePhraseDiagnosticEvent,
   type WakePhrasePlaybackRoute,
   type WakePhraseState,
 } from '../../modules/clio-meta-wearables';

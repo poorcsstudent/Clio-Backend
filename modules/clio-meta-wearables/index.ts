@@ -95,6 +95,14 @@ export type WakePhrasePlaybackRoute = {
 
 type WakePhraseDetectedEvent = { phrase: string };
 type WakePhraseCommandEvent = { command: string };
+export type WakePhraseDiagnosticEvent = WakePhrasePlaybackRoute & {
+  stage:
+    | 'listenerStarted'
+    | 'wakeDetected'
+    | 'acknowledgementQueued'
+    | 'answerRoutePrepared';
+  message: string;
+};
 
 type NativeWakePhraseModule = {
   getState(): Promise<WakePhraseState>;
@@ -113,6 +121,10 @@ type NativeWakePhraseModule = {
   addListener(
     eventName: 'onWakePhraseCommand',
     listener: (event: WakePhraseCommandEvent) => void,
+  ): EventSubscription;
+  addListener(
+    eventName: 'onWakePhraseDiagnostic',
+    listener: (event: WakePhraseDiagnosticEvent) => void,
   ): EventSubscription;
 };
 
@@ -178,4 +190,10 @@ export function addWakePhraseDetectedListener(
 
 export function addWakePhraseCommandListener(listener: (event: WakePhraseCommandEvent) => void) {
   return nativeWakePhraseModule?.addListener('onWakePhraseCommand', listener) ?? { remove() {} };
+}
+
+export function addWakePhraseDiagnosticListener(
+  listener: (event: WakePhraseDiagnosticEvent) => void,
+) {
+  return nativeWakePhraseModule?.addListener('onWakePhraseDiagnostic', listener) ?? { remove() {} };
 }
