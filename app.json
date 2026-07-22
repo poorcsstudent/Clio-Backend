@@ -1,23 +1,45 @@
 {
   "expo": {
     "name": "ClioVision",
-    "slug": "ClioVision",
+    "slug": "clioviz",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "cliovision",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.cliovision.guide",
+      "supportsTablet": true,
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": ["fb-viewapp"],
+        "UISupportedExternalAccessoryProtocols": ["com.meta.ar.wearable"],
+        "UIBackgroundModes": ["bluetooth-peripheral", "external-accessory"],
+        "NSBluetoothAlwaysUsageDescription": "Allow ClioVision to connect to your Meta glasses.",
+        "NSSpeechRecognitionUsageDescription": "Allow ClioVision to recognize Hey Clio and your campus question while the app is open.",
+        "MWDAT": {
+          "AppLinkURLScheme": "cliovision://",
+          "MetaAppID": "0",
+          "Analytics": { "OptOut": true }
+        }
+      },
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.cliovision.guide",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ]
     },
     "web": {
       "output": "static",
@@ -25,6 +47,22 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Allow ClioVision to hear campus questions from your phone or connected glasses.",
+          "recordAudioAndroid": true,
+          "enableBackgroundPlayback": false,
+          "enableBackgroundRecording": false
+        }
+      ],
+      [
+        "expo-secure-store",
+        {
+          "configureAndroidBackup": true,
+          "faceIDPermission": "Allow ClioVision to protect your device session."
+        }
+      ],
       [
         "expo-splash-screen",
         {
@@ -39,6 +77,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4546bc76-1d38-43ba-9ed3-f2eca39ea86e"
+      }
+    },
+    "owner": "cliovisions-team"
   }
 }
