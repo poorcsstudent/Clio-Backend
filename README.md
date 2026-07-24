@@ -58,7 +58,15 @@ Open the app, enter `CLIO_DEVICE_ENROLLMENT_CODE`, and pair. The code is exchang
 
 ## Campus knowledge
 
-The current data is in `backend/src/data/campuses.ts`. It contains one campus, five tours, and five stops. Only one stop currently has richer talking points and a spoken script.
+The official campus-map records are in `backend/src/data/campusPlaces.ts`. Degree definitions, program-to-building access rules, and graph construction are in `backend/src/data/degreeTours.ts`. The backend currently exposes:
+
+- 33 undergraduate degree tours from the 2025-2026 Missouri S&T catalog
+- one general campus-life tour
+- Havener Center as the root of every degree route
+- 28 permission-mapped campus nodes shared across the degree graph
+- program-specific stop order, relevance, audio scripts, catalog links, and map coordinates
+
+For each degree, Clio builds a minimum-distance access graph using only relevant buildings and runs a best-first proximity search from Havener. `GET /campuses/missouri-s-and-t/tours` returns the catalog, `GET /campuses/missouri-s-and-t/stops?tourId=<degree-id>` returns an ordered route, and `GET /campuses/missouri-s-and-t/tour-graph/<degree-id>` exposes its graph.
 
 After changing the campus records, run:
 

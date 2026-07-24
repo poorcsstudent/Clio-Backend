@@ -16,6 +16,7 @@
         "UISupportedExternalAccessoryProtocols": ["com.meta.ar.wearable"],
         "UIBackgroundModes": ["bluetooth-peripheral", "external-accessory"],
         "NSBluetoothAlwaysUsageDescription": "Allow ClioVision to connect to your Meta glasses.",
+        "NSLocationWhenInUseUsageDescription": "Allow ClioVision to detect when you arrive at each campus tour stop.",
         "NSSpeechRecognitionUsageDescription": "Allow ClioVision to recognize Hey Clio and your campus question while the app is open.",
         "MWDAT": {
           "AppLinkURLScheme": "cliovision://",
@@ -54,6 +55,12 @@
           "recordAudioAndroid": true,
           "enableBackgroundPlayback": false,
           "enableBackgroundRecording": false
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow ClioVision to detect when you arrive at each campus tour stop."
         }
       ],
       [

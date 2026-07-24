@@ -39,7 +39,7 @@ app.use(rateLimit({
 app.get("/", (_req, res) => {
   res.json({
     message: "ClioVision API is running",
-    version: "0.3.0",
+    version: "0.4.0",
     aiConfigured: Boolean(providerKey(config.aiProvider)),
     aiProvider: config.aiProvider,
     voiceConfigured: Boolean(providerKey(config.voiceProvider)),

@@ -45,6 +45,62 @@ test("invalid enrollment codes are rejected", async () => {
   assert.equal(response.status, 401);
 });
 
+test("degree tour catalog and graph expose Havener-rooted routes", async () => {
+  const app = getApp();
+  const catalog = await request(app).get("/campuses/missouri-s-and-t/tours");
+  assert.equal(catalog.status, 200);
+  assert.equal(catalog.body.metadata.degreeProgramCount, 33);
+  assert.equal(
+    catalog.body.tours.filter(
+      (tour: { audience: string }) => tour.audience === "undergraduate-degree",
+    ).length,
+    33,
+  );
+
+  const graph = await request(app).get(
+    "/campuses/missouri-s-and-t/tour-graph/computer-science",
+  );
+  assert.equal(graph.status, 200);
+  assert.equal(graph.body.rootNodeId, "havener-center");
+  assert.equal(graph.body.route[0], "havener-center");
+  assert.deepEqual(
+    new Set(graph.body.route),
+    new Set([
+      "havener-center",
+      "computer-science-building",
+      "kummer-student-design-center",
+    ]),
+  );
+
+  const route = await request(app).get(
+    "/campuses/missouri-s-and-t/stops?tourId=computer-science",
+  );
+  assert.equal(route.status, 200);
+  assert.equal(route.body[0].id, "havener-center");
+  assert.equal(route.body.length, 3);
+});
+
+test("tour sessions start at Havener and can be ended", async () => {
+  const app = getApp();
+  const started = await request(app).post("/tour/start").send({
+    campusId: "missouri-s-and-t",
+    tourId: "computer-science",
+  });
+
+  assert.equal(started.status, 200);
+  assert.match(started.body.sessionId, /^tour_/);
+  assert.equal(started.body.tour.id, "computer-science");
+  assert.equal(started.body.stops[0].id, "havener-center");
+  assert.equal(started.body.stopCount, started.body.stops.length);
+
+  const ended = await request(app)
+    .post("/tour/end")
+    .send({ sessionId: started.body.sessionId });
+  assert.equal(ended.status, 200);
+  assert.equal(ended.body.status, "ended");
+  assert.equal(ended.body.sessionId, started.body.sessionId);
+});
+
 test("iOS installer exposes an Apple over-the-air manifest", async () => {
   const app = getApp();
   const installPage = await request(app)

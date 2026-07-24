@@ -1,4 +1,9 @@
-import { campuses, tourStops, tours } from "../data/campuses";
+import {
+  campuses,
+  getTourStopsForTour,
+  tourStops,
+  tours,
+} from "../data/campuses";
 import { campusPlaces } from "../data/campusPlaces";
 
 export interface KnowledgeSource {
@@ -91,10 +96,23 @@ const knowledgeDocuments: KnowledgeDocument[] = [
         id: `tour:${campus.id}:${tour.id}`,
         title: tour.name,
         campusId: campus.id,
-        content: `${tour.description} Included stops: ${tourStops
-          .filter(stop => stop.campusId === campus.id && stop.tourTags.includes(tour.id))
-          .map(stop => stop.name)
-          .join(", ") || "none currently loaded"}.`,
+        sourceUrl: tour.catalogUrl,
+        content: [
+          tour.description,
+          tour.degreeTypes?.length
+            ? `Degree types: ${tour.degreeTypes.join(" and ")}.`
+            : "",
+          tour.emphasisAreas?.length
+            ? `Emphasis areas: ${tour.emphasisAreas.join(", ")}.`
+            : "",
+          `The route starts at Havener Center and uses a ${tour.routeStrategy.replaceAll("-", " ")} graph search.`,
+          `Included stops: ${getTourStopsForTour(tour.id)
+            .filter(stop => stop.campusId === campus.id)
+            .map(stop =>
+              stop.relevance ? `${stop.name} (${stop.relevance})` : stop.name,
+            )
+            .join(", ") || "none currently loaded"}.`,
+        ].filter(Boolean).join(" "),
       }),
     ),
   ),
@@ -121,9 +139,15 @@ export function retrieveCampusKnowledge(
       const currentStopBoost = item.stopId === currentStopId ? 3 : 0;
       const curatedStopBoost = item.stopId && titlePhraseBoost > 0 ? 3 : 0;
       const stopIntentBoost = item.stopId && querySet.has("building") ? 7 : 0;
+      const placeIntentBoost =
+        /^\s*where\b/i.test(question) &&
+        item.id.startsWith("place:") &&
+        uniqueMatches > 0
+          ? 5
+          : 0;
       const score =
         uniqueMatches * 2 + matches.length * 0.25 + Math.max(titlePhraseBoost, aliasPhraseBoost)
-        + currentStopBoost + curatedStopBoost + stopIntentBoost;
+        + currentStopBoost + curatedStopBoost + stopIntentBoost + placeIntentBoost;
       return { ...item, score };
     })
     .filter(item => item.score > 0 || item.stopId === currentStopId)

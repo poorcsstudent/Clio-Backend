@@ -41,7 +41,41 @@ export interface TourStop {
   description: string;
   latitude: number;
   longitude: number;
+  relevance?: string;
+  distanceFromPreviousMeters?: number;
+  programCatalogUrl?: string;
   suggestedQuestions?: string[];
+}
+
+export interface CampusTour {
+  id: string;
+  name: string;
+  description: string;
+  audience: 'all-visitors' | 'undergraduate-degree';
+  degreeTypes?: string[];
+  emphasisAreas?: string[];
+  catalogUrl?: string;
+  rootStopId: string;
+  routeStrategy: 'curated' | 'best-first-proximity';
+  stopCount: number;
+}
+
+export interface CampusTourCatalog {
+  metadata: {
+    lastVerified: string;
+    degreeProgramCount: number;
+    totalTourCount: number;
+    routedPlaceCount: number;
+  };
+  tours: CampusTour[];
+}
+
+export interface TourSession {
+  sessionId: string;
+  campusId: string;
+  tour: CampusTour;
+  stopCount: number;
+  stops: TourStop[];
 }
 
 export class ApiError extends Error {
@@ -212,7 +246,32 @@ export async function createSpeechSource(text: string) {
   };
 }
 
-export async function getTourStops() {
-  const response = await fetch(`${apiBaseUrl}/campuses/missouri-s-and-t/stops`);
+export async function getCampusTours() {
+  const response = await fetch(`${apiBaseUrl}/campuses/missouri-s-and-t/tours`);
+  return parseResponse<CampusTourCatalog>(response);
+}
+
+export async function getTourStops(tourId: string) {
+  const response = await fetch(
+    `${apiBaseUrl}/campuses/missouri-s-and-t/stops?tourId=${encodeURIComponent(tourId)}`,
+  );
   return parseResponse<TourStop[]>(response);
+}
+
+export async function startTour(tourId: string) {
+  const response = await fetch(`${apiBaseUrl}/tour/start`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ campusId: 'missouri-s-and-t', tourId }),
+  });
+  return parseResponse<TourSession>(response);
+}
+
+export async function endTour(sessionId: string) {
+  const response = await fetch(`${apiBaseUrl}/tour/end`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId }),
+  });
+  return parseResponse<{ sessionId: string; status: 'ended' }>(response);
 }

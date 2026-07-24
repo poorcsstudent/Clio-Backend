@@ -7,7 +7,7 @@
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "tsx --test src/services/knowledge.test.ts src/routes/api.test.ts",
+    "test": "tsx --test src/data/degreeTours.test.ts src/services/knowledge.test.ts src/routes/api.test.ts",
     "knowledge:check": "tsx src/scripts/check-knowledge.ts"
   },
   "keywords": [],
