@@ -20,6 +20,8 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
   private var wakeTimeout: DispatchWorkItem?
   private var restartWorkItem: DispatchWorkItem?
   private var commandCaptureWorkItem: DispatchWorkItem?
+  private var pendingSpeechWorkItem: DispatchWorkItem?
+  private var pendingSpeechUtterance: AVSpeechUtterance?
   private var recognitionGeneration = 0
   private var tapInstalled = false
   private var desiredListening = false
@@ -94,6 +96,8 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
 
       let route = try self.preparePlaybackRoute()
       self.speechSynthesizer.delegate = self.speechDelegate
+      self.speechSynthesizer.usesApplicationAudioSession = true
+      self.cancelPendingSpeech()
       if self.speechSynthesizer.isSpeaking || self.speechSynthesizer.isPaused {
         self.speechSynthesizer.stopSpeaking(at: .immediate)
       }
@@ -103,7 +107,19 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
       utterance.volume = 1
       self.speechKinds[ObjectIdentifier(utterance)] = "answer"
-      self.speechSynthesizer.speak(utterance)
+      self.pendingSpeechUtterance = utterance
+      let workItem = DispatchWorkItem { [weak self] in
+        guard let self, let pendingUtterance = self.pendingSpeechUtterance else { return }
+        self.pendingSpeechWorkItem = nil
+        self.pendingSpeechUtterance = nil
+        self.speechSynthesizer.speak(pendingUtterance)
+        self.emitDiagnostic(
+          stage: "answerSpeechSubmitted",
+          message: "Submitted the committed answer bubble text to AVSpeechSynthesizer."
+        )
+      }
+      self.pendingSpeechWorkItem = workItem
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: workItem)
       self.emitNativeSpeechState(
         kind: "answer",
         stage: "queued",
@@ -113,8 +129,11 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     }.runOnQueue(.main)
 
     AsyncFunction("stopSpeaking") { () -> Bool in
-      let wasSpeaking = self.speechSynthesizer.isSpeaking || self.speechSynthesizer.isPaused
-      if wasSpeaking {
+      let hadPendingSpeech = self.pendingSpeechUtterance != nil
+      self.cancelPendingSpeech()
+      let wasSpeaking =
+        hadPendingSpeech || self.speechSynthesizer.isSpeaking || self.speechSynthesizer.isPaused
+      if self.speechSynthesizer.isSpeaking || self.speechSynthesizer.isPaused {
         self.speechSynthesizer.stopSpeaking(at: .immediate)
       }
       return wasSpeaking
@@ -244,10 +263,10 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     let audioSession = AVAudioSession.sharedInstance()
     try audioSession.setCategory(
       .playAndRecord,
-      mode: .voicePrompt,
-      options: [.allowBluetoothHFP, .defaultToSpeaker]
+      mode: .voiceChat,
+      options: [.allowBluetoothHFP, .allowBluetoothA2DP, .defaultToSpeaker]
     )
-    try audioSession.setActive(true)
+    try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
 
     let bluetoothInput = audioSession.availableInputs?.first { input in
       input.portType == .bluetoothHFP
@@ -262,6 +281,15 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       message: "Prepared the iOS route for answer playback."
     )
     return route
+  }
+
+  private func cancelPendingSpeech() {
+    pendingSpeechWorkItem?.cancel()
+    pendingSpeechWorkItem = nil
+    if let pendingSpeechUtterance {
+      speechKinds.removeValue(forKey: ObjectIdentifier(pendingSpeechUtterance))
+    }
+    pendingSpeechUtterance = nil
   }
 
   private func handleRecognition(transcript: String?, isFinal: Bool, hasError: Bool) {

@@ -322,6 +322,45 @@ export default function HomeScreen() {
     return () => clearTimeout(speechTimeout);
   }, [answer, phase]);
 
+  useEffect(() => {
+    const spokenText = answer.trim();
+    if (phase !== 'speaking' || !spokenText) return;
+
+    let active = true;
+    const speakCommittedAnswer = async () => {
+      try {
+        addVoiceDiagnostic(
+          `Reading the committed answer bubble through native iOS speech (${spokenText.length} characters)`,
+        );
+        const route = await startNativeAnswerSpeech(spokenText);
+        if (!active) return;
+        addVoiceDiagnostic(
+          `Native answer speech queued. Output: ${
+            route.outputs.filter(Boolean).join(', ') || 'no output route'
+          }; Bluetooth: ${route.bluetoothSelected ? 'selected' : 'not selected'}`,
+        );
+      } catch (error) {
+        if (!active) return;
+        addVoiceDiagnostic(
+          `Native answer speech failed: ${
+            error instanceof Error ? error.message : 'unknown error'
+          }`,
+        );
+        setPhase('ready');
+        setStatus(
+          error instanceof Error
+            ? `Answer ready; native speech unavailable: ${error.message}`
+            : 'Answer ready; native speech unavailable',
+        );
+      }
+    };
+
+    void speakCommittedAnswer();
+    return () => {
+      active = false;
+    };
+  }, [answer, phase]);
+
   async function handlePair() {
     if (pairingCode.trim().length < 8) {
       setStatus('Pairing codes contain at least 8 characters');
@@ -341,34 +380,6 @@ export default function HomeScreen() {
     }
   }
 
-  async function playAnswer(text: string) {
-    setPhase('speaking');
-    setStatus('Sending the answer shown below to native iOS speech…');
-    try {
-      addVoiceDiagnostic('Sending the exact answer bubble text to native iOS speech');
-      const route = await startNativeAnswerSpeech(text);
-      addVoiceDiagnostic(
-        `Native answer speech queued. Output: ${
-          route.outputs.filter(Boolean).join(', ') || 'no output route'
-        }; Bluetooth: ${route.bluetoothSelected ? 'selected' : 'not selected'}`,
-      );
-      return true;
-    } catch (error) {
-      addVoiceDiagnostic(
-        `Native answer speech failed: ${
-          error instanceof Error ? error.message : 'unknown error'
-        }`,
-      );
-      setPhase('ready');
-      setStatus(
-        error instanceof Error
-          ? `Answer ready; native speech unavailable: ${error.message}`
-          : 'Answer ready; native speech unavailable',
-      );
-      return false;
-    }
-  }
-
   async function submitQuestion(value = question) {
     const cleaned = value.trim();
     if (!cleaned || !paired) return;
@@ -379,14 +390,16 @@ export default function HomeScreen() {
     setQuestion(cleaned);
     setTranscript(cleaned);
     setStatus('Searching verified campus knowledge…');
-    let speaking = false;
+    let answered = false;
     try {
       const result = await askCampusQuestion(cleaned);
       addVoiceDiagnostic('Text answer received from the backend');
       setAnswer(result.answer);
       setSources(result.sources);
       setQuestion('');
-      speaking = await playAnswer(result.answer);
+      setStatus('Answer shown below; preparing the glasses audio route…');
+      setPhase('speaking');
+      answered = true;
     } catch (error) {
       addVoiceDiagnostic(
         `Question pipeline failed: ${error instanceof Error ? error.message : 'unknown error'}`,
@@ -394,8 +407,16 @@ export default function HomeScreen() {
       if (error instanceof ApiError && error.status === 401) setPaired(false);
       setStatus(error instanceof Error ? error.message : 'Clio could not answer');
     } finally {
-      if (!speaking) setPhase('ready');
+      if (!answered) setPhase('ready');
     }
+  }
+
+  async function handleReplayAnswer() {
+    if (!answer.trim() || phase !== 'ready') return;
+    await stopNativeSpeech().catch(() => false);
+    addVoiceDiagnostic('Replay requested for the exact answer bubble text');
+    setStatus('Replaying the answer through the glasses…');
+    setPhase('speaking');
   }
 
   async function handleWakeToggle() {
@@ -794,6 +815,22 @@ export default function HomeScreen() {
                 <View style={styles.answerCard}>
                   {transcript ? <Text style={styles.transcript}>“{transcript}”</Text> : null}
                   {answer ? <Text style={styles.answer}>{answer}</Text> : null}
+                  {answer ? (
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Play the answer through the Meta glasses"
+                      style={({ pressed }) => [
+                        styles.answerSpeechButton,
+                        phase !== 'ready' && styles.disabledButton,
+                        pressed && phase === 'ready' && styles.pressed,
+                      ]}
+                      onPress={handleReplayAnswer}
+                      disabled={phase !== 'ready'}>
+                      <Text style={styles.answerSpeechButtonText}>
+                        {phase === 'speaking' ? 'Speaking through glasses…' : 'Play through glasses'}
+                      </Text>
+                    </Pressable>
+                  ) : null}
                   {sources.length > 0 && (
                     <View style={styles.sourcesRow}>
                       <Text style={styles.sourcesLabel}>GROUNDED IN</Text>
@@ -957,6 +994,15 @@ const styles = StyleSheet.create({
   answerCard: { backgroundColor: '#F3F0E6', borderRadius: 24, padding: 20, gap: 14 },
   transcript: { color: '#718078', fontSize: 13, fontStyle: 'italic', lineHeight: 19 },
   answer: { color: '#102A22', fontSize: 18, lineHeight: 27, fontWeight: '600' },
+  answerSpeechButton: {
+    minHeight: 44,
+    borderRadius: 13,
+    backgroundColor: '#102A22',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+  },
+  answerSpeechButtonText: { color: '#7EE2AE', fontSize: 13, fontWeight: '800' },
   sourcesRow: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#C7CFC9', paddingTop: 12, gap: 4 },
   sourcesLabel: { color: '#748078', fontSize: 9, fontWeight: '800', letterSpacing: 1.6 },
   sourcesText: { color: '#40564C', fontSize: 11, lineHeight: 16 },

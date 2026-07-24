@@ -104,6 +104,7 @@ export type WakePhraseDiagnosticEvent = WakePhrasePlaybackRoute & {
     | 'commandSpeechDetected'
     | 'commandCaptureError'
     | 'commandTimeout'
+    | 'answerSpeechSubmitted'
     | 'answerRoutePrepared';
   message: string;
 };
