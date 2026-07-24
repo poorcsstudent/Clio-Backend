@@ -3,21 +3,30 @@ import ExpoModulesCore
 import Foundation
 import Speech
 
+private enum ClioRecognitionPurpose {
+  case wakePhrase
+  case command
+}
+
 public final class ClioWakePhraseModule: Module, @unchecked Sendable {
   private let audioEngine = AVAudioEngine()
-  private let diagnosticSpeechSynthesizer = AVSpeechSynthesizer()
+  private let speechSynthesizer = AVSpeechSynthesizer()
   private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+  private lazy var speechDelegate = ClioSpeechSynthesizerDelegate(owner: self)
+  private var speechKinds: [ObjectIdentifier: String] = [:]
   private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
   private var recognitionTask: SFSpeechRecognitionTask?
   private var commandTimer: DispatchWorkItem?
   private var wakeTimeout: DispatchWorkItem?
   private var restartWorkItem: DispatchWorkItem?
+  private var commandCaptureWorkItem: DispatchWorkItem?
   private var recognitionGeneration = 0
   private var tapInstalled = false
   private var desiredListening = false
   private var isListening = false
   private var wakeDetected = false
   private var latestCommand = ""
+  private var recognitionPurpose = ClioRecognitionPurpose.wakePhrase
   private var mode = "idle"
   private var wakePhrase = "hey clio"
 
@@ -28,7 +37,8 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       "onWakePhraseState",
       "onWakePhraseDetected",
       "onWakePhraseCommand",
-      "onWakePhraseDiagnostic"
+      "onWakePhraseDiagnostic",
+      "onNativeSpeechState"
     )
 
     AsyncFunction("getState") { () -> [String: Any] in
@@ -42,7 +52,9 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     AsyncFunction("start") { (phrase: String) -> [String: Any] in
       let requestedPhrase = phrase.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
       let normalizedPhrase = requestedPhrase.isEmpty ? "hey clio" : requestedPhrase
-      if self.desiredListening, self.isListening, self.wakePhrase == normalizedPhrase {
+      if self.desiredListening,
+         (self.isListening || self.mode == "awaitingCommand"),
+         self.wakePhrase == normalizedPhrase {
         return self.snapshot()
       }
       self.wakePhrase = normalizedPhrase
@@ -52,8 +64,10 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     }.runOnQueue(.main)
 
     AsyncFunction("stop") { () -> [String: Any] in
+      let shouldDeactivateAudio =
+        self.desiredListening || self.isListening || self.audioEngine.isRunning
       self.desiredListening = false
-      self.tearDownRecognition(deactivateAudio: true)
+      self.tearDownRecognition(deactivateAudio: shouldDeactivateAudio)
       self.mode = "idle"
       self.emitState()
       return self.snapshot()
@@ -65,6 +79,45 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       self.mode = "idle"
       self.emitState()
       return try self.preparePlaybackRoute()
+    }.runOnQueue(.main)
+
+    AsyncFunction("speakAnswer") { (text: String) -> [String: Any] in
+      let spokenText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+      guard !spokenText.isEmpty else {
+        throw WakePhraseUnavailableException("The answer text is empty.")
+      }
+
+      self.desiredListening = false
+      self.tearDownRecognition(deactivateAudio: false)
+      self.mode = "processing"
+      self.emitState()
+
+      let route = try self.preparePlaybackRoute()
+      self.speechSynthesizer.delegate = self.speechDelegate
+      if self.speechSynthesizer.isSpeaking || self.speechSynthesizer.isPaused {
+        self.speechSynthesizer.stopSpeaking(at: .immediate)
+      }
+
+      let utterance = AVSpeechUtterance(string: spokenText)
+      utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+      utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
+      utterance.volume = 1
+      self.speechKinds[ObjectIdentifier(utterance)] = "answer"
+      self.speechSynthesizer.speak(utterance)
+      self.emitNativeSpeechState(
+        kind: "answer",
+        stage: "queued",
+        message: "Queued the exact answer bubble text for native iOS speech."
+      )
+      return route
+    }.runOnQueue(.main)
+
+    AsyncFunction("stopSpeaking") { () -> Bool in
+      let wasSpeaking = self.speechSynthesizer.isSpeaking || self.speechSynthesizer.isPaused
+      if wasSpeaking {
+        self.speechSynthesizer.stopSpeaking(at: .immediate)
+      }
+      return wasSpeaking
     }.runOnQueue(.main)
   }
 
@@ -94,7 +147,9 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     }
   }
 
-  private func beginRecognition() throws {
+  private func beginRecognition(
+    purpose: ClioRecognitionPurpose = .wakePhrase
+  ) throws {
     guard SFSpeechRecognizer.authorizationStatus() == .authorized else {
       throw WakePhrasePermissionException("Speech recognition permission is required.")
     }
@@ -111,9 +166,10 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     tearDownRecognition(deactivateAudio: false)
     let generation = recognitionGeneration
     desiredListening = true
-    wakeDetected = false
+    recognitionPurpose = purpose
+    wakeDetected = purpose == .command
     latestCommand = ""
-    mode = "listening"
+    mode = purpose == .command ? "awaitingCommand" : "listening"
 
     let audioSession = AVAudioSession.sharedInstance()
     try audioSession.setCategory(
@@ -132,8 +188,11 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     let request = SFSpeechAudioBufferRecognitionRequest()
     request.shouldReportPartialResults = true
     request.requiresOnDeviceRecognition = true
-    request.taskHint = .confirmation
-    request.contextualStrings = ["Hey Clio", "Clio", "Cleo", "Missouri S&T"]
+    request.taskHint = purpose == .command ? .dictation : .confirmation
+    request.contextualStrings =
+      purpose == .command
+        ? ["Missouri S&T", "campus", "building", "Clio"]
+        : ["Hey Clio", "Clio", "Cleo", "Missouri S&T"]
     recognitionRequest = request
 
     let inputNode = audioEngine.inputNode
@@ -169,10 +228,16 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     }
     isListening = true
     emitDiagnostic(
-      stage: "listenerStarted",
-      message: "Wake listener started on the active iOS audio route."
+      stage: purpose == .command ? "commandListenerStarted" : "listenerStarted",
+      message:
+        purpose == .command
+          ? "Fresh command listener started after the acknowledgement."
+          : "Wake listener started on the active iOS audio route."
     )
     emitState()
+    if purpose == .command {
+      scheduleWakeTimeout()
+    }
   }
 
   private func preparePlaybackRoute() throws -> [String: Any] {
@@ -202,6 +267,11 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
   private func handleRecognition(transcript: String?, isFinal: Bool, hasError: Bool) {
     guard desiredListening else { return }
 
+    if recognitionPurpose == .command {
+      handleCommandRecognition(transcript: transcript, isFinal: isFinal, hasError: hasError)
+      return
+    }
+
     if let transcript {
       if !wakeDetected, containsWakePhrase(transcript) {
         wakeDetected = true
@@ -211,30 +281,63 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
           stage: "wakeDetected",
           message: "Detected Hey Clio on-device."
         )
+        tearDownRecognition(deactivateAudio: false, resetCapture: false)
+        desiredListening = true
+        wakeDetected = true
+        mode = "awaitingCommand"
         speakDiagnosticAcknowledgement()
         emitState()
-        scheduleWakeTimeout()
-      }
-
-      if wakeDetected {
-        let command = commandAfterWakePhrase(transcript)
-        if !command.isEmpty {
-          latestCommand = command
-          scheduleCommandCompletion()
-        }
+        scheduleCommandCapture(after: 3)
+        return
       }
 
       if isFinal {
-        if wakeDetected, !latestCommand.isEmpty {
-          finishCommand()
-          return
-        }
         scheduleRestart()
         return
       }
     }
 
     if hasError {
+      scheduleRestart()
+    }
+  }
+
+  private func handleCommandRecognition(
+    transcript: String?,
+    isFinal: Bool,
+    hasError: Bool
+  ) {
+    if let transcript {
+      let command = transcript.trimmingCharacters(in: .whitespacesAndNewlines)
+      if !command.isEmpty {
+        let firstSpeech = latestCommand.isEmpty
+        latestCommand = command
+        if firstSpeech {
+          emitDiagnostic(
+            stage: "commandSpeechDetected",
+            message: "Question speech reached the fresh command listener."
+          )
+        }
+        scheduleCommandCompletion()
+      }
+
+      if isFinal {
+        if !latestCommand.isEmpty {
+          finishCommand()
+        }
+        return
+      }
+    }
+
+    if hasError {
+      if !latestCommand.isEmpty {
+        finishCommand()
+        return
+      }
+      emitDiagnostic(
+        stage: "commandCaptureError",
+        message: "The command listener ended before hearing a question; returning to wake mode."
+      )
       scheduleRestart()
     }
   }
@@ -250,25 +353,6 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     return false
   }
 
-  private func commandAfterWakePhrase(_ transcript: String) -> String {
-    let words = normalizedWords(transcript)
-    guard words.count >= 2 else { return "" }
-    for index in 0..<(words.count - 1) {
-      if words[index] == "hey", ["clio", "cleo"].contains(words[index + 1]) {
-        let commandStart = index + 2
-        guard commandStart < words.count else { return "" }
-        var commandWords = Array(words[commandStart...])
-        if commandWords.starts(with: ["hey", "user"]) {
-          commandWords.removeFirst(2)
-        } else if commandWords.first == "user" {
-          commandWords.removeFirst()
-        }
-        return commandWords.joined(separator: " ")
-      }
-    }
-    return ""
-  }
-
   private func normalizedWords(_ value: String) -> [String] {
     value
       .lowercased()
@@ -277,18 +361,25 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
   }
 
   private func speakDiagnosticAcknowledgement() {
-    if diagnosticSpeechSynthesizer.isSpeaking {
-      diagnosticSpeechSynthesizer.stopSpeaking(at: .immediate)
+    speechSynthesizer.delegate = speechDelegate
+    if speechSynthesizer.isSpeaking || speechSynthesizer.isPaused {
+      speechSynthesizer.stopSpeaking(at: .immediate)
     }
 
     let utterance = AVSpeechUtterance(string: "Hey User")
     utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
     utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.9
     utterance.volume = 1
-    diagnosticSpeechSynthesizer.speak(utterance)
+    speechKinds[ObjectIdentifier(utterance)] = "acknowledgement"
+    speechSynthesizer.speak(utterance)
     emitDiagnostic(
       stage: "acknowledgementQueued",
       message: "Queued the local Hey User acknowledgement."
+    )
+    emitNativeSpeechState(
+      kind: "acknowledgement",
+      stage: "queued",
+      message: "Queued the local Hey User acknowledgement with native iOS speech."
     )
   }
 
@@ -316,6 +407,43 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     sendEvent("onWakePhraseDiagnostic", event)
   }
 
+  fileprivate func handleSpeechSynthesizerEvent(
+    stage: String,
+    utterance: AVSpeechUtterance
+  ) {
+    let identifier = ObjectIdentifier(utterance)
+    guard let kind = speechKinds[identifier] else { return }
+
+    let messages = [
+      "started": "Native iOS speech started.",
+      "finished": "Native iOS speech finished.",
+      "cancelled": "Native iOS speech was cancelled."
+    ]
+    emitNativeSpeechState(
+      kind: kind,
+      stage: stage,
+      message: messages[stage] ?? "Native iOS speech changed state."
+    )
+
+    if stage == "finished" || stage == "cancelled" {
+      speechKinds.removeValue(forKey: identifier)
+      if kind == "acknowledgement" {
+        scheduleCommandCapture(after: stage == "finished" ? 0.2 : 0.4)
+      } else if kind == "answer" {
+        mode = "idle"
+        emitState()
+      }
+    }
+  }
+
+  private func emitNativeSpeechState(kind: String, stage: String, message: String) {
+    var event = routeSnapshot()
+    event["kind"] = kind
+    event["stage"] = stage
+    event["message"] = message
+    sendEvent("onNativeSpeechState", event)
+  }
+
   private func scheduleCommandCompletion() {
     commandTimer?.cancel()
     let workItem = DispatchWorkItem { [weak self] in
@@ -325,10 +453,31 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     DispatchQueue.main.asyncAfter(deadline: .now() + 1.25, execute: workItem)
   }
 
+  private func scheduleCommandCapture(after delay: TimeInterval) {
+    guard desiredListening, mode == "awaitingCommand" else { return }
+    commandCaptureWorkItem?.cancel()
+    let workItem = DispatchWorkItem { [weak self] in
+      guard let self, self.desiredListening, self.mode == "awaitingCommand" else { return }
+      do {
+        try self.beginRecognition(purpose: .command)
+      } catch {
+        self.desiredListening = false
+        self.mode = "error"
+        self.emitState(error: error.localizedDescription)
+      }
+    }
+    commandCaptureWorkItem = workItem
+    DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: workItem)
+  }
+
   private func scheduleWakeTimeout() {
     wakeTimeout?.cancel()
     let workItem = DispatchWorkItem { [weak self] in
       guard let self, self.desiredListening, self.latestCommand.isEmpty else { return }
+      self.emitDiagnostic(
+        stage: "commandTimeout",
+        message: "No question was heard after Hey User; returning to the wake listener."
+      )
       self.mode = "listening"
       self.wakeDetected = false
       self.emitState()
@@ -355,7 +504,7 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     let workItem = DispatchWorkItem { [weak self] in
       guard let self, self.desiredListening else { return }
       do {
-        try self.beginRecognition()
+        try self.beginRecognition(purpose: .wakePhrase)
       } catch {
         self.desiredListening = false
         self.mode = "error"
@@ -366,7 +515,10 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.25, execute: workItem)
   }
 
-  private func tearDownRecognition(deactivateAudio: Bool) {
+  private func tearDownRecognition(
+    deactivateAudio: Bool,
+    resetCapture: Bool = true
+  ) {
     recognitionGeneration += 1
     commandTimer?.cancel()
     commandTimer = nil
@@ -374,6 +526,8 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     wakeTimeout = nil
     restartWorkItem?.cancel()
     restartWorkItem = nil
+    commandCaptureWorkItem?.cancel()
+    commandCaptureWorkItem = nil
     recognitionRequest?.endAudio()
     recognitionTask?.cancel()
     recognitionTask = nil
@@ -384,8 +538,11 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       tapInstalled = false
     }
     isListening = false
-    wakeDetected = false
-    latestCommand = ""
+    if resetCapture {
+      recognitionPurpose = .wakePhrase
+      wakeDetected = false
+      latestCommand = ""
+    }
     if deactivateAudio {
       try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
@@ -410,6 +567,39 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     sendEvent("onWakePhraseState", state)
   }
 
+}
+
+private final class ClioSpeechSynthesizerDelegate:
+  NSObject,
+  AVSpeechSynthesizerDelegate,
+  @unchecked Sendable
+{
+  private weak var owner: ClioWakePhraseModule?
+
+  init(owner: ClioWakePhraseModule) {
+    self.owner = owner
+  }
+
+  func speechSynthesizer(
+    _ synthesizer: AVSpeechSynthesizer,
+    didStart utterance: AVSpeechUtterance
+  ) {
+    owner?.handleSpeechSynthesizerEvent(stage: "started", utterance: utterance)
+  }
+
+  func speechSynthesizer(
+    _ synthesizer: AVSpeechSynthesizer,
+    didFinish utterance: AVSpeechUtterance
+  ) {
+    owner?.handleSpeechSynthesizerEvent(stage: "finished", utterance: utterance)
+  }
+
+  func speechSynthesizer(
+    _ synthesizer: AVSpeechSynthesizer,
+    didCancel utterance: AVSpeechUtterance
+  ) {
+    owner?.handleSpeechSynthesizerEvent(stage: "cancelled", utterance: utterance)
+  }
 }
 
 private final class WakePhrasePermissionException: GenericException<String>, @unchecked Sendable {

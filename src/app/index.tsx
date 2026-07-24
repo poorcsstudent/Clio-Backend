@@ -2,14 +2,10 @@ import {
   AudioModule,
   RecordingPresets,
   setAudioModeAsync,
-  setIsAudioActiveAsync,
-  type AudioSource,
-  useAudioPlayer,
-  useAudioPlayerStatus,
   useAudioRecorder,
   useAudioRecorderState,
 } from 'expo-audio';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -31,7 +27,6 @@ import {
   ApiError,
   apiBaseUrl,
   askCampusQuestion,
-  createSpeechSource,
   disconnectDevice,
   pairDevice,
   restoreDeviceSession,
@@ -48,17 +43,18 @@ import {
   type MetaWearablesState,
 } from '@/services/meta-wearables';
 import {
+  addNativeSpeechStateListener,
   addWakePhraseCommandListener,
   addWakePhraseDetectedListener,
   addWakePhraseDiagnosticListener,
   addWakePhraseStateListener,
   getWakePhraseState,
   initialWakePhraseState,
-  prepareWakePhrasePlaybackRoute,
   requestWakePhrasePermissions,
+  startNativeAnswerSpeech,
   startWakePhraseListening,
+  stopNativeSpeech,
   stopWakePhraseListening,
-  type WakePhrasePlaybackRoute,
   type WakePhraseState,
 } from '@/services/wake-phrase';
 
@@ -77,121 +73,6 @@ type Phase =
   | 'speaking'
   | 'transcribing';
 
-type SpeechPlaybackProps = {
-  source: AudioSource;
-  route: WakePhrasePlaybackRoute | null;
-  onDiagnostic: (message: string) => void;
-  onStatus: (message: string) => void;
-  onSettled: (result: 'complete' | 'error' | 'timeout', error?: string) => void;
-};
-
-function SpeechPlayback({
-  source,
-  route,
-  onDiagnostic,
-  onStatus,
-  onSettled,
-}: SpeechPlaybackProps) {
-  const player = useAudioPlayer(source, { downloadFirst: true });
-  const playerStatus = useAudioPlayerStatus(player);
-  const playbackStartedRef = useRef(false);
-  const playingLoggedRef = useRef(false);
-  const settledRef = useRef(false);
-  const onDiagnosticRef = useRef(onDiagnostic);
-  const onStatusRef = useRef(onStatus);
-  const onSettledRef = useRef(onSettled);
-  onDiagnosticRef.current = onDiagnostic;
-  onStatusRef.current = onStatus;
-  onSettledRef.current = onSettled;
-
-  useEffect(() => {
-    onDiagnosticRef.current('Answer audio player created; downloading speech audio');
-  }, []);
-
-  useEffect(() => {
-    if (settledRef.current) return;
-
-    if (playerStatus.error) {
-      settledRef.current = true;
-      onDiagnosticRef.current(`Answer audio player error: ${playerStatus.error}`);
-      onSettledRef.current('error', playerStatus.error);
-      return;
-    }
-
-    if (playerStatus.playing && !playingLoggedRef.current) {
-      playingLoggedRef.current = true;
-      onDiagnosticRef.current('Answer audio is actively playing');
-    }
-
-    const reachedEnd =
-      playerStatus.duration > 0 &&
-      playerStatus.currentTime >= playerStatus.duration - 0.1 &&
-      !playerStatus.playing;
-
-    if (playbackStartedRef.current && (playerStatus.didJustFinish || reachedEnd)) {
-      settledRef.current = true;
-      onDiagnosticRef.current('Answer audio playback completed');
-      onSettledRef.current('complete');
-      return;
-    }
-
-    if (playerStatus.isLoaded && !playbackStartedRef.current) {
-      try {
-        playbackStartedRef.current = true;
-        onDiagnosticRef.current(
-          `Answer audio loaded (${playerStatus.duration.toFixed(1)} seconds); requesting playback`,
-        );
-        player.play();
-        const outputNames = route?.outputs.filter(Boolean).join(', ');
-        onStatusRef.current(
-          route?.bluetoothSelected
-            ? `Playing through ${outputNames || 'the connected Bluetooth glasses'}`
-            : route?.bluetoothAvailable
-              ? 'Meta glasses audio is available, but iOS kept the iPhone output route'
-              : 'Playing through the iPhone audio route; connect the Meta glasses for spoken answers',
-        );
-      } catch (error) {
-        settledRef.current = true;
-        const message = error instanceof Error ? error.message : 'Audio playback could not start';
-        onDiagnosticRef.current(`Answer playback request failed: ${message}`);
-        onSettledRef.current(
-          'error',
-          message,
-        );
-      }
-    }
-  }, [
-    player,
-    playerStatus.currentTime,
-    playerStatus.didJustFinish,
-    playerStatus.duration,
-    playerStatus.error,
-    playerStatus.isLoaded,
-    playerStatus.playing,
-    route,
-  ]);
-
-  useEffect(() => {
-    if (settledRef.current) return;
-    const timeoutMs = playerStatus.isLoaded
-      ? Math.max(30_000, (playerStatus.duration + 10) * 1_000)
-      : 20_000;
-    const timeout = setTimeout(() => {
-      if (settledRef.current) return;
-      settledRef.current = true;
-      onDiagnosticRef.current(
-        playerStatus.isLoaded
-          ? 'Answer audio timed out after loading'
-          : 'Answer audio timed out before loading',
-      );
-      onSettledRef.current('timeout');
-    }, timeoutMs);
-    return () => clearTimeout(timeout);
-  }, [player, playerStatus.duration, playerStatus.isLoaded]);
-
-  return null;
-}
-
 export default function HomeScreen() {
   const [phase, setPhase] = useState<Phase>('checking');
   const [paired, setPaired] = useState(false);
@@ -207,9 +88,7 @@ export default function HomeScreen() {
   const [wakeState, setWakeState] = useState<WakePhraseState>(initialWakePhraseState);
   const [wakeEnabled, setWakeEnabled] = useState(false);
   const [appIsActive, setAppIsActive] = useState(true);
-  const [speechSource, setSpeechSource] = useState<AudioSource | null>(null);
   const [voiceDiagnostics, setVoiceDiagnostics] = useState<string[]>([]);
-  const playbackRouteRef = useRef<WakePhrasePlaybackRoute | null>(null);
 
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
   const recorderState = useAudioRecorderState(recorder);
@@ -332,6 +211,50 @@ export default function HomeScreen() {
           event.bluetoothSelected ? 'selected' : 'not selected'
         }`,
       );
+      if (event.stage === 'commandListenerStarted') {
+        setStatus('Listening for your question now…');
+      } else if (event.stage === 'commandSpeechDetected') {
+        setStatus('Question heard - waiting for you to finish…');
+      } else if (event.stage === 'commandTimeout') {
+        setStatus('No question was heard; say “Hey Clio” and try again');
+      } else if (event.stage === 'commandCaptureError') {
+        setStatus('Question capture stopped; say “Hey Clio” and try again');
+      }
+    });
+    const speechSubscription = addNativeSpeechStateListener(event => {
+      if (!active) return;
+      const outputs = event.outputs.filter(Boolean).join(', ') || 'no output route';
+      addVoiceDiagnostic(
+        `${event.kind === 'answer' ? 'Answer' : 'Acknowledgement'} speech ${
+          event.stage
+        }. Output: ${outputs}; Bluetooth: ${
+          event.bluetoothSelected ? 'selected' : 'not selected'
+        }`,
+      );
+
+      if (event.kind === 'acknowledgement') {
+        if (event.stage === 'finished') {
+          setStatus('“Hey User” finished - listening for your question…');
+        }
+        return;
+      }
+      if (event.stage === 'queued') {
+        setStatus('Answer text queued for native iOS speech');
+      } else if (event.stage === 'started') {
+        setStatus(
+          event.bluetoothSelected
+            ? `Speaking through ${outputs}`
+            : event.bluetoothAvailable
+              ? 'Speaking now; iOS did not select the glasses output route'
+              : 'Speaking through the iPhone; connect the Meta glasses for in-ear audio',
+        );
+      } else if (event.stage === 'finished') {
+        setPhase('ready');
+        setStatus('Answer complete - Hey Clio is ready for another question');
+      } else if (event.stage === 'cancelled') {
+        setPhase('ready');
+        setStatus('Native answer speech stopped; the text answer remains available');
+      }
     });
     const commandSubscription = addWakePhraseCommandListener(event => {
       if (!active || !paired || !event.command.trim()) return;
@@ -345,6 +268,7 @@ export default function HomeScreen() {
       stateSubscription.remove();
       detectedSubscription.remove();
       diagnosticSubscription.remove();
+      speechSubscription.remove();
       commandSubscription.remove();
     };
   }, [paired]);
@@ -360,6 +284,7 @@ export default function HomeScreen() {
 
     const syncWakeListener = async () => {
       try {
+        if (!shouldListen && phase === 'speaking') return;
         const nextState = shouldListen
           ? await startWakePhraseListening('hey clio')
           : await stopWakePhraseListening();
@@ -379,105 +304,23 @@ export default function HomeScreen() {
 
   useEffect(() => () => {
     void stopWakePhraseListening();
+    void stopNativeSpeech();
   }, []);
 
-  /* Playback is owned by the keyed SpeechPlayback component above.
   useEffect(() => {
     if (phase !== 'speaking') return;
 
-    if (playerStatus.error) {
-      player.pause();
-      playbackStartedRef.current = false;
-      playbackRouteRef.current = null;
-      setSpeechSource(null);
-      setPhase('ready');
-      setStatus(
-        wakeEnabled
-          ? `Answer ready; audio playback failed: ${playerStatus.error}. Say “Hey Clio” to try another question.`
-          : `Answer ready; audio playback failed: ${playerStatus.error}`,
-      );
-      return;
-    }
-
-    const reachedEnd =
-      playerStatus.duration > 0 &&
-      playerStatus.currentTime >= playerStatus.duration - 0.1 &&
-      !playerStatus.playing;
-
-    if (playbackStartedRef.current && (playerStatus.didJustFinish || reachedEnd)) {
-      playbackStartedRef.current = false;
-      playbackRouteRef.current = null;
-      setSpeechSource(null);
-      setPhase('ready');
-      setStatus(
-        wakeEnabled
-          ? 'Answer complete — say “Hey Clio” for another question'
-          : 'Answer complete',
-      );
-      return;
-    }
-
-    if (speechSource && playerStatus.isLoaded && !playbackStartedRef.current) {
-      try {
-        playbackStartedRef.current = true;
-        player.play();
-        const route = playbackRouteRef.current;
-        const outputNames = route?.outputs.filter(Boolean).join(', ');
-        setStatus(
-          route?.bluetoothSelected
-            ? `Playing through ${outputNames || 'the connected Bluetooth glasses'}`
-            : route?.bluetoothAvailable
-              ? 'Meta glasses audio is available, but iOS kept the iPhone output route'
-              : 'Playing through the iPhone audio route; connect the Meta glasses for spoken answers',
-        );
-      } catch (error) {
-        playbackStartedRef.current = false;
-        playbackRouteRef.current = null;
-        setSpeechSource(null);
+    const timeoutMs = Math.max(45_000, Math.min(300_000, answer.length * 90 + 20_000));
+    const speechTimeout = setTimeout(() => {
+      addVoiceDiagnostic('Native answer speech watchdog expired');
+      void stopNativeSpeech().finally(() => {
         setPhase('ready');
-        setStatus(
-          error instanceof Error
-            ? `Answer ready; audio playback failed: ${error.message}`
-            : 'Answer ready; audio playback failed',
-        );
-      }
-    }
-  }, [
-    phase,
-    player,
-    playerStatus.currentTime,
-    playerStatus.didJustFinish,
-    playerStatus.duration,
-    playerStatus.error,
-    playerStatus.isLoaded,
-    playerStatus.playing,
-    speechSource,
-    wakeEnabled,
-  ]);
-
-  useEffect(() => {
-    if (phase !== 'speaking') return;
-
-    const timeoutMs = playerStatus.isLoaded
-      ? Math.max(30_000, (playerStatus.duration + 10) * 1_000)
-      : 20_000;
-    const timeout = setTimeout(() => {
-      player.pause();
-      playbackStartedRef.current = false;
-      playbackRouteRef.current = null;
-      setSpeechSource(null);
-      setPhase('ready');
-      setStatus(
-        wakeEnabled
-          ? 'Spoken audio timed out — say “Hey Clio” to ask another question'
-          : 'Spoken audio timed out; the text answer is still available',
-      );
+        setStatus('Native speech timed out; the text answer remains available');
+      });
     }, timeoutMs);
 
-    return () => clearTimeout(timeout);
-  }, [phase, player, playerStatus.duration, playerStatus.isLoaded, wakeEnabled]);
-
-  */
+    return () => clearTimeout(speechTimeout);
+  }, [answer, phase]);
 
   async function handlePair() {
     if (pairingCode.trim().length < 8) {
@@ -499,24 +342,28 @@ export default function HomeScreen() {
   }
 
   async function playAnswer(text: string) {
+    setPhase('speaking');
+    setStatus('Sending the answer shown below to native iOS speech…');
     try {
-      addVoiceDiagnostic('Requesting synthesized answer audio from the backend');
-      const source = await createSpeechSource(text);
-      addVoiceDiagnostic('Backend returned an answer audio source');
-      setSpeechSource(source);
-      setPhase('speaking');
-      setStatus('Loading the spoken answer…');
+      addVoiceDiagnostic('Sending the exact answer bubble text to native iOS speech');
+      const route = await startNativeAnswerSpeech(text);
+      addVoiceDiagnostic(
+        `Native answer speech queued. Output: ${
+          route.outputs.filter(Boolean).join(', ') || 'no output route'
+        }; Bluetooth: ${route.bluetoothSelected ? 'selected' : 'not selected'}`,
+      );
       return true;
     } catch (error) {
       addVoiceDiagnostic(
-        `Answer TTS source failed: ${error instanceof Error ? error.message : 'unknown error'}`,
+        `Native answer speech failed: ${
+          error instanceof Error ? error.message : 'unknown error'
+        }`,
       );
-      playbackRouteRef.current = null;
-      setSpeechSource(null);
+      setPhase('ready');
       setStatus(
         error instanceof Error
-          ? `Answer ready; audio unavailable: ${error.message}`
-          : 'Answer ready; audio unavailable',
+          ? `Answer ready; native speech unavailable: ${error.message}`
+          : 'Answer ready; native speech unavailable',
       );
       return false;
     }
@@ -539,24 +386,6 @@ export default function HomeScreen() {
       setAnswer(result.answer);
       setSources(result.sources);
       setQuestion('');
-      await setAudioModeAsync({
-        allowsRecording: true,
-        playsInSilentMode: true,
-        interruptionMode: 'doNotMix',
-        shouldRouteThroughEarpiece: false,
-      });
-      addVoiceDiagnostic('Expo audio mode configured for spoken output');
-      playbackRouteRef.current = await prepareWakePhrasePlaybackRoute().catch(() => null);
-      const route = playbackRouteRef.current;
-      addVoiceDiagnostic(
-        route
-          ? `Answer route ready: ${route.outputs.filter(Boolean).join(', ') || 'no output'}; Bluetooth ${
-              route.bluetoothSelected ? 'selected' : 'not selected'
-            }`
-          : 'Native answer route preparation failed',
-      );
-      await setIsAudioActiveAsync(true);
-      addVoiceDiagnostic('Expo audio session activated');
       speaking = await playAnswer(result.answer);
     } catch (error) {
       addVoiceDiagnostic(
@@ -623,8 +452,7 @@ export default function HomeScreen() {
 
     try {
       await stopWakePhraseListening().catch(() => undefined);
-      playbackRouteRef.current = null;
-      setSpeechSource(null);
+      await stopNativeSpeech().catch(() => false);
       await setAudioModeAsync({
         allowsRecording: true,
         playsInSilentMode: true,
@@ -643,8 +471,7 @@ export default function HomeScreen() {
   async function handleDisconnect() {
     setWakeEnabled(false);
     await stopWakePhraseListening().catch(() => undefined);
-    playbackRouteRef.current = null;
-    setSpeechSource(null);
+    await stopNativeSpeech().catch(() => false);
     await disconnectDevice();
     setPaired(false);
     setAnswer('');
@@ -681,38 +508,6 @@ export default function HomeScreen() {
     }
   }
 
-  function handleSpeechSettled(result: 'complete' | 'error' | 'timeout', error?: string) {
-    addVoiceDiagnostic(
-      result === 'error'
-        ? `Answer playback settled with error: ${error ?? 'unknown error'}`
-        : `Answer playback settled: ${result}`,
-    );
-    playbackRouteRef.current = null;
-    setSpeechSource(null);
-    setPhase('ready');
-    if (result === 'complete') {
-      setStatus(
-        wakeEnabled
-          ? 'Answer complete â€” say â€œHey Clioâ€ for another question'
-          : 'Answer complete',
-      );
-      return;
-    }
-    if (result === 'timeout') {
-      setStatus(
-        wakeEnabled
-          ? 'Spoken audio timed out â€” say â€œHey Clioâ€ to ask another question'
-          : 'Spoken audio timed out; the text answer is still available',
-      );
-      return;
-    }
-    setStatus(
-      wakeEnabled
-        ? `Answer ready; audio playback failed: ${error ?? 'Unknown error'}. Say â€œHey Clioâ€ to try another question.`
-        : `Answer ready; audio playback failed: ${error ?? 'Unknown error'}`,
-    );
-  }
-
   const busy = !['ready', 'checking', 'recording'].includes(phase);
   const connectedMetaDevice = metaState.devices.find(device => device.linkState === 'connected');
   const metaStatus = !metaState.platformSupported
@@ -732,20 +527,6 @@ export default function HomeScreen() {
       style={styles.screen}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-        {speechSource && (
-          <SpeechPlayback
-            key={
-              typeof speechSource === 'object' && speechSource.uri
-                ? speechSource.uri
-                : String(speechSource)
-            }
-            source={speechSource}
-            route={playbackRouteRef.current}
-            onDiagnostic={addVoiceDiagnostic}
-            onStatus={setStatus}
-            onSettled={handleSpeechSettled}
-          />
-        )}
         <ScrollView
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
@@ -841,7 +622,7 @@ export default function HomeScreen() {
               <View style={styles.debugHeader}>
                 <View style={styles.debugHeaderCopy}>
                   <Text style={styles.debugEyebrow}>VOICE DEBUG</Text>
-                  <Text style={styles.debugTitle}>Wake, route, and playback checkpoints</Text>
+                  <Text style={styles.debugTitle}>Wake, route, and native speech checkpoints</Text>
                 </View>
                 <Pressable
                   accessibilityRole="button"
@@ -853,7 +634,8 @@ export default function HomeScreen() {
               </View>
               <Text style={styles.debugHelp}>
                 "Hey User" is generated locally before Clio contacts the backend. If you hear it in
-                the glasses, wake detection and the iOS Bluetooth output route are working.
+                the glasses, wake detection and the iOS Bluetooth output route are working. Answer
+                speech uses the exact text shown in the answer bubble below.
               </Text>
               {voiceDiagnostics.length > 0 ? (
                 <View style={styles.debugLog}>

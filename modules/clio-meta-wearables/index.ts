@@ -100,7 +100,18 @@ export type WakePhraseDiagnosticEvent = WakePhrasePlaybackRoute & {
     | 'listenerStarted'
     | 'wakeDetected'
     | 'acknowledgementQueued'
+    | 'commandListenerStarted'
+    | 'commandSpeechDetected'
+    | 'commandCaptureError'
+    | 'commandTimeout'
     | 'answerRoutePrepared';
+  message: string;
+};
+export type NativeSpeechKind = 'acknowledgement' | 'answer';
+export type NativeSpeechStage = 'queued' | 'started' | 'finished' | 'cancelled';
+export type NativeSpeechStateEvent = WakePhrasePlaybackRoute & {
+  kind: NativeSpeechKind;
+  stage: NativeSpeechStage;
   message: string;
 };
 
@@ -110,6 +121,8 @@ type NativeWakePhraseModule = {
   start(phrase: string): Promise<WakePhraseState>;
   stop(): Promise<WakePhraseState>;
   preparePlaybackRoute(): Promise<WakePhrasePlaybackRoute>;
+  speakAnswer(text: string): Promise<WakePhrasePlaybackRoute>;
+  stopSpeaking(): Promise<boolean>;
   addListener(
     eventName: 'onWakePhraseState',
     listener: (event: WakePhraseState) => void,
@@ -125,6 +138,10 @@ type NativeWakePhraseModule = {
   addListener(
     eventName: 'onWakePhraseDiagnostic',
     listener: (event: WakePhraseDiagnosticEvent) => void,
+  ): EventSubscription;
+  addListener(
+    eventName: 'onNativeSpeechState',
+    listener: (event: NativeSpeechStateEvent) => void,
   ): EventSubscription;
 };
 
@@ -178,6 +195,19 @@ export async function prepareWakePhrasePlaybackRoute(): Promise<WakePhrasePlayba
   return nativeWakePhraseModule.preparePlaybackRoute();
 }
 
+export async function startNativeAnswerSpeech(
+  text: string,
+): Promise<WakePhrasePlaybackRoute> {
+  if (!nativeWakePhraseModule) {
+    throw new Error('Install the native speech-enabled iOS build first.');
+  }
+  return nativeWakePhraseModule.speakAnswer(text);
+}
+
+export async function stopNativeSpeech() {
+  return nativeWakePhraseModule?.stopSpeaking() ?? false;
+}
+
 export function addWakePhraseStateListener(listener: (event: WakePhraseState) => void) {
   return nativeWakePhraseModule?.addListener('onWakePhraseState', listener) ?? { remove() {} };
 }
@@ -196,4 +226,10 @@ export function addWakePhraseDiagnosticListener(
   listener: (event: WakePhraseDiagnosticEvent) => void,
 ) {
   return nativeWakePhraseModule?.addListener('onWakePhraseDiagnostic', listener) ?? { remove() {} };
+}
+
+export function addNativeSpeechStateListener(
+  listener: (event: NativeSpeechStateEvent) => void,
+) {
+  return nativeWakePhraseModule?.addListener('onNativeSpeechState', listener) ?? { remove() {} };
 }
