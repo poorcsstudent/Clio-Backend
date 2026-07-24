@@ -78,6 +78,42 @@ export interface TourSession {
   stops: TourStop[];
 }
 
+export interface WalkingCoordinate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface WalkingRouteStep {
+  instruction: string;
+  maneuver?: string;
+  distanceMeters: number;
+  durationSeconds: number;
+  path: WalkingCoordinate[];
+}
+
+export interface WalkingRouteLeg {
+  fromStopId: string;
+  toStopId: string;
+  distanceMeters: number;
+  durationSeconds: number;
+  path: WalkingCoordinate[];
+  steps: WalkingRouteStep[];
+}
+
+export interface CampusWalkingRoute {
+  campusId: string;
+  tourId: string;
+  travelMode: 'WALK';
+  provider: 'clio-coordinate-fallback';
+  providerConfigured: boolean;
+  distanceMeters: number;
+  durationSeconds: number;
+  path: WalkingCoordinate[];
+  legs: WalkingRouteLeg[];
+  generatedAt: string;
+  warning?: string;
+}
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -256,6 +292,13 @@ export async function getTourStops(tourId: string) {
     `${apiBaseUrl}/campuses/missouri-s-and-t/stops?tourId=${encodeURIComponent(tourId)}`,
   );
   return parseResponse<TourStop[]>(response);
+}
+
+export async function getWalkingRoute(tourId: string) {
+  const response = await fetch(
+    `${apiBaseUrl}/navigation/walking-route/${encodeURIComponent(tourId)}?campusId=missouri-s-and-t`,
+  );
+  return parseResponse<CampusWalkingRoute>(response);
 }
 
 export async function startTour(tourId: string) {

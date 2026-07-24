@@ -101,6 +101,21 @@ test("tour sessions start at Havener and can be ended", async () => {
   assert.equal(ended.body.sessionId, started.body.sessionId);
 });
 
+test("walking route pilot preserves the Computer Science tour order", async () => {
+  const app = getApp();
+  const response = await request(app).get(
+    "/navigation/walking-route/computer-science?campusId=missouri-s-and-t",
+  );
+
+  assert.equal(response.status, 200);
+  assert.equal(response.body.tourId, "computer-science");
+  assert.equal(response.body.travelMode, "WALK");
+  assert.equal(response.body.provider, "clio-coordinate-fallback");
+  assert.equal(response.body.legs[0].fromStopId, "havener-center");
+  assert.equal(response.body.legs[0].toStopId, "computer-science-building");
+  assert.equal(response.body.legs[1].toStopId, "kummer-student-design-center");
+});
+
 test("iOS installer exposes an Apple over-the-air manifest", async () => {
   const app = getApp();
   const installPage = await request(app)

@@ -68,6 +68,15 @@ The official campus-map records are in `backend/src/data/campusPlaces.ts`. Degre
 
 For each degree, Clio builds a minimum-distance access graph using only relevant buildings and runs a best-first proximity search from Havener. `GET /campuses/missouri-s-and-t/tours` returns the catalog, `GET /campuses/missouri-s-and-t/stops?tourId=<degree-id>` returns an ordered route, and `GET /campuses/missouri-s-and-t/tour-graph/<degree-id>` exposes its graph.
 
+### Pedestrian navigation
+
+`GET /navigation/walking-route/<degree-id>?campusId=missouri-s-and-t` converts the
+ordered building stops into Clio-owned coordinate geometry and returns the path,
+per-building legs, approximate distance, duration, and stop-to-stop guidance.
+The app renders that route in its native campus-map surface, follows the user's
+live GPS position, and keeps arrival detection independent of a third-party map
+or cloud-routing provider.
+
 After changing the campus records, run:
 
 ```bash

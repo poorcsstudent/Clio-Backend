@@ -13,12 +13,15 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { CampusRouteMap, type MapCoordinate } from '@/components/campus-route-map';
 import { BottomTabInset } from '@/constants/theme';
 import {
   getCampusTours,
   endTour,
   getTourStops,
+  getWalkingRoute,
   startTour,
+  type CampusWalkingRoute,
   type CampusTour,
   type CampusTourCatalog,
   type TourSession,
@@ -63,6 +66,9 @@ export default function CampusScreen() {
   const [catalog, setCatalog] = useState<CampusTourCatalog | null>(null);
   const [selectedTourId, setSelectedTourId] = useState('');
   const [routesByTourId, setRoutesByTourId] = useState<Record<string, TourStop[]>>({});
+  const [walkingRoutesByTourId, setWalkingRoutesByTourId] = useState<
+    Record<string, CampusWalkingRoute>
+  >({});
   const [loadingCatalog, setLoadingCatalog] = useState(true);
   const [loadingTourId, setLoadingTourId] = useState<string | null>(null);
   const [startingTourId, setStartingTourId] = useState<string | null>(null);
@@ -73,6 +79,7 @@ export default function CampusScreen() {
   const [gpsStatus, setGpsStatus] = useState<GpsStatus>('idle');
   const [distanceToCurrentStop, setDistanceToCurrentStop] = useState<number | null>(null);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
+  const [userCoordinate, setUserCoordinate] = useState<MapCoordinate | null>(null);
   const [error, setError] = useState('');
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
 
@@ -113,6 +120,16 @@ export default function CampusScreen() {
     setError('');
     setSelectedStopId(null);
     setSelectedTourId(tour.id);
+    if (!walkingRoutesByTourId[tour.id]) {
+      void getWalkingRoute(tour.id)
+        .then(walkingRoute => {
+          setWalkingRoutesByTourId(current => ({
+            ...current,
+            [tour.id]: walkingRoute,
+          }));
+        })
+        .catch(() => undefined);
+    }
     if (routesByTourId[tour.id]) return;
 
     setLoadingTourId(tour.id);
@@ -141,9 +158,20 @@ export default function CampusScreen() {
       setGpsStatus('requesting');
       setDistanceToCurrentStop(null);
       setGpsAccuracy(null);
+      setUserCoordinate(null);
       setSelectedTourId(tour.id);
       setSelectedStopId(null);
       setRoutesByTourId(current => ({ ...current, [tour.id]: session.stops }));
+      if (!walkingRoutesByTourId[tour.id]) {
+        void getWalkingRoute(tour.id)
+          .then(walkingRoute => {
+            setWalkingRoutesByTourId(current => ({
+              ...current,
+              [tour.id]: walkingRoute,
+            }));
+          })
+          .catch(() => undefined);
+      }
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Could not start this tour');
     } finally {
@@ -168,6 +196,7 @@ export default function CampusScreen() {
       setGpsStatus('idle');
       setDistanceToCurrentStop(null);
       setGpsAccuracy(null);
+      setUserCoordinate(null);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Could not end this tour');
     } finally {
@@ -223,6 +252,10 @@ export default function CampusScreen() {
       setGpsStatus('tracking');
       setDistanceToCurrentStop(distance);
       setGpsAccuracy(accuracy);
+      setUserCoordinate({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
 
       if (isReliableTourArrival(distance, accuracy)) {
         arrivalSamples += 1;
@@ -353,6 +386,7 @@ export default function CampusScreen() {
                 const expanded = tour.id === selectedTourId;
                 const route = routesByTourId[tour.id] ?? [];
                 const loadingRoute = loadingTourId === tour.id;
+                const walkingRoute = walkingRoutesByTourId[tour.id] ?? null;
                 const isActiveTour = activeTour?.tour.id === tour.id;
                 const currentStop = isActiveTour ? activeTour.stops[activeStopIndex] : null;
                 const tourProgress = isActiveTour
@@ -360,6 +394,19 @@ export default function CampusScreen() {
                   : 0;
                 const displayedGpsStatus: GpsStatus | 'preview' =
                   Platform.OS === 'web' && isActiveTour ? 'preview' : gpsStatus;
+                const displayedUserCoordinate =
+                  isActiveTour && Platform.OS === 'web' && currentStop
+                    ? {
+                        latitude:
+                          activeTour.stops[Math.max(0, activeStopIndex - 1)]?.latitude ??
+                          currentStop.latitude,
+                        longitude:
+                          activeTour.stops[Math.max(0, activeStopIndex - 1)]?.longitude ??
+                          currentStop.longitude,
+                      }
+                    : isActiveTour
+                      ? userCoordinate
+                      : null;
 
                 return (
                   <View
@@ -447,6 +494,20 @@ export default function CampusScreen() {
                             </Pressable>
                           ) : null}
                         </View>
+
+                        {!loadingRoute && route.length ? (
+                          <CampusRouteMap
+                            stops={route}
+                            walkingRoute={walkingRoute}
+                            isActive={isActiveTour}
+                            activeStopIndex={isActiveTour ? activeStopIndex : 0}
+                            userCoordinate={displayedUserCoordinate}
+                            selectedStopId={selectedStopId}
+                            onSelectStop={stopId =>
+                              setSelectedStopId(current => (current === stopId ? null : stopId))
+                            }
+                          />
+                        ) : null}
 
                         {isActiveTour && currentStop ? (
                           <View style={styles.activeGuide}>

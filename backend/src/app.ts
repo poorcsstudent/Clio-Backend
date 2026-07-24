@@ -11,6 +11,7 @@ import campusRoutes from "./routes/campuses";
 import tourRoutes from "./routes/tours";
 import aiRoutes from "./routes/ai";
 import iosInstallRoutes from "./routes/iosInstall";
+import navigationRoutes from "./routes/navigation";
 import voiceRoutes from "./routes/voice";
 
 const app = express();
@@ -44,6 +45,7 @@ app.get("/", (_req, res) => {
     aiProvider: config.aiProvider,
     voiceConfigured: Boolean(providerKey(config.voiceProvider)),
     voiceProvider: config.voiceProvider,
+    walkingRoutesConfigured: true,
   });
 });
 
@@ -51,6 +53,7 @@ app.use("/ios", iosInstallRoutes);
 app.use("/auth", authRoutes);
 app.use("/campuses", campusRoutes);
 app.use("/tour", tourRoutes);
+app.use("/navigation", navigationRoutes);
 app.use("/ai-guide", aiRoutes);
 app.use("/voice", voiceRoutes);
 
