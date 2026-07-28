@@ -110,7 +110,10 @@ test("walking route pilot preserves the Computer Science tour order", async () =
   assert.equal(response.status, 200);
   assert.equal(response.body.tourId, "computer-science");
   assert.equal(response.body.travelMode, "WALK");
-  assert.equal(response.body.provider, "clio-coordinate-fallback");
+  assert.equal(response.body.provider, "clio-campus-pilot");
+  assert.equal(response.body.providerConfigured, true);
+  assert.equal(response.body.fieldVerified, false);
+  assert.ok(response.body.path.length > 50);
   assert.equal(response.body.legs[0].fromStopId, "havener-center");
   assert.equal(response.body.legs[0].toStopId, "computer-science-building");
   assert.equal(response.body.legs[1].toStopId, "kummer-student-design-center");
