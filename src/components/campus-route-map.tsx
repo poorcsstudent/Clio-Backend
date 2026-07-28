@@ -20,6 +20,7 @@ interface CampusRouteMapProps {
   stops: TourStop[];
   walkingRoute?: CampusWalkingRoute | null;
   activeStopIndex?: number;
+  activeStepIndex?: number;
   isActive?: boolean;
   userCoordinate?: MapCoordinate | null;
   selectedStopId?: string | null;
@@ -131,6 +132,7 @@ export function CampusRouteMap({
   stops,
   walkingRoute = null,
   activeStopIndex = 0,
+  activeStepIndex = 0,
   isActive = false,
   userCoordinate = null,
   selectedStopId = null,
@@ -186,10 +188,16 @@ export function CampusRouteMap({
       stops.reduce((total, stop) => total + (stop.distanceFromPreviousMeters ?? 0), 0),
   );
   const activeWalkingLeg =
-    walkingRoute?.legs[
-      safeActiveIndex === 0 ? 0 : Math.min(safeActiveIndex - 1, walkingRoute.legs.length - 1)
-    ];
-  const activeWalkingStep = activeWalkingLeg?.steps[0];
+    safeActiveIndex > 0
+      ? walkingRoute?.legs[
+          Math.min(safeActiveIndex - 1, walkingRoute.legs.length - 1)
+        ]
+      : undefined;
+  const activeWalkingStep = activeWalkingLeg
+    ? activeWalkingLeg.steps[
+        clamp(activeStepIndex, 0, Math.max(0, activeWalkingLeg.steps.length - 1))
+      ]
+    : undefined;
   const routeLegs =
     walkingRoute?.legs.length
       ? walkingRoute.legs
@@ -242,7 +250,13 @@ export function CampusRouteMap({
             {stops.length} stops
             {totalDistanceMeters > 0 ? `  /  about ${totalDistanceMeters.toLocaleString()} m` : ''}
           </Text>
-          <Text style={styles.providerText}>CLIO CAMPUS ROUTE</Text>
+          <Text style={styles.providerText}>
+            {walkingRoute?.provider === 'clio-campus-pilot'
+              ? `CLIO WALKING PILOT · ${
+                  walkingRoute.fieldVerified ? 'FIELD VERIFIED' : 'FIELD CHECK NEEDED'
+                }`
+              : 'CLIO COORDINATE PREVIEW'}
+          </Text>
         </View>
         <View style={styles.livePill}>
           <View style={[styles.liveDot, isActive && styles.liveDotActive]} />
@@ -472,6 +486,9 @@ export function CampusRouteMap({
         {walkingRoute?.warning ??
           'Clio connects verified campus coordinates to preview the tour route. Follow posted pedestrian paths and accessibility guidance while walking.'}
       </Text>
+      {walkingRoute?.attribution ? (
+        <Text style={styles.attribution}>{walkingRoute.attribution}</Text>
+      ) : null}
     </View>
   );
 }
@@ -719,4 +736,5 @@ const styles = StyleSheet.create({
   selectedStopName: { color: '#F5F3EB', fontSize: 13, fontWeight: '800', marginTop: 3 },
   selectedStopAction: { color: '#7EE2AE', fontSize: 8, fontWeight: '900' },
   disclaimer: { color: '#58776A', fontSize: 8, lineHeight: 12, marginTop: 8 },
+  attribution: { color: '#678477', fontSize: 8, lineHeight: 12, marginTop: 5 },
 });
