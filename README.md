@@ -77,6 +77,15 @@ The app renders that route in its native campus-map surface, follows the user's
 live GPS position, and keeps arrival detection independent of a third-party map
 or cloud-routing provider.
 
+The Computer Science tour is the first walking pilot. It uses a curated
+OpenStreetMap/OSRM pedestrian path from Havener Center to the Computer Science
+Building and then to the Kummer Student Design Center. The app tracks the active
+walking step, warns after a reliable GPS fix is more than 60 meters off the
+route, advances after two reliable readings within 35 meters of a stop, and
+speaks arrival narration through the active iOS audio route. The pilot remains
+marked `FIELD CHECK NEEDED` until its paths and crossings are walked on campus;
+all other tours retain the coordinate-preview fallback.
+
 After changing the campus records, run:
 
 ```bash
