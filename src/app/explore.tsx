@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import * as Location from 'expo-location';
 import {
   ActivityIndicator,
@@ -33,8 +33,28 @@ import {
   TOUR_ARRIVAL_RADIUS_METERS,
   TOUR_REQUIRED_ARRIVAL_SAMPLES,
 } from '@/services/tourLocation';
+import {
+  distanceToWalkingPathMeters,
+  isOffPilotRoute,
+  nearestWalkingStepIndex,
+  TOUR_OFF_ROUTE_THRESHOLD_METERS,
+} from '@/services/walkingNavigation';
+import {
+  addNativeSpeechStateListener,
+  startNativeAnswerSpeech,
+  startWakePhraseListening,
+  stopNativeSpeech,
+} from '@/services/wake-phrase';
 
-type GpsStatus = 'idle' | 'requesting' | 'tracking' | 'denied' | 'disabled' | 'error';
+type GpsStatus =
+  | 'idle'
+  | 'requesting'
+  | 'tracking'
+  | 'paused'
+  | 'denied'
+  | 'disabled'
+  | 'error';
+type TourSpeechStatus = 'idle' | 'queued' | 'speaking' | 'finished' | 'unavailable';
 
 function gpsStatusCopy(
   status: GpsStatus | 'preview',
@@ -46,6 +66,8 @@ function gpsStatusCopy(
       return distanceMeters === null
         ? 'Waiting for a precise GPS fix…'
         : `${Math.round(distanceMeters)} m away · accuracy ±${Math.round(accuracyMeters ?? 0)} m`;
+    case 'paused':
+      return 'Tour paused. Resume when you are ready to continue walking.';
     case 'requesting':
       return 'Requesting precise location…';
     case 'denied':
@@ -58,6 +80,21 @@ function gpsStatusCopy(
       return `Activates on iPhone within ${TOUR_ARRIVAL_RADIUS_METERS} m of a stop.`;
     default:
       return 'GPS activates when the tour starts.';
+  }
+}
+
+function tourSpeechStatusCopy(status: TourSpeechStatus) {
+  switch (status) {
+    case 'queued':
+      return 'Tour narration queued for the active iOS audio route.';
+    case 'speaking':
+      return 'Speaking the stop narration through the active audio route.';
+    case 'finished':
+      return 'Stop narration finished. Replay it at any time.';
+    case 'unavailable':
+      return 'Native tour narration is unavailable; the same text remains visible.';
+    default:
+      return 'Arrival narration will play through the active iOS audio route.';
   }
 }
 
@@ -74,14 +111,67 @@ export default function CampusScreen() {
   const [startingTourId, setStartingTourId] = useState<string | null>(null);
   const [activeTour, setActiveTour] = useState<TourSession | null>(null);
   const [activeStopIndex, setActiveStopIndex] = useState(0);
+  const [activeWalkingStepIndex, setActiveWalkingStepIndex] = useState(0);
+  const [tourPaused, setTourPaused] = useState(false);
   const [endingTour, setEndingTour] = useState(false);
   const [tourNotice, setTourNotice] = useState('');
+  const [tourSpeechStatus, setTourSpeechStatus] =
+    useState<TourSpeechStatus>('idle');
   const [gpsStatus, setGpsStatus] = useState<GpsStatus>('idle');
   const [distanceToCurrentStop, setDistanceToCurrentStop] = useState<number | null>(null);
+  const [distanceToActivePath, setDistanceToActivePath] = useState<number | null>(null);
   const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
   const [userCoordinate, setUserCoordinate] = useState<MapCoordinate | null>(null);
   const [error, setError] = useState('');
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
+  const tourNarrationPending = useRef(false);
+
+  async function speakTourGuidance(text: string) {
+    if (Platform.OS !== 'ios' || !text.trim()) return;
+
+    tourNarrationPending.current = true;
+    setTourSpeechStatus('queued');
+    try {
+      await startNativeAnswerSpeech(text.trim());
+    } catch {
+      tourNarrationPending.current = false;
+      setTourSpeechStatus('unavailable');
+    }
+  }
+
+  function arrivalNarration(
+    stop: TourStop,
+    nextStop: TourStop | undefined,
+    finalStop: boolean,
+  ) {
+    const stopNarration =
+      stop.audioScript ?? `You have arrived at ${stop.name}. ${stop.relevance ?? stop.description}`;
+    if (finalStop) {
+      return `${stopNarration} You have completed this walking pilot.`;
+    }
+    return `${stopNarration} Next, continue to ${nextStop?.name}.`;
+  }
+
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+
+    const subscription = addNativeSpeechStateListener(event => {
+      if (event.kind !== 'answer' || !tourNarrationPending.current) return;
+      if (event.stage === 'queued') {
+        setTourSpeechStatus('queued');
+      } else if (event.stage === 'started') {
+        setTourSpeechStatus('speaking');
+      } else if (event.stage === 'finished') {
+        tourNarrationPending.current = false;
+        setTourSpeechStatus('finished');
+        void startWakePhraseListening('hey clio').catch(() => undefined);
+      } else if (event.stage === 'cancelled') {
+        setTourSpeechStatus('idle');
+      }
+    });
+
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -152,26 +242,32 @@ export default function CampusScreen() {
       if (activeTour) {
         await endTour(activeTour.sessionId);
       }
-      const session = await startTour(tour.id);
+      const [session, walkingRoute] = await Promise.all([
+        startTour(tour.id),
+        walkingRoutesByTourId[tour.id]
+          ? Promise.resolve(walkingRoutesByTourId[tour.id])
+          : getWalkingRoute(tour.id),
+      ]);
       setActiveTour(session);
       setActiveStopIndex(0);
+      setActiveWalkingStepIndex(0);
+      setTourPaused(false);
       setGpsStatus('requesting');
       setDistanceToCurrentStop(null);
+      setDistanceToActivePath(null);
       setGpsAccuracy(null);
       setUserCoordinate(null);
+      setTourSpeechStatus('idle');
       setSelectedTourId(tour.id);
       setSelectedStopId(null);
       setRoutesByTourId(current => ({ ...current, [tour.id]: session.stops }));
-      if (!walkingRoutesByTourId[tour.id]) {
-        void getWalkingRoute(tour.id)
-          .then(walkingRoute => {
-            setWalkingRoutesByTourId(current => ({
-              ...current,
-              [tour.id]: walkingRoute,
-            }));
-          })
-          .catch(() => undefined);
-      }
+      setWalkingRoutesByTourId(current => ({
+        ...current,
+        [tour.id]: walkingRoute,
+      }));
+      void speakTourGuidance(
+        `${tour.name} walking pilot started. Begin at Havener Center. Clio will advance after two accurate location readings within ${TOUR_ARRIVAL_RADIUS_METERS} meters.`,
+      );
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Could not start this tour');
     } finally {
@@ -193,8 +289,11 @@ export default function CampusScreen() {
       );
       setActiveTour(null);
       setActiveStopIndex(0);
+      setActiveWalkingStepIndex(0);
+      setTourPaused(false);
       setGpsStatus('idle');
       setDistanceToCurrentStop(null);
+      setDistanceToActivePath(null);
       setGpsAccuracy(null);
       setUserCoordinate(null);
     } catch (reason) {
@@ -206,14 +305,37 @@ export default function CampusScreen() {
 
   async function advanceTour() {
     if (!activeTour) return;
-    if (activeStopIndex >= activeTour.stops.length - 1) {
+    const currentStop = activeTour.stops[activeStopIndex];
+    const finalStop = activeStopIndex >= activeTour.stops.length - 1;
+    const nextStop = activeTour.stops[activeStopIndex + 1];
+    if (currentStop) {
+      void speakTourGuidance(
+        arrivalNarration(currentStop, nextStop, finalStop),
+      );
+    }
+    if (finalStop) {
       await closeActiveTour(true);
       return;
     }
     setActiveStopIndex(current => current + 1);
+    setActiveWalkingStepIndex(0);
     setDistanceToCurrentStop(null);
+    setDistanceToActivePath(null);
     setGpsAccuracy(null);
     setSelectedStopId(null);
+  }
+
+  function toggleTourPaused() {
+    setTourPaused(current => {
+      const nextPaused = !current;
+      setGpsStatus(nextPaused ? 'paused' : 'requesting');
+      if (!nextPaused) {
+        setDistanceToCurrentStop(null);
+        setDistanceToActivePath(null);
+        setGpsAccuracy(null);
+      }
+      return nextPaused;
+    });
   }
 
   async function openWalkingDirections(stop: TourStop) {
@@ -225,12 +347,22 @@ export default function CampusScreen() {
     await Linking.openURL(url);
   }
 
+  const activeWalkingRoute = activeTour
+    ? walkingRoutesByTourId[activeTour.tour.id] ?? null
+    : null;
+
   useEffect(() => {
-    if (!activeTour || Platform.OS === 'web') return;
+    if (!activeTour || Platform.OS === 'web' || tourPaused) return;
 
     const tourSession = activeTour;
     const stop = tourSession.stops[activeStopIndex];
     if (!stop) return;
+    const activeWalkingLeg =
+      activeStopIndex > 0
+        ? activeWalkingRoute?.legs[
+            Math.min(activeStopIndex - 1, activeWalkingRoute.legs.length - 1)
+          ]
+        : undefined;
 
     let cancelled = false;
     let subscription: Location.LocationSubscription | null = null;
@@ -241,21 +373,30 @@ export default function CampusScreen() {
       if (cancelled || arrivalHandled) return;
 
       const accuracy = location.coords.accuracy;
+      const currentCoordinate = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      };
       const distance = distanceBetweenCoordinatesMeters(
-        {
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-        },
+        currentCoordinate,
         { latitude: stop.latitude, longitude: stop.longitude },
       );
 
       setGpsStatus('tracking');
       setDistanceToCurrentStop(distance);
       setGpsAccuracy(accuracy);
-      setUserCoordinate({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      });
+      setUserCoordinate(currentCoordinate);
+      if (activeWalkingLeg) {
+        setDistanceToActivePath(
+          distanceToWalkingPathMeters(currentCoordinate, activeWalkingLeg.path),
+        );
+        setActiveWalkingStepIndex(
+          nearestWalkingStepIndex(currentCoordinate, activeWalkingLeg.steps),
+        );
+      } else {
+        setDistanceToActivePath(null);
+        setActiveWalkingStepIndex(0);
+      }
 
       if (isReliableTourArrival(distance, accuracy)) {
         arrivalSamples += 1;
@@ -267,12 +408,17 @@ export default function CampusScreen() {
       arrivalHandled = true;
 
       const finalStop = activeStopIndex === tourSession.stops.length - 1;
+      const nextStop = tourSession.stops[activeStopIndex + 1];
+      void speakTourGuidance(
+        arrivalNarration(stop, nextStop, finalStop),
+      );
       if (!finalStop) {
-        const nextStop = tourSession.stops[activeStopIndex + 1];
         setTourNotice(`Arrived at ${stop.name}. Advancing to ${nextStop.name}.`);
         setActiveStopIndex(current => (current === activeStopIndex ? current + 1 : current));
+        setActiveWalkingStepIndex(0);
         setSelectedStopId(null);
         setDistanceToCurrentStop(null);
+        setDistanceToActivePath(null);
         setGpsAccuracy(null);
         return;
       }
@@ -285,8 +431,11 @@ export default function CampusScreen() {
           setTourNotice(`${tourSession.tour.name} completed automatically at ${stop.name}.`);
           setActiveTour(null);
           setActiveStopIndex(0);
+          setActiveWalkingStepIndex(0);
+          setTourPaused(false);
           setGpsStatus('idle');
           setDistanceToCurrentStop(null);
+          setDistanceToActivePath(null);
           setGpsAccuracy(null);
         })
         .catch(reason => {
@@ -349,7 +498,7 @@ export default function CampusScreen() {
       cancelled = true;
       subscription?.remove();
     };
-  }, [activeStopIndex, activeTour]);
+  }, [activeStopIndex, activeTour, activeWalkingRoute, tourPaused]);
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
@@ -407,6 +556,10 @@ export default function CampusScreen() {
                     : isActiveTour
                       ? userCoordinate
                       : null;
+                const offPilotRoute =
+                  isActiveTour &&
+                  walkingRoute?.provider === 'clio-campus-pilot' &&
+                  isOffPilotRoute(distanceToActivePath, gpsAccuracy);
 
                 return (
                   <View
@@ -501,6 +654,9 @@ export default function CampusScreen() {
                             walkingRoute={walkingRoute}
                             isActive={isActiveTour}
                             activeStopIndex={isActiveTour ? activeStopIndex : 0}
+                            activeStepIndex={
+                              isActiveTour ? activeWalkingStepIndex : 0
+                            }
                             userCoordinate={displayedUserCoordinate}
                             selectedStopId={selectedStopId}
                             onSelectStop={stopId =>
@@ -513,7 +669,11 @@ export default function CampusScreen() {
                           <View style={styles.activeGuide}>
                             <View style={styles.activeGuideHeader}>
                               <View style={styles.activeGuideHeaderCopy}>
-                                <Text style={styles.liveLabel}>LIVE TOUR</Text>
+                                <Text style={styles.liveLabel}>
+                                  {walkingRoute?.provider === 'clio-campus-pilot'
+                                    ? 'LIVE WALKING PILOT'
+                                    : 'LIVE TOUR'}
+                                </Text>
                                 <Text style={styles.activeGuideTitle}>{tour.name}</Text>
                               </View>
                               <Text style={styles.progressLabel} numberOfLines={1}>
@@ -533,6 +693,36 @@ export default function CampusScreen() {
                             <Text style={styles.currentStopDescription}>
                               {currentStop.relevance ?? currentStop.description}
                             </Text>
+                            <View style={styles.speechCard}>
+                              <View style={styles.speechCardCopy}>
+                                <Text style={styles.speechCardLabel}>
+                                  GLASSES NARRATION
+                                </Text>
+                                <Text style={styles.speechCardText}>
+                                  {tourSpeechStatusCopy(tourSpeechStatus)}
+                                </Text>
+                              </View>
+                              <Pressable
+                                accessibilityRole="button"
+                                disabled={tourSpeechStatus === 'speaking'}
+                                style={({ pressed }) => [
+                                  styles.speechButton,
+                                  pressed && styles.pressed,
+                                  tourSpeechStatus === 'speaking' && styles.disabled,
+                                ]}
+                                onPress={() =>
+                                  speakTourGuidance(
+                                    currentStop.audioScript ??
+                                      `This is ${currentStop.name}. ${
+                                        currentStop.relevance ?? currentStop.description
+                                      }`,
+                                  )
+                                }>
+                                <Text style={styles.speechButtonText}>
+                                  {tourSpeechStatus === 'speaking' ? 'Speaking…' : 'Replay'}
+                                </Text>
+                              </Pressable>
+                            </View>
                             <View style={styles.gpsCard}>
                               <View style={styles.gpsHeader}>
                                 <View
@@ -547,7 +737,11 @@ export default function CampusScreen() {
                                       styles.gpsDotError,
                                   ]}
                                 />
-                                <Text style={styles.gpsTitle}>Automatic GPS arrival</Text>
+                                <Text style={styles.gpsTitle}>
+                                  {offPilotRoute
+                                    ? 'Move back toward the pilot path'
+                                    : 'Automatic GPS arrival'}
+                                </Text>
                                 <Text style={styles.gpsRadius}>
                                   {TOUR_ARRIVAL_RADIUS_METERS} m radius
                                 </Text>
@@ -559,6 +753,19 @@ export default function CampusScreen() {
                                   gpsAccuracy,
                                 )}
                               </Text>
+                              {offPilotRoute ? (
+                                <Text style={styles.offRouteText}>
+                                  About {Math.round(distanceToActivePath ?? 0)} m from the
+                                  highlighted path. Use posted pedestrian guidance or open
+                                  Apple Maps before continuing.
+                                </Text>
+                              ) : walkingRoute?.provider === 'clio-campus-pilot' &&
+                                distanceToActivePath !== null ? (
+                                <Text style={styles.onRouteText}>
+                                  On pilot path · off-route alert at{' '}
+                                  {TOUR_OFF_ROUTE_THRESHOLD_METERS} m
+                                </Text>
+                              ) : null}
                               {(displayedGpsStatus === 'denied' ||
                                 displayedGpsStatus === 'disabled') &&
                               Platform.OS !== 'web' ? (
@@ -598,11 +805,29 @@ export default function CampusScreen() {
                                 ]}
                                 onPress={() => {
                                   setActiveStopIndex(current => Math.max(0, current - 1));
+                                  setActiveWalkingStepIndex(0);
                                   setDistanceToCurrentStop(null);
+                                  setDistanceToActivePath(null);
                                   setGpsAccuracy(null);
                                   setSelectedStopId(null);
                                 }}>
                                 <Text style={styles.secondaryControlText}>Back</Text>
+                              </Pressable>
+                              <Pressable
+                                accessibilityRole="button"
+                                style={({ pressed }) => [
+                                  styles.secondaryControl,
+                                  tourPaused && styles.pauseControlActive,
+                                  pressed && styles.pressed,
+                                ]}
+                                onPress={toggleTourPaused}>
+                                <Text
+                                  style={[
+                                    styles.secondaryControlText,
+                                    tourPaused && styles.pauseControlTextActive,
+                                  ]}>
+                                  {tourPaused ? 'Resume' : 'Pause'}
+                                </Text>
                               </Pressable>
                               <Pressable
                                 accessibilityRole="button"
@@ -614,7 +839,7 @@ export default function CampusScreen() {
                                 <Text style={styles.nextControlText}>
                                   {activeStopIndex === activeTour.stops.length - 1
                                     ? 'Finish tour'
-                                    : 'Next stop'}
+                                    : 'Mark arrived'}
                                 </Text>
                               </Pressable>
                             </View>
@@ -626,7 +851,12 @@ export default function CampusScreen() {
                                 pressed && styles.pressed,
                                 endingTour && styles.disabled,
                               ]}
-                              onPress={() => closeActiveTour(false)}>
+                              onPress={async () => {
+                                tourNarrationPending.current = false;
+                                await stopNativeSpeech().catch(() => false);
+                                await closeActiveTour(false);
+                                await startWakePhraseListening('hey clio').catch(() => undefined);
+                              }}>
                               <Text style={styles.endTourButtonText}>
                                 {endingTour ? 'Ending tour…' : 'End tour'}
                               </Text>
@@ -924,6 +1154,36 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
   currentStopDescription: { color: '#AFC0B7', fontSize: 13, lineHeight: 19, marginTop: 7 },
+  speechCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 12,
+    backgroundColor: '#172B24',
+    borderWidth: 1,
+    borderColor: '#315A4A',
+    padding: 12,
+    marginTop: 14,
+  },
+  speechCardCopy: { flex: 1 },
+  speechCardLabel: {
+    color: '#7EE2AE',
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 1.1,
+    textTransform: 'uppercase',
+  },
+  speechCardText: { color: '#B8C8C0', fontSize: 10, lineHeight: 15, marginTop: 4 },
+  speechButton: {
+    minHeight: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#4A806A',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+  speechButtonText: { color: '#A6E7C5', fontSize: 10, fontWeight: '900' },
   gpsCard: {
     borderRadius: 12,
     backgroundColor: '#102A22',
@@ -944,6 +1204,8 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   gpsStatusText: { color: '#8FA99D', fontSize: 10, lineHeight: 15, marginTop: 7 },
+  offRouteText: { color: '#FFB29F', fontSize: 10, lineHeight: 15, marginTop: 7 },
+  onRouteText: { color: '#82CBAA', fontSize: 10, lineHeight: 15, marginTop: 7 },
   locationSettingsButton: {
     minHeight: 34,
     borderRadius: 10,
@@ -977,6 +1239,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   secondaryControlText: { color: '#CAD5D0', fontSize: 12, fontWeight: '800' },
+  pauseControlActive: { backgroundColor: '#D9B56D', borderColor: '#D9B56D' },
+  pauseControlTextActive: { color: '#1F1709' },
   nextControl: {
     flex: 2,
     minHeight: 46,
