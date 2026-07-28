@@ -42,6 +42,7 @@ export interface TourStop {
   latitude: number;
   longitude: number;
   relevance?: string;
+  audioScript?: string;
   distanceFromPreviousMeters?: number;
   programCatalogUrl?: string;
   suggestedQuestions?: string[];
@@ -104,14 +105,18 @@ export interface CampusWalkingRoute {
   campusId: string;
   tourId: string;
   travelMode: 'WALK';
-  provider: 'clio-coordinate-fallback';
+  provider: 'clio-campus-pilot' | 'clio-coordinate-fallback';
   providerConfigured: boolean;
+  fieldVerified: boolean;
   distanceMeters: number;
   durationSeconds: number;
   path: WalkingCoordinate[];
   legs: WalkingRouteLeg[];
   generatedAt: string;
   warning?: string;
+  attribution?: string;
+  lastReviewed?: string;
+  sourceUrls?: string[];
 }
 
 export class ApiError extends Error {
