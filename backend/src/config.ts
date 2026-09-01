@@ -32,7 +32,7 @@ export const config = {
   aiProvider,
   voiceProvider,
   aiModel: process.env.CLIO_AI_MODEL ?? (
-    aiProvider === "groq" ? "llama-3.1-8b-instant" : "gpt-5.6-luna"
+    aiProvider === "groq" ? "openai/gpt-oss-20b" : "gpt-5.6-luna"
   ),
   transcriptionModel: process.env.CLIO_TRANSCRIPTION_MODEL ?? (
     voiceProvider === "groq" ? "whisper-large-v3-turbo" : "gpt-4o-transcribe"
