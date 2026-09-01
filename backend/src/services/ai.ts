@@ -50,10 +50,14 @@ export async function answerCampusQuestion(input: {
     .map(source => `[${source.id}] ${source.title}\n${source.content}`)
     .join("\n\n");
 
+  const usesGroqGptOss = config.aiProvider === "groq"
+    && config.aiModel.startsWith("openai/gpt-oss-");
+
   const response = await openai.chat.completions.create({
     model: config.aiModel,
-    temperature: 0.2,
-    max_tokens: 120,
+    temperature: usesGroqGptOss ? 0.6 : 0.2,
+    max_completion_tokens: usesGroqGptOss ? 1_024 : 120,
+    ...(usesGroqGptOss ? { reasoning_effort: "low" as const } : {}),
     messages: [
       {
         role: "system",
@@ -75,7 +79,9 @@ export async function answerCampusQuestion(input: {
   const answer = response.choices[0]?.message.content;
 
   return {
-    answer: answer ? spokenExcerpt(answer) : "I couldn't produce an answer from the campus guide.",
+    answer: answer
+      ? spokenExcerpt(answer)
+      : spokenExcerpt(`${sources[0].title}: ${sources[0].content}`),
     provider: config.aiProvider,
     sources,
   };
