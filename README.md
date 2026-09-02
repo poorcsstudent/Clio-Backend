@@ -1,56 +1,115 @@
-# Welcome to your Expo app 👋
+# ClioVision
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+ClioVision is a cross-platform campus guide for iOS, Android, web, and connected Meta AI glasses. The mobile app records a visitor's question, sends it through an authenticated backend, retrieves the most relevant verified campus records, produces a grounded answer, and plays generated speech over the phone's active audio route.
 
-## Get started
+## What is implemented
 
-1. Install dependencies
+- Expo SDK 56 app shared by iOS and Android
+- Secure device pairing with 15-minute access tokens and 7-day refresh tokens
+- Refresh-token storage in iOS Keychain / Android Keystore through Expo SecureStore
+- Campus retrieval over the structured Missouri S&T data
+- OpenAI Responses API integration with a retrieval-only fallback when no API key is present
+- Authenticated speech-to-text and text-to-speech endpoints
+- In-memory audio handling, upload limits, MIME validation, expiring speech URLs, and rate limits
+- EAS build profiles for development, preview, and production
 
-   ```bash
-   npm install
-   ```
+This uses retrieval-augmented generation (RAG), not model fine-tuning. Campus facts change and must remain traceable, so retrieval is safer and easier to update than “training” facts into model weights.
 
-2. Start the app
+## Configure the backend
 
-   ```bash
-   npx expo start
-   ```
+Copy `backend/.env.example` to `backend/.env`, then replace every placeholder:
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+CLIO_JWT_SECRET=<at least 32 random characters>
+CLIO_DEVICE_ENROLLMENT_CODE=<private code entered once in the app>
+OPENAI_API_KEY=<server-side OpenAI API key>
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+The OpenAI key is optional for retrieval-only text testing. It is required for real model answers, speech recognition, and generated speech.
 
-### Other setup steps
+Start the API:
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+```bash
+cd backend
+npm install
+npm run build
+npm test
+npm run dev
+```
 
-## Learn more
+## Configure the app
 
-To learn more about developing your project with Expo, look at the following resources:
+Copy `.env.example` to `.env.local` and point it at the API. A physical phone must use the computer's LAN address during local development; `localhost` refers to the phone itself.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```text
+EXPO_PUBLIC_CLIO_API_URL=http://192.168.1.20:3000
+```
 
-## Join the community
+Production must use an HTTPS URL.
 
-Join our community of developers creating universal apps.
+```bash
+npm install
+npm run typecheck
+npm run doctor
+npm start
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Open the app, enter `CLIO_DEVICE_ENROLLMENT_CODE`, and pair. The code is exchanged for tokens and is not stored by the app.
+
+## Campus knowledge
+
+The official campus-map records are in `backend/src/data/campusPlaces.ts`. Degree definitions, program-to-building access rules, and graph construction are in `backend/src/data/degreeTours.ts`. The backend currently exposes:
+
+- 33 undergraduate degree tours from the 2025-2026 Missouri S&T catalog
+- one general campus-life tour
+- Havener Center as the root of every degree route
+- 28 permission-mapped campus nodes shared across the degree graph
+- program-specific stop order, relevance, audio scripts, catalog links, and map coordinates
+
+For each degree, Clio builds a minimum-distance access graph using only relevant buildings and runs a best-first proximity search from Havener. `GET /campuses/missouri-s-and-t/tours` returns the catalog, `GET /campuses/missouri-s-and-t/stops?tourId=<degree-id>` returns an ordered route, and `GET /campuses/missouri-s-and-t/tour-graph/<degree-id>` exposes its graph.
+
+### Pedestrian navigation
+
+`GET /navigation/walking-route/<degree-id>?campusId=missouri-s-and-t` converts the
+ordered building stops into Clio-owned coordinate geometry and returns the path,
+per-building legs, approximate distance, duration, and stop-to-stop guidance.
+The app renders that route in its native campus-map surface, follows the user's
+live GPS position, and keeps arrival detection independent of a third-party map
+or cloud-routing provider.
+
+The Computer Science tour is the first walking pilot. It uses a curated
+OpenStreetMap/OSRM pedestrian path from Havener Center to the Computer Science
+Building and then to the Kummer Student Design Center. The app tracks the active
+walking step, warns after a reliable GPS fix is more than 60 meters off the
+route, advances after two reliable readings within 35 meters of a stop, and
+speaks arrival narration through the active iOS audio route. The pilot remains
+marked `FIELD CHECK NEEDED` until its paths and crossings are walked on campus;
+all other tours retain the coordinate-preview fallback.
+
+After changing the campus records, run:
+
+```bash
+cd backend
+npm run knowledge:check
+npm test
+```
+
+Answers include the retrieved sources. When the data does not cover a question, the assistant is instructed to say so instead of inventing a fact.
+
+## Build iOS and Android
+
+Cloud builds are the practical path from Windows because EAS performs iOS builds on macOS infrastructure:
+
+```bash
+npx eas-cli@latest login
+npx eas-cli@latest build:configure
+npm run build:all
+```
+
+Store builds additionally require Apple Developer Program and Google Play signing credentials. Update the bundle/package identifier in `app.json` if `com.cliovision.guide` is not the identifier registered to your accounts.
+
+## Meta glasses
+
+For the current audio MVP, pair the glasses to the phone and select them as the active Bluetooth microphone/output route. The app records and plays through the operating system audio session.
+
+Native Meta Device Access Toolkit registration still requires a Meta Wearables developer organization, Meta app ID, release channel, GitHub package access, and physical-device testing. See `docs/META_GLASSES.md` for the integration boundary and `docs/SECURITY.md` for the production threat model.

@@ -1,0 +1,2 @@
+modules/clio-meta-wearables/ios/Frameworks/**/*.swiftinterface text eol=lf
+modules/clio-meta-wearables/ios/Frameworks/**/*.modulemap text eol=lf

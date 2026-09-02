@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { tourStops, tours } from "../data/campuses";
+import { campuses, getTourStopsForTour, tours } from "../data/campuses";
+import { buildDegreeTourGraph } from "../data/degreeTours";
 
 const router = Router();
 
@@ -14,6 +15,15 @@ router.post("/start", (req, res) => {
     return res.status(400).json({ error: "tourId is required" });
   }
 
+  const validCampus = campuses.find(campus => campus.id === campusId);
+
+  if (!validCampus) {
+    return res.status(400).json({
+      error: "Invalid campusId",
+      validCampuses: campuses.map(campus => campus.id),
+    });
+  }
+
   const validTour = tours.find(tour => tour.id === tourId);
 
   if (!validTour) {
@@ -23,9 +33,8 @@ router.post("/start", (req, res) => {
     });
   }
 
-  const stops = tourStops
+  const stops = getTourStopsForTour(tourId)
     .filter(stop => stop.campusId === campusId)
-    .filter(stop => stop.tourTags.includes(tourId))
     .sort((a, b) => a.order - b.order);
 
   res.json({
@@ -33,7 +42,8 @@ router.post("/start", (req, res) => {
     campusId,
     tour: validTour,
     stopCount: stops.length,
-    stops
+    stops,
+    routeGraph: buildDegreeTourGraph(tourId) ?? undefined,
   });
 });
 
