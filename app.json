@@ -14,8 +14,12 @@
       "infoPlist": {
         "LSApplicationQueriesSchemes": ["fb-viewapp"],
         "UISupportedExternalAccessoryProtocols": ["com.meta.ar.wearable"],
-        "UIBackgroundModes": ["bluetooth-peripheral", "external-accessory"],
+        "UIBackgroundModes": ["audio", "bluetooth-central", "bluetooth-peripheral", "external-accessory"],
         "NSBluetoothAlwaysUsageDescription": "Allow ClioVision to connect to your Meta glasses.",
+        "NSBluetoothPeripheralUsageDescription": "Allow ClioVision to exchange camera and audio data with your Meta glasses.",
+        "NSLocalNetworkUsageDescription": "Allow ClioVision to receive a camera image from your Meta glasses while identifying campus landmarks.",
+        "NSBonjourServices": ["_bonjour._tcp"],
+        "NSCameraUsageDescription": "Allow ClioVision to receive a camera image from your Meta glasses for campus landmark identification.",
         "NSLocationWhenInUseUsageDescription": "Allow ClioVision to detect when you arrive at each campus tour stop.",
         "NSSpeechRecognitionUsageDescription": "Allow ClioVision to recognize Hey Clio and your campus question while the app is open.",
         "MWDAT": {

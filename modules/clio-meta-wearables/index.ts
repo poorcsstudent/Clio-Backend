@@ -26,12 +26,23 @@ export type MetaWearablesState = {
   devices: MetaWearablesDevice[];
 };
 
+export type MetaCameraPermissionState = 'granted' | 'denied';
+
+export type MetaCameraPhoto = {
+  base64: string;
+  mimeType: 'image/jpeg';
+  width: number;
+  height: number;
+};
+
 type NativeMetaWearablesModule = {
   configure(): Promise<MetaWearablesState>;
   getState(): Promise<MetaWearablesState>;
   startRegistration(): Promise<MetaWearablesState>;
   handleUrl(url: string): Promise<MetaWearablesState & { handled: boolean }>;
   unregister(): Promise<MetaWearablesState>;
+  requestCameraPermission(): Promise<MetaCameraPermissionState>;
+  capturePhoto(): Promise<MetaCameraPhoto>;
 };
 
 const nativeModule =
@@ -70,6 +81,16 @@ export async function handleMetaCallback(
 export async function unregisterMetaWearables(): Promise<MetaWearablesState> {
   if (!nativeModule) throw new Error('Install the Meta-enabled iOS build first.');
   return nativeModule.unregister();
+}
+
+export async function requestMetaCameraPermission(): Promise<MetaCameraPermissionState> {
+  if (!nativeModule) throw new Error('Install the Meta camera-enabled iOS build first.');
+  return nativeModule.requestCameraPermission();
+}
+
+export async function captureMetaCameraPhoto(): Promise<MetaCameraPhoto> {
+  if (!nativeModule) throw new Error('Install the Meta camera-enabled iOS build first.');
+  return nativeModule.capturePhoto();
 }
 
 export type WakePhraseMode = 'idle' | 'listening' | 'awaitingCommand' | 'processing' | 'error';

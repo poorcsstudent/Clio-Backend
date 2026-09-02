@@ -12,7 +12,21 @@ ClioVision now includes a native Expo module around Meta Wearables Device Access
 
 Developer Mode uses `MetaAppID` value `0`, so the first physical-device test does not require a release channel. Before external distribution, replace that value with the project App ID and finish the iOS configuration in Meta Wearables Developer Center.
 
-The official `MWDATCore.xcframework` is vendored under the local Expo module and pinned to tag `0.7.0`. Its upstream `LICENSE` and `NOTICE` files are included alongside the module. This keeps EAS builds deterministic while the Expo project remains generated/prebuild-based. Meta v0.8.0 currently ships a Swift 6.3.2 development-compiler interface that Expo's Xcode 26.4 image cannot import; v0.7.0 uses Apple Swift 6.2.3 and retains the registration/device APIs required for Ray-Ban Meta glasses.
+The official `MWDATCore.xcframework` and `MWDATCamera.xcframework` are vendored under the local Expo module and pinned to tag `0.7.0`. Their upstream `LICENSE` and `NOTICE` files are included alongside the module. This keeps EAS builds deterministic while the Expo project remains generated/prebuild-based. Meta v0.8.0 currently ships a Swift 6.3.2 development-compiler interface that Expo's Xcode 26.4 image cannot import; v0.7.0 uses Apple Swift 6.2.3 and retains the APIs required for the physical Wayfarers.
+
+## Visual campus questions
+
+After the foreground wake phrase, the command **“Clio, what am I looking at?”** starts an on-demand visual request:
+
+1. Clio stops the wake/command microphone session and deactivates recording mode.
+2. DAT requests camera permission through Meta AI if it has not already been granted.
+3. A temporary low-resolution `MWDATCamera` stream captures one JPEG from the glasses.
+4. The app downsizes/compresses the image, uploads it over authenticated HTTPS, and deletes the temporary phone file after the request.
+5. The backend uses optional GPS proximity to narrow the Missouri S&T candidates and asks the configured vision model to choose only from that list.
+6. Clio rejects low-confidence matches. For accepted matches, history, present-day use, and fun facts come from the verified campus dataset.
+7. The camera session is already stopped before the answer is spoken over the glasses route.
+
+Stopping microphone capture before the camera session is deliberate. It avoids the current DAT/iOS conflict in which still-photo callbacks can stall while the glasses microphone holds the Bluetooth HFP route.
 
 ## Voice audio path
 
@@ -35,7 +49,7 @@ No backend token, enrollment code, OpenAI key, or Meta credential is sent to the
 
 ## Not implemented yet
 
-- DAT camera permission and first-person photo/video streaming (`MWDATCamera`)
+- continuous first-person video understanding (the current flow captures one privacy-visible photo)
 - Android DAT native module
 - release-channel App ID and universal-link production registration
 - explicit display support for Meta Ray-Ban Display

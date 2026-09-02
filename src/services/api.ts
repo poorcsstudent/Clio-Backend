@@ -48,6 +48,22 @@ export interface TourStop {
   suggestedQuestions?: string[];
 }
 
+export interface CampusVisionResult {
+  answer: string;
+  identification: {
+    placeId: string | null;
+    name: string | null;
+    confidence: number;
+    visualEvidence: string;
+  };
+  profile: {
+    history: string;
+    use: string;
+    funFacts: string[];
+  } | null;
+  sources: KnowledgeSource[];
+}
+
 export interface CampusTour {
   id: string;
   name: string;
@@ -290,6 +306,29 @@ export async function createSpeechSource(text: string) {
 export async function getCampusTours() {
   const response = await fetch(`${apiBaseUrl}/campuses/missouri-s-and-t/tours`);
   return parseResponse<CampusTourCatalog>(response);
+}
+
+export async function identifyCampusView(
+  uri: string,
+  location?: { latitude: number; longitude: number },
+) {
+  const form = new FormData();
+  form.append('campusId', 'missouri-s-and-t');
+  if (location) {
+    form.append('latitude', String(location.latitude));
+    form.append('longitude', String(location.longitude));
+  }
+  form.append('image', {
+    uri,
+    name: 'clio-campus-view.jpg',
+    type: 'image/jpeg',
+  } as unknown as Blob);
+
+  const response = await authorizedFetch('/vision/identify', {
+    method: 'POST',
+    body: form,
+  });
+  return parseResponse<CampusVisionResult>(response);
 }
 
 export async function getTourStops(tourId: string) {

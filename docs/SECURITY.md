@@ -14,6 +14,8 @@ flowchart LR
     A -->|OS audio route / A2DP or HFP| G
 ```
 
+For visual questions, the glasses camera sends one JPEG to the mobile app through Meta DAT. The app downsizes the image, sends it to the authenticated `/vision/identify` endpoint over HTTPS, and removes the temporary cached file after the request. The backend keeps the upload in memory and sends it to the configured vision provider; application code does not persist it.
+
 The backend is the only component that holds the OpenAI API key. The phone receives a generated speech URL only after authenticating, and the URL contains a random identifier rather than a bearer token.
 
 ## Controls implemented
@@ -27,8 +29,10 @@ The backend is the only component that holds the OpenAI API key. The phone recei
 - Native refresh tokens are stored with Expo SecureStore using this-device-only, when-unlocked accessibility.
 - Access tokens live in app memory. The enrollment code is never stored.
 - Speech uploads are restricted to one supported audio file, held in memory, and capped at 10 MB.
+- Visual uploads require an authenticated device, accept one JPEG or PNG, are held in memory, are capped at 4 MB, and are limited to 12 requests per minute.
+- Visual matches are restricted to known campus-place IDs and rejected below the confidence threshold; descriptive facts are loaded from curated records after identification.
 - Generated speech is held in memory for two minutes, scoped to the authenticated device, and returned with `no-store` headers.
-- Raw audio, questions, answers, tokens, and enrollment codes are not intentionally logged or persisted by application code.
+- Raw audio, captured images, questions, answers, tokens, and enrollment codes are not intentionally logged or persisted by application code.
 - Background recording is disabled in native configuration.
 
 ## Required production infrastructure

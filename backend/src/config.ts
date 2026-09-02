@@ -13,6 +13,7 @@ function provider(value: string | undefined, fallback: ModelProvider): ModelProv
 const defaultProvider: ModelProvider = groqKey ? "groq" : "openai";
 const aiProvider = provider(process.env.CLIO_AI_PROVIDER, defaultProvider);
 const voiceProvider = provider(process.env.CLIO_VOICE_PROVIDER, aiProvider);
+const visionProvider = provider(process.env.CLIO_VISION_PROVIDER, aiProvider);
 
 function csv(value: string | undefined) {
   return (value ?? "")
@@ -31,8 +32,12 @@ export const config = {
   openAIKey,
   aiProvider,
   voiceProvider,
+  visionProvider,
   aiModel: process.env.CLIO_AI_MODEL ?? (
     aiProvider === "groq" ? "openai/gpt-oss-20b" : "gpt-5.6-luna"
+  ),
+  visionModel: process.env.CLIO_VISION_MODEL ?? (
+    visionProvider === "groq" ? "qwen/qwen3.6-27b" : "gpt-5.4-mini"
   ),
   transcriptionModel: process.env.CLIO_TRANSCRIPTION_MODEL ?? (
     voiceProvider === "groq" ? "whisper-large-v3-turbo" : "gpt-4o-transcribe"

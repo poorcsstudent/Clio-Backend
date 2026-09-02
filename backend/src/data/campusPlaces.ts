@@ -9,6 +9,9 @@ export interface CampusPlace {
   sourceUrl: string;
   address?: string;
   aliases?: string[];
+  history?: string;
+  funFacts?: string[];
+  factSourceUrls?: string[];
 }
 
 export const campusPlaceMetadata = {
@@ -162,6 +165,13 @@ export const campusPlaces: CampusPlace[] = [
     "name": "Chancellor's Residence",
     "category": "Campus Landmark",
     "description": "Originally the first residence hall on campus, this building is also the second-oldest building, after the Rolla Building.",
+    "history": "Built in 1889, it began as a student residence and has housed the university's chief executive since 1905.",
+    "funFacts": [
+      "It is the second-oldest building on campus, after the Rolla Building."
+    ],
+    "factSourceUrls": [
+      "https://news.mst.edu/2015/08/plumbing-issues-being-addressed-at-residence/"
+    ],
     "latitude": 37.95262727388301,
     "longitude": -91.77470460231108,
     "sourceUrl": "https://calendar.mst.edu/chancellors_residence_711",
@@ -364,6 +374,14 @@ export const campusPlaces: CampusPlace[] = [
     "name": "Havener Center",
     "category": "Campus and Student Support",
     "description": "The center of campus, this building features conference rooms and event space, a number of dining options, a student lounge, and the S&T Store. Over 5,000 student, faculty, staff, alumni, donor and corporate events are held here every year.",
+    "history": "The 105,000-square-foot student center opened in 2005 after a lead gift from 1962 mathematics alumnus Gary Havener and funding supported by students.",
+    "funFacts": [
+      "More than 5,000 university and community events are held here in a typical year."
+    ],
+    "factSourceUrls": [
+      "https://case.mst.edu/people/casealumnihalloffame/garyhavener/",
+      "https://news.mst.edu/2005/05/havener_center_dedication_held/"
+    ],
     "latitude": 37.954821574023576,
     "longitude": -91.77634294571274,
     "sourceUrl": "https://calendar.mst.edu/havener-center",
@@ -647,6 +665,15 @@ export const campusPlaces: CampusPlace[] = [
     "name": "Rolla Building",
     "category": "Classrooms and Labs",
     "description": "Home to our Mathematics and Statistics Department, this is the oldest academic building on campus.",
+    "history": "The City of Rolla built it in 1871 as a high school. Missouri's new School of Mines began classes here that year and purchased the entire building in 1875.",
+    "funFacts": [
+      "Missouri S&T's first class began here with twelve boys and one girl in November 1871.",
+      "The Mathematics and Statistics Department moved into the renovated building in 1997."
+    ],
+    "factSourceUrls": [
+      "https://masterplan.mst.edu/rollabuilding/",
+      "https://www.mst.edu/about/our-history/"
+    ],
     "latitude": 37.95354861313933,
     "longitude": -91.77413321448516,
     "sourceUrl": "https://calendar.mst.edu/rolla_building_927",

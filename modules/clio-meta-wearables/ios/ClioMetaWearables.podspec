@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
   s.name           = 'ClioMetaWearables'
   s.version        = '0.1.0'
   s.summary        = 'Expo bridge for Meta Wearables Device Access Toolkit'
-  s.description    = 'ClioVision native registration and device-state bridge for Meta AI glasses.'
+  s.description    = 'ClioVision native registration, device-state, and camera bridge for Meta AI glasses.'
   s.license        = { :type => 'Meta Wearables Device Access Toolkit License', :file => '../LICENSE' }
   s.author         = 'ClioVision'
   s.homepage       = 'https://github.com/facebook/meta-wearables-dat-ios'
@@ -14,8 +14,8 @@ Pod::Spec.new do |s|
   s.dependency 'ExpoModulesCore'
 
   s.source_files = '*.swift'
-  s.vendored_frameworks = 'Frameworks/MWDATCore.xcframework'
-  s.preserve_paths = 'Frameworks/MWDATCore.xcframework'
+  s.vendored_frameworks = 'Frameworks/MWDATCore.xcframework', 'Frameworks/MWDATCamera.xcframework'
+  s.preserve_paths = 'Frameworks/MWDATCore.xcframework', 'Frameworks/MWDATCamera.xcframework'
   s.frameworks = 'AVFoundation', 'CoreBluetooth', 'Speech', 'UIKit'
   s.pod_target_xcconfig = {
     'DEFINES_MODULE' => 'YES',

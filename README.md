@@ -8,7 +8,8 @@ ClioVision is a cross-platform campus guide for iOS, Android, web, and connected
 - Secure device pairing with 15-minute access tokens and 7-day refresh tokens
 - Refresh-token storage in iOS Keychain / Android Keystore through Expo SecureStore
 - Campus retrieval over the structured Missouri S&T data
-- OpenAI Responses API integration with a retrieval-only fallback when no API key is present
+- Groq-backed text and vision models with a retrieval-only fallback for text when no API key is present
+- On-demand Meta glasses photo capture for the command “Clio, what am I looking at?”
 - Authenticated speech-to-text and text-to-speech endpoints
 - In-memory audio handling, upload limits, MIME validation, expiring speech URLs, and rate limits
 - EAS build profiles for development, preview, and production
@@ -25,7 +26,7 @@ CLIO_DEVICE_ENROLLMENT_CODE=<private code entered once in the app>
 OPENAI_API_KEY=<server-side OpenAI API key>
 ```
 
-The OpenAI key is optional for retrieval-only text testing. It is required for real model answers, speech recognition, and generated speech.
+The provider key is optional for retrieval-only text testing. It is required for model answers, speech recognition, speech generation, and image identification.
 
 Start the API:
 
@@ -110,6 +111,6 @@ Store builds additionally require Apple Developer Program and Google Play signin
 
 ## Meta glasses
 
-For the current audio MVP, pair the glasses to the phone and select them as the active Bluetooth microphone/output route. The app records and plays through the operating system audio session.
+The iOS preview integrates Meta Wearables DAT Core and Camera 0.7.0. It supports registration, device status, foreground “Hey Clio” listening, native TTS over the active glasses route, and one-photo visual questions. After “Hey Clio,” say “Clio, what am I looking at?” Clio pauses microphone capture, requests camera access, captures one compressed JPEG, stops the camera session, identifies a campus candidate, and reads the grounded answer.
 
-Native Meta Device Access Toolkit registration still requires a Meta Wearables developer organization, Meta app ID, release channel, GitHub package access, and physical-device testing. See `docs/META_GLASSES.md` for the integration boundary and `docs/SECURITY.md` for the production threat model.
+Visual identification is intentionally conservative. The model may select only from the Missouri S&T campus records, GPS is used as an optional proximity clue, low-confidence results are rejected, and history/use/fun facts come from the curated data rather than the image model. See `docs/META_GLASSES.md` for setup and `docs/SECURITY.md` for the production threat model.

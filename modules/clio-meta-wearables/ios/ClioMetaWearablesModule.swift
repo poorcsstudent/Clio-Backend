@@ -1,6 +1,8 @@
 import ExpoModulesCore
 import Foundation
 internal import MWDATCore
+internal import MWDATCamera
+import UIKit
 
 public final class ClioMetaWearablesModule: Module, @unchecked Sendable {
   private let configurationLock = NSLock()
@@ -42,6 +44,139 @@ public final class ClioMetaWearablesModule: Module, @unchecked Sendable {
       try await Wearables.shared.startUnregistration()
       return self.snapshot()
     }
+
+    AsyncFunction("requestCameraPermission") { () -> String in
+      try self.ensureConfigured()
+      let status = try await Wearables.shared.requestPermission(.camera)
+      return status == .granted ? "granted" : "denied"
+    }
+
+    AsyncFunction("capturePhoto") { () -> [String: Any] in
+      try self.ensureConfigured()
+      return try await self.captureStillPhoto()
+    }
+  }
+
+  private func captureStillPhoto() async throws -> [String: Any] {
+    let permission = try await Wearables.shared.requestPermission(.camera)
+    guard permission == .granted else {
+      throw MetaCameraException("Camera access was not granted in Meta AI.")
+    }
+
+    let selector = AutoDeviceSelector(wearables: Wearables.shared)
+    let session = try Wearables.shared.createSession(deviceSelector: selector)
+    var cameraStream: MWDATCamera.Stream?
+
+    do {
+      try session.start()
+      try await waitForSession(session)
+
+      let configuration = StreamConfiguration(
+        videoCodec: .raw,
+        resolution: .low,
+        frameRate: 5
+      )
+      guard let stream = try session.addStream(config: configuration) else {
+        throw MetaCameraException("The glasses did not create a camera stream.")
+      }
+      cameraStream = stream
+      await stream.start()
+      try await waitForStream(stream)
+
+      let photo = try await waitForPhoto(from: stream)
+      let encoded = try encodeForVision(photo)
+      await stream.stop()
+      session.stop()
+      return encoded
+    } catch {
+      if let cameraStream {
+        await cameraStream.stop()
+      }
+      session.stop()
+      throw error
+    }
+  }
+
+  private func waitForSession(_ session: DeviceSession) async throws {
+    let deadline = Date().addingTimeInterval(15)
+    while Date() < deadline {
+      switch session.state {
+      case .started:
+        return
+      case .stopped:
+        throw MetaCameraException("The Meta device session stopped before the camera was ready.")
+      default:
+        try await Task.sleep(for: .milliseconds(100))
+      }
+    }
+    throw MetaCameraException("The Meta device session timed out.")
+  }
+
+  private func waitForStream(_ stream: MWDATCamera.Stream) async throws {
+    let deadline = Date().addingTimeInterval(20)
+    while Date() < deadline {
+      switch stream.state {
+      case .streaming:
+        return
+      case .stopped:
+        throw MetaCameraException("The glasses camera stream stopped before it was ready.")
+      default:
+        try await Task.sleep(for: .milliseconds(100))
+      }
+    }
+    throw MetaCameraException("The glasses camera stream timed out.")
+  }
+
+  private func waitForPhoto(from stream: MWDATCamera.Stream) async throws -> PhotoData {
+    try await withCheckedThrowingContinuation { continuation in
+      let capture = MetaPhotoCapture(continuation: continuation)
+      let photoToken = stream.photoDataPublisher.listen { photo in
+        capture.finish(.success(photo))
+      }
+      let errorToken = stream.errorPublisher.listen { error in
+        capture.finish(.failure(error))
+      }
+      capture.install(photoToken: photoToken, errorToken: errorToken)
+
+      Task {
+        try? await Task.sleep(for: .seconds(12))
+        capture.finish(.failure(MetaCameraException("The glasses did not return a photo in time.")))
+      }
+
+      guard stream.capturePhoto(format: .jpeg) else {
+        capture.finish(.failure(MetaCameraException("The glasses rejected the photo request.")))
+        return
+      }
+    }
+  }
+
+  private func encodeForVision(_ photo: PhotoData) throws -> [String: Any] {
+    guard let sourceImage = UIImage(data: photo.data) else {
+      throw MetaCameraException("The glasses returned an unreadable image.")
+    }
+
+    let maximumDimension: CGFloat = 1_280
+    let originalSize = sourceImage.size
+    let scale = min(1, maximumDimension / max(originalSize.width, originalSize.height))
+    let targetSize = CGSize(
+      width: max(1, (originalSize.width * scale).rounded()),
+      height: max(1, (originalSize.height * scale).rounded())
+    )
+    let format = UIGraphicsImageRendererFormat()
+    format.scale = 1
+    let image = UIGraphicsImageRenderer(size: targetSize, format: format).image { _ in
+      sourceImage.draw(in: CGRect(origin: .zero, size: targetSize))
+    }
+    guard let data = image.jpegData(compressionQuality: 0.72) else {
+      throw MetaCameraException("The captured image could not be prepared for identification.")
+    }
+
+    return [
+      "base64": data.base64EncodedString(),
+      "mimeType": "image/jpeg",
+      "width": Int(targetSize.width),
+      "height": Int(targetSize.height)
+    ]
   }
 
   private func ensureConfigured() throws {
@@ -100,8 +235,53 @@ public final class ClioMetaWearablesModule: Module, @unchecked Sendable {
   }
 }
 
+private final class MetaPhotoCapture: @unchecked Sendable {
+  private let lock = NSLock()
+  private var continuation: CheckedContinuation<PhotoData, Error>?
+  private var photoToken: (any AnyListenerToken)?
+  private var errorToken: (any AnyListenerToken)?
+
+  init(continuation: CheckedContinuation<PhotoData, Error>) {
+    self.continuation = continuation
+  }
+
+  func install(
+    photoToken: any AnyListenerToken,
+    errorToken: any AnyListenerToken
+  ) {
+    lock.lock()
+    self.photoToken = photoToken
+    self.errorToken = errorToken
+    lock.unlock()
+  }
+
+  func finish(_ result: Result<PhotoData, Error>) {
+    lock.lock()
+    guard let continuation else {
+      lock.unlock()
+      return
+    }
+    self.continuation = nil
+    let photoToken = self.photoToken
+    let errorToken = self.errorToken
+    self.photoToken = nil
+    self.errorToken = nil
+    lock.unlock()
+
+    continuation.resume(with: result)
+    Task {
+      await photoToken?.cancel()
+      await errorToken?.cancel()
+    }
+  }
+}
+
 private final class InvalidMetaCallbackUrlException: GenericException<String>, @unchecked Sendable {
   override var reason: String {
     "Invalid Meta callback URL: \(param)"
   }
+}
+
+private final class MetaCameraException: GenericException<String>, @unchecked Sendable {
+  override var reason: String { param }
 }

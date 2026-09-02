@@ -5,6 +5,8 @@ import {
   useAudioRecorder,
   useAudioRecorderState,
 } from 'expo-audio';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -28,16 +30,20 @@ import {
   apiBaseUrl,
   askCampusQuestion,
   disconnectDevice,
+  identifyCampusView,
   pairDevice,
   restoreDeviceSession,
   transcribeQuestion,
+  type CampusVisionResult,
   type KnowledgeSource,
 } from '@/services/api';
 import {
+  captureMetaCameraPhoto,
   configureMetaWearables,
   getMetaWearablesState,
   handleMetaCallback,
   initialMetaWearablesState,
+  requestMetaCameraPermission,
   startMetaRegistration,
   unregisterMetaWearables,
   type MetaWearablesState,
@@ -59,6 +65,7 @@ import {
 } from '@/services/wake-phrase';
 
 const suggestedQuestions = [
+  'Clio, what am I looking at?',
   'What happens in the computer science building?',
   'Which stops are on the computer engineering tour?',
   'What is the Havener Center?',
@@ -71,7 +78,12 @@ type Phase =
   | 'pairing'
   | 'thinking'
   | 'speaking'
-  | 'transcribing';
+  | 'transcribing'
+  | 'seeing';
+
+function isVisualIdentificationCommand(value: string) {
+  return /\bwhat\s+am\s+i\s+looking\s+at\b/i.test(value);
+}
 
 export default function HomeScreen() {
   const [phase, setPhase] = useState<Phase>('checking');
@@ -81,6 +93,9 @@ export default function HomeScreen() {
   const [transcript, setTranscript] = useState('');
   const [answer, setAnswer] = useState('');
   const [sources, setSources] = useState<KnowledgeSource[]>([]);
+  const [visionIdentification, setVisionIdentification] = useState<
+    CampusVisionResult['identification'] | null
+  >(null);
   const [status, setStatus] = useState('Checking the secure connection…');
   const [metaState, setMetaState] = useState<MetaWearablesState>(initialMetaWearablesState);
   const [metaBusy, setMetaBusy] = useState(false);
@@ -383,12 +398,17 @@ export default function HomeScreen() {
   async function submitQuestion(value = question) {
     const cleaned = value.trim();
     if (!cleaned || !paired) return;
+    if (isVisualIdentificationCommand(cleaned)) {
+      await submitVisualQuestion(cleaned);
+      return;
+    }
 
     await stopWakePhraseListening().catch(() => undefined);
     addVoiceDiagnostic(`Sending question to Clio: "${cleaned}"`);
     setPhase('thinking');
     setQuestion(cleaned);
     setTranscript(cleaned);
+    setVisionIdentification(null);
     setStatus('Searching verified campus knowledge…');
     let answered = false;
     try {
@@ -407,6 +427,97 @@ export default function HomeScreen() {
       if (error instanceof ApiError && error.status === 401) setPaired(false);
       setStatus(error instanceof Error ? error.message : 'Clio could not answer');
     } finally {
+      if (!answered) setPhase('ready');
+    }
+  }
+
+  async function submitVisualQuestion(value: string) {
+    const cleaned = value.trim();
+    if (!paired || !cleaned) return;
+
+    await stopWakePhraseListening().catch(() => undefined);
+    await stopNativeSpeech().catch(() => false);
+    setPhase('seeing');
+    setQuestion(cleaned);
+    setTranscript(cleaned);
+    setAnswer('');
+    setSources([]);
+    setVisionIdentification(null);
+    setStatus('Preparing the glasses camera…');
+    addVoiceDiagnostic('Visual command detected; stopping the microphone route before camera capture');
+
+    let photoUri = '';
+    let answered = false;
+    try {
+      if (!metaState.devices.some(device => device.linkState === 'connected')) {
+        throw new Error('Connect the Meta glasses before asking what you are looking at.');
+      }
+
+      await setAudioModeAsync({
+        allowsRecording: false,
+        playsInSilentMode: true,
+        interruptionMode: 'doNotMix',
+      });
+      // Give iOS time to release the Bluetooth HFP microphone route. The Meta
+      // camera transport can otherwise stall while the glasses mic is active.
+      await new Promise(resolve => setTimeout(resolve, 400));
+      const permission = await requestMetaCameraPermission();
+      if (permission !== 'granted') {
+        throw new Error('Approve Clio camera access in Meta AI, then try again.');
+      }
+
+      setStatus('Capturing one first-person photo…');
+      addVoiceDiagnostic('Meta camera permission granted; starting a temporary camera stream');
+      const photo = await captureMetaCameraPhoto();
+      addVoiceDiagnostic(`Glasses photo captured at ${photo.width} × ${photo.height}`);
+
+      if (!FileSystem.cacheDirectory) throw new Error('The iPhone photo cache is unavailable.');
+      photoUri = `${FileSystem.cacheDirectory}clio-campus-view-${Date.now()}.jpg`;
+      await FileSystem.writeAsStringAsync(photoUri, photo.base64, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const locationPermission = await Location.getForegroundPermissionsAsync();
+      const position = locationPermission.granted
+        ? await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced })
+            .catch(() => null)
+        : null;
+
+      setStatus('Comparing the view with verified campus landmarks…');
+      addVoiceDiagnostic(
+        position
+          ? 'Sending the encrypted photo with approximate campus coordinates'
+          : 'Sending the encrypted photo without coordinates',
+      );
+      const result = await identifyCampusView(
+        photoUri,
+        position ? {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        } : undefined,
+      );
+      setAnswer(result.answer);
+      setSources(result.sources);
+      setVisionIdentification(result.identification);
+      setQuestion('');
+      addVoiceDiagnostic(
+        result.identification.name
+          ? `Vision identified ${result.identification.name} at ${Math.round(result.identification.confidence * 100)}% confidence`
+          : 'Vision could not identify the campus view confidently',
+      );
+      setStatus('Visual answer shown below; preparing the glasses audio route…');
+      setPhase('speaking');
+      answered = true;
+    } catch (error) {
+      addVoiceDiagnostic(
+        `Visual question failed: ${error instanceof Error ? error.message : 'unknown error'}`,
+      );
+      if (error instanceof ApiError && error.status === 401) setPaired(false);
+      setStatus(error instanceof Error ? error.message : 'Clio could not identify this view');
+    } finally {
+      if (photoUri) {
+        await FileSystem.deleteAsync(photoUri, { idempotent: true }).catch(() => undefined);
+      }
       if (!answered) setPhase('ready');
     }
   }
@@ -497,6 +608,7 @@ export default function HomeScreen() {
     setPaired(false);
     setAnswer('');
     setSources([]);
+    setVisionIdentification(null);
     setStatus('Device session removed');
   }
 
@@ -654,9 +766,9 @@ export default function HomeScreen() {
                 </Pressable>
               </View>
               <Text style={styles.debugHelp}>
-                "Hey User" is generated locally before Clio contacts the backend. If you hear it in
-                the glasses, wake detection and the iOS Bluetooth output route are working. Answer
-                speech uses the exact text shown in the answer bubble below.
+                {'"Hey User" is generated locally before Clio contacts the backend. If you hear it in '
+                  + 'the glasses, wake detection and the iOS Bluetooth output route are working. Answer '
+                  + 'speech uses the exact text shown in the answer bubble below.'}
               </Text>
               {voiceDiagnostics.length > 0 ? (
                 <View style={styles.debugLog}>
@@ -814,6 +926,14 @@ export default function HomeScreen() {
               {(answer || transcript) && (
                 <View style={styles.answerCard}>
                   {transcript ? <Text style={styles.transcript}>“{transcript}”</Text> : null}
+                  {visionIdentification?.name ? (
+                    <View style={styles.visionResultRow}>
+                      <Text style={styles.visionResultLabel}>VIEW IDENTIFIED</Text>
+                      <Text style={styles.visionResultText}>
+                        {visionIdentification.name} · {Math.round(visionIdentification.confidence * 100)}%
+                      </Text>
+                    </View>
+                  ) : null}
                   {answer ? <Text style={styles.answer}>{answer}</Text> : null}
                   {answer ? (
                     <Pressable
@@ -993,6 +1113,15 @@ const styles = StyleSheet.create({
   suggestionText: { color: '#BFD0C8', fontSize: 12 },
   answerCard: { backgroundColor: '#F3F0E6', borderRadius: 24, padding: 20, gap: 14 },
   transcript: { color: '#718078', fontSize: 13, fontStyle: 'italic', lineHeight: 19 },
+  visionResultRow: {
+    borderRadius: 14,
+    backgroundColor: '#DDF4E6',
+    paddingHorizontal: 13,
+    paddingVertical: 10,
+    gap: 3,
+  },
+  visionResultLabel: { color: '#3E6D59', fontSize: 9, fontWeight: '800', letterSpacing: 1.4 },
+  visionResultText: { color: '#102A22', fontSize: 13, fontWeight: '800' },
   answer: { color: '#102A22', fontSize: 18, lineHeight: 27, fontWeight: '600' },
   answerSpeechButton: {
     minHeight: 44,

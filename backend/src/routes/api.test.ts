@@ -26,6 +26,25 @@ test("device enrollment protects the AI route", async () => {
   assert.equal(enrollment.status, 200);
   assert.equal(typeof enrollment.body.accessToken, "string");
 
+  const unauthenticatedVision = await request(app)
+    .post("/vision/identify")
+    .field("campusId", "missouri-s-and-t")
+    .attach("image", Buffer.from([0xff, 0xd8, 0xff, 0xd9]), {
+      filename: "campus.jpg",
+      contentType: "image/jpeg",
+    });
+  assert.equal(unauthenticatedVision.status, 401);
+
+  const disguisedNonImage = await request(app)
+    .post("/vision/identify")
+    .set("Authorization", `Bearer ${enrollment.body.accessToken}`)
+    .field("campusId", "missouri-s-and-t")
+    .attach("image", Buffer.from("not an image"), {
+      filename: "campus.jpg",
+      contentType: "image/jpeg",
+    });
+  assert.equal(disguisedNonImage.status, 400);
+
   const answer = await request(app)
     .post("/ai-guide/question")
     .set("Authorization", `Bearer ${enrollment.body.accessToken}`)

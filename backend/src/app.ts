@@ -13,6 +13,7 @@ import aiRoutes from "./routes/ai";
 import iosInstallRoutes from "./routes/iosInstall";
 import navigationRoutes from "./routes/navigation";
 import voiceRoutes from "./routes/voice";
+import visionRoutes from "./routes/vision";
 
 const app = express();
 
@@ -45,6 +46,9 @@ app.get("/", (_req, res) => {
     aiProvider: config.aiProvider,
     voiceConfigured: Boolean(providerKey(config.voiceProvider)),
     voiceProvider: config.voiceProvider,
+    visionConfigured: Boolean(providerKey(config.visionProvider)),
+    visionProvider: config.visionProvider,
+    visionModel: config.visionModel,
     walkingRoutesConfigured: true,
   });
 });
@@ -56,6 +60,7 @@ app.use("/tour", tourRoutes);
 app.use("/navigation", navigationRoutes);
 app.use("/ai-guide", aiRoutes);
 app.use("/voice", voiceRoutes);
+app.use("/vision", visionRoutes);
 
 app.use((_req, res) => {
   res.status(404).json({ error: "Route not found" });
@@ -64,7 +69,7 @@ app.use((_req, res) => {
 app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   if (error instanceof multer.MulterError) {
     res.status(400).json({
-      error: error.code === "LIMIT_FILE_SIZE" ? "Audio file is too large" : "Invalid upload",
+      error: error.code === "LIMIT_FILE_SIZE" ? "Uploaded file is too large" : "Invalid upload",
     });
     return;
   }
