@@ -102,10 +102,7 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
         self.speechSynthesizer.stopSpeaking(at: .immediate)
       }
 
-      let utterance = AVSpeechUtterance(string: spokenText)
-      utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-      utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.92
-      utterance.volume = 1
+      let utterance = self.makeClioUtterance(spokenText)
       self.speechKinds[ObjectIdentifier(utterance)] = "answer"
       self.pendingSpeechUtterance = utterance
       let workItem = DispatchWorkItem { [weak self] in
@@ -388,16 +385,41 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       .filter { !$0.isEmpty }
   }
 
+  private func makeClioUtterance(_ text: String) -> AVSpeechUtterance {
+    // Re-read installed voices so a newly downloaded enhanced voice is used
+    // without requiring the user to reinstall Clio.
+    let voices = AVSpeechSynthesisVoice.speechVoices().filter {
+      $0.language == "en-US" && $0.gender == .female
+    }
+    let selectedVoice = voices.sorted { left, right in
+      if left.quality.rawValue != right.quality.rawValue {
+        return left.quality.rawValue > right.quality.rawValue
+      }
+      let leftIsSamantha = left.name.localizedCaseInsensitiveContains("Samantha")
+      let rightIsSamantha = right.name.localizedCaseInsensitiveContains("Samantha")
+      if leftIsSamantha != rightIsSamantha { return leftIsSamantha }
+      return left.identifier < right.identifier
+    }.first ?? AVSpeechSynthesisVoice(language: "en-US")
+
+    let utterance = AVSpeechUtterance(string: text)
+    utterance.voice = selectedVoice
+    utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.88
+    utterance.pitchMultiplier = 1.0
+    utterance.volume = 1.0
+    emitDiagnostic(
+      stage: "speechVoiceSelected",
+      message: "Clio voice: \(selectedVoice?.name ?? "system default"); quality: \(selectedVoice?.quality.rawValue ?? 0)."
+    )
+    return utterance
+  }
+
   private func speakDiagnosticAcknowledgement() {
     speechSynthesizer.delegate = speechDelegate
     if speechSynthesizer.isSpeaking || speechSynthesizer.isPaused {
       speechSynthesizer.stopSpeaking(at: .immediate)
     }
 
-    let utterance = AVSpeechUtterance(string: "Hey User")
-    utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-    utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.9
-    utterance.volume = 1
+    let utterance = makeClioUtterance("Hey User")
     speechKinds[ObjectIdentifier(utterance)] = "acknowledgement"
     speechSynthesizer.speak(utterance)
     emitDiagnostic(
