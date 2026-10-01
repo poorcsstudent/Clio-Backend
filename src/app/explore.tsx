@@ -29,9 +29,8 @@ import {
 } from '@/services/api';
 import {
   distanceBetweenCoordinatesMeters,
-  isReliableTourArrival,
+  createArrivalTracker,
   TOUR_ARRIVAL_RADIUS_METERS,
-  TOUR_REQUIRED_ARRIVAL_SAMPLES,
 } from '@/services/tourLocation';
 import {
   distanceToWalkingPathMeters,
@@ -266,7 +265,7 @@ export default function CampusScreen() {
         [tour.id]: walkingRoute,
       }));
       void speakTourGuidance(
-        `${tour.name} walking pilot started. Begin at Havener Center. Clio will advance after two accurate location readings within ${TOUR_ARRIVAL_RADIUS_METERS} meters.`,
+        `${tour.name} walking pilot started. Begin at Havener Center. Clio will advance after several fresh location readings within ${TOUR_ARRIVAL_RADIUS_METERS} meters over at least eight seconds.`,
       );
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Could not start this tour');
@@ -366,7 +365,7 @@ export default function CampusScreen() {
 
     let cancelled = false;
     let subscription: Location.LocationSubscription | null = null;
-    let arrivalSamples = 0;
+    const checkArrival = createArrivalTracker();
     let arrivalHandled = false;
 
     function handleLocation(location: Location.LocationObject) {
@@ -398,13 +397,7 @@ export default function CampusScreen() {
         setActiveWalkingStepIndex(0);
       }
 
-      if (isReliableTourArrival(distance, accuracy)) {
-        arrivalSamples += 1;
-      } else {
-        arrivalSamples = 0;
-      }
-
-      if (arrivalSamples < TOUR_REQUIRED_ARRIVAL_SAMPLES) return;
+      if (!checkArrival(distance, accuracy, location.timestamp)) return;
       arrivalHandled = true;
 
       const finalStop = activeStopIndex === tourSession.stops.length - 1;
@@ -470,7 +463,8 @@ export default function CampusScreen() {
         const createdSubscription = await Location.watchPositionAsync(
           {
             accuracy: Location.Accuracy.BestForNavigation,
-            distanceInterval: 3,
+            // Dwell confirmation needs updates even while standing at a stop.
+            distanceInterval: 0,
             timeInterval: 2_000,
           },
           handleLocation,

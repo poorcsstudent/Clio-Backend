@@ -3,9 +3,39 @@ import test from 'node:test';
 
 import {
   distanceBetweenCoordinatesMeters,
+  createArrivalTracker,
   isReliableTourArrival,
   TOUR_ARRIVAL_RADIUS_METERS,
 } from './tourLocation';
+
+test('arrival requires distinct fresh readings and eight seconds of dwell', () => {
+  const check = createArrivalTracker();
+  assert.equal(check(10, 5, 1000, 1000), false);
+  assert.equal(check(10, 5, 1000, 2000), false);
+  assert.equal(check(10, 5, 5000, 5000), false);
+  assert.equal(check(10, 5, 9000, 9000), true);
+});
+
+test('unreliable, stale, future and out-of-radius fixes cannot count as arrival', () => {
+  for (const fix of [[10, 80, 5000, 5000], [80, 5, 5000, 5000], [10, 5, 5000, 20000], [10, 5, 6000, 5000]]) {
+    const check = createArrivalTracker();
+    check(10, 5, 1000, 1000);
+    assert.equal(check(...fix as [number, number, number, number]), false);
+    assert.equal(check(10, 5, 21000, 21000), false);
+    assert.equal(check(10, 5, 25000, 25000), false);
+    assert.equal(check(10, 5, 29000, 29000), true);
+  }
+});
+
+test('long gaps restart dwell and invalid distances are rejected', () => {
+  const check = createArrivalTracker();
+  check(10, 5, 1000, 1000);
+  check(10, 5, 5000, 5000);
+  assert.equal(check(10, 5, 25000, 25000), false);
+  assert.equal(isReliableTourArrival(-1, 5), false);
+  assert.equal(isReliableTourArrival(1, -1), false);
+  assert.equal(isReliableTourArrival(NaN, 5), false);
+});
 
 test('campus-scale distances use geographic coordinates', () => {
   const distance = distanceBetweenCoordinatesMeters(

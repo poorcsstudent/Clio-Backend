@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- September 30: Build 21 arrival tracker now requires three distinct fresh fixes
+  over eight seconds. Stale/future fixes, unreliable accuracy, departures, and long
+  gaps reset confirmation. Stationary location updates are requested for dwell.
+  App typecheck and eight navigation tests pass. Physical campus validation remains pending.
+
 - September 30: Build 20 voice controls implemented: installed female voices,
   Automatic selection, three speed presets, persisted native preferences, and a
   preview that preserves the answer. Fixed stale wake callbacks and overlapping

@@ -1,6 +1,8 @@
 export const TOUR_ARRIVAL_RADIUS_METERS = 35;
 export const TOUR_MAX_GPS_ACCURACY_METERS = 50;
-export const TOUR_REQUIRED_ARRIVAL_SAMPLES = 2;
+export const TOUR_REQUIRED_ARRIVAL_SAMPLES = 3;
+export const TOUR_ARRIVAL_DWELL_MS = 8000;
+export const TOUR_MAX_FIX_AGE_MS = 10000;
 
 interface Coordinate {
   latitude: number;
@@ -32,7 +34,34 @@ export function isReliableTourArrival(distanceMeters: number, accuracyMeters: nu
   return (
     accuracyMeters !== null &&
     Number.isFinite(accuracyMeters) &&
+    accuracyMeters >= 0 &&
     accuracyMeters <= TOUR_MAX_GPS_ACCURACY_METERS &&
+    Number.isFinite(distanceMeters) && distanceMeters >= 0 &&
     distanceMeters <= TOUR_ARRIVAL_RADIUS_METERS
   );
+}
+
+/** One tracker per target stop; discard it when paused or the target changes. */
+export function createArrivalTracker() {
+  let lastTimestamp = -Infinity;
+  let firstTimestamp: number | null = null;
+  let samples = 0;
+  return (distance: number, accuracy: number | null, timestamp: number, now = Date.now()) => {
+    const fresh = Number.isFinite(timestamp) && timestamp <= now && now - timestamp <= TOUR_MAX_FIX_AGE_MS;
+    if (!fresh || !isReliableTourArrival(distance, accuracy)) {
+      firstTimestamp = null;
+      samples = 0;
+      return false;
+    }
+    // The initial position and watcher may deliver the same cached fix.
+    if (timestamp <= lastTimestamp) return false;
+    if (timestamp - lastTimestamp > TOUR_MAX_FIX_AGE_MS) {
+      firstTimestamp = null;
+      samples = 0;
+    }
+    lastTimestamp = timestamp;
+    firstTimestamp ??= timestamp;
+    samples += 1;
+    return samples >= TOUR_REQUIRED_ARRIVAL_SAMPLES && timestamp - firstTimestamp >= TOUR_ARRIVAL_DWELL_MS;
+  };
 }
