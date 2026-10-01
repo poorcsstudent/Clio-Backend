@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 1: Build 22 camera requests omit GPS fixes older than 15 seconds,
+  future timestamps, accuracy worse than 50 meters, and malformed coordinates.
+  Optional GPS collection stops blocking after four seconds; photo identification
+  proceeds without coordinates. App typecheck and 11 location/navigation tests pass.
+  Camera uncertainty/feedback UI and real-image acceptance tests remain unfinished.
+
 - September 30: Build 21 arrival tracker now requires three distinct fresh fixes
   over eight seconds. Stale/future fixes, unreliable accuracy, departures, and long
   gaps reset confirmation. Stationary location updates are requested for dwell.

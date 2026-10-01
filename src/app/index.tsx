@@ -26,6 +26,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BottomTabInset } from '@/constants/theme';
 import VoiceSettings from '@/components/voice-settings';
+import { optionalPositionWithin, reliableVisionCoordinates } from '@/services/visionLocation';
 import {
   ApiError,
   apiBaseUrl,
@@ -494,22 +495,19 @@ export default function HomeScreen() {
 
       const locationPermission = await Location.getForegroundPermissionsAsync();
       const position = locationPermission.granted
-        ? await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced })
-            .catch(() => null)
+        ? await optionalPositionWithin(Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced }))
         : null;
+      const coordinates = reliableVisionCoordinates(position);
 
       setStatus('Comparing the view with verified campus landmarks…');
       addVoiceDiagnostic(
-        position
+        coordinates
           ? 'Sending the encrypted photo with approximate campus coordinates'
           : 'Sending the encrypted photo without coordinates',
       );
       const result = await identifyCampusView(
         photoUri,
-        position ? {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        } : undefined,
+        coordinates,
       );
       setAnswer(result.answer);
       setSources(result.sources);
