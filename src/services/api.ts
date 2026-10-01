@@ -235,9 +235,14 @@ export async function restoreDeviceSession() {
   try {
     await refreshSession();
     return true;
-  } catch {
-    await disconnectDevice();
-    return false;
+  } catch (error) {
+    // Only an explicit authentication rejection invalidates pairing. A network
+    // outage or provider failure must not delete a still-valid refresh token.
+    if (error instanceof ApiError && error.status === 401) {
+      await disconnectDevice();
+      return false;
+    }
+    throw error;
   }
 }
 

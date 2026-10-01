@@ -137,7 +137,15 @@ export type NativeSpeechStateEvent = WakePhrasePlaybackRoute & {
   message: string;
 };
 
+export interface ClioVoiceSettings {
+  identifier: string;
+  speed: number;
+  voices: { identifier: string; name: string; quality: number }[];
+}
+
 type NativeWakePhraseModule = {
+  getVoiceSettings?(): Promise<ClioVoiceSettings>;
+  setVoiceSettings?(identifier: string, speed: number): Promise<ClioVoiceSettings>;
   getState(): Promise<WakePhraseState>;
   requestPermissions(): Promise<WakePhraseState>;
   start(phrase: string): Promise<WakePhraseState>;
@@ -185,6 +193,17 @@ export const initialWakePhraseState: WakePhraseState = {
 
 export async function getWakePhraseState() {
   return nativeWakePhraseModule?.getState() ?? initialWakePhraseState;
+}
+
+export async function getClioVoiceSettings() {
+  return nativeWakePhraseModule?.getVoiceSettings?.() ?? null;
+}
+
+export async function setClioVoiceSettings(identifier: string, speed: number) {
+  if (!nativeWakePhraseModule?.setVoiceSettings) {
+    throw new Error('Voice controls require the new native iOS build.');
+  }
+  return nativeWakePhraseModule.setVoiceSettings(identifier, speed);
 }
 
 export async function requestWakePhrasePermissions() {

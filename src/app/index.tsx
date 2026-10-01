@@ -7,7 +7,7 @@ import {
 } from 'expo-audio';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Location from 'expo-location';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -25,6 +25,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BottomTabInset } from '@/constants/theme';
+import VoiceSettings from '@/components/voice-settings';
 import {
   ApiError,
   apiBaseUrl,
@@ -92,6 +93,9 @@ export default function HomeScreen() {
   const [question, setQuestion] = useState('');
   const [transcript, setTranscript] = useState('');
   const [answer, setAnswer] = useState('');
+  const [voicePreview, setVoicePreview] = useState('');
+  const requestInFlight = useRef(false);
+  const submitQuestionRef = useRef<(value: string) => Promise<void>>(async () => {});
   const [sources, setSources] = useState<KnowledgeSource[]>([]);
   const [visionIdentification, setVisionIdentification] = useState<
     CampusVisionResult['identification'] | null
@@ -275,7 +279,7 @@ export default function HomeScreen() {
       if (!active || !paired || !event.command.trim()) return;
       addVoiceDiagnostic(`Command captured: "${event.command}"`);
       setStatus(`Heard: “${event.command}”`);
-      void submitQuestion(event.command);
+      void submitQuestionRef.current(event.command);
     });
 
     return () => {
@@ -338,7 +342,7 @@ export default function HomeScreen() {
   }, [answer, phase]);
 
   useEffect(() => {
-    const spokenText = answer.trim();
+    const spokenText = (voicePreview || answer).trim();
     if (phase !== 'speaking' || !spokenText) return;
 
     let active = true;
@@ -374,7 +378,15 @@ export default function HomeScreen() {
     return () => {
       active = false;
     };
-  }, [answer, phase]);
+  }, [answer, voicePreview, phase]);
+
+  useEffect(() => {
+    if (phase === 'ready') setVoicePreview('');
+  }, [phase]);
+
+  useEffect(() => {
+    submitQuestionRef.current = submitQuestion;
+  });
 
   async function handlePair() {
     if (pairingCode.trim().length < 8) {
@@ -397,12 +409,13 @@ export default function HomeScreen() {
 
   async function submitQuestion(value = question) {
     const cleaned = value.trim();
-    if (!cleaned || !paired) return;
+    if (!cleaned || !paired || requestInFlight.current || phase === 'speaking') return;
     if (isVisualIdentificationCommand(cleaned)) {
       await submitVisualQuestion(cleaned);
       return;
     }
 
+    requestInFlight.current = true;
     await stopWakePhraseListening().catch(() => undefined);
     addVoiceDiagnostic(`Sending question to Clio: "${cleaned}"`);
     setPhase('thinking');
@@ -427,13 +440,15 @@ export default function HomeScreen() {
       if (error instanceof ApiError && error.status === 401) setPaired(false);
       setStatus(error instanceof Error ? error.message : 'Clio could not answer');
     } finally {
+      requestInFlight.current = false;
       if (!answered) setPhase('ready');
     }
   }
 
   async function submitVisualQuestion(value: string) {
     const cleaned = value.trim();
-    if (!paired || !cleaned) return;
+    if (!paired || !cleaned || requestInFlight.current || phase === 'speaking') return;
+    requestInFlight.current = true;
 
     await stopWakePhraseListening().catch(() => undefined);
     await stopNativeSpeech().catch(() => false);
@@ -518,6 +533,7 @@ export default function HomeScreen() {
       if (photoUri) {
         await FileSystem.deleteAsync(photoUri, { idempotent: true }).catch(() => undefined);
       }
+      requestInFlight.current = false;
       if (!answered) setPhase('ready');
     }
   }
@@ -672,6 +688,11 @@ export default function HomeScreen() {
             </View>
             <View style={[styles.statusDot, paired ? styles.statusDotReady : styles.statusDotIdle]} />
           </View>
+
+          <VoiceSettings disabled={phase !== 'ready'} onPreview={() => {
+            setVoicePreview('Hi, I’m Clio, your campus guide. Let’s explore Missouri S and T together.');
+            setPhase('speaking');
+          }} />
 
           <View style={styles.securityCard}>
             <View style={styles.securityIcon}><Text style={styles.securityIconText}>✓</Text></View>

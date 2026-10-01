@@ -47,6 +47,24 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       self.snapshot()
     }.runOnQueue(.main)
 
+    AsyncFunction("getVoiceSettings") { () -> [String: Any] in
+      self.voiceSettings()
+    }.runOnQueue(.main)
+
+    AsyncFunction("setVoiceSettings") { (identifier: String, speed: Double) -> [String: Any] in
+      guard speed.isFinite, speed >= 0.7, speed <= 1.15 else {
+        throw WakePhraseUnavailableException("Choose a speech speed between 0.7 and 1.15.")
+      }
+      guard identifier.isEmpty || AVSpeechSynthesisVoice.speechVoices().contains(where: {
+        $0.identifier == identifier && $0.language == "en-US" && $0.gender == .female
+      }) else {
+        throw WakePhraseUnavailableException("That voice is no longer installed. Choose Automatic.")
+      }
+      UserDefaults.standard.set(identifier, forKey: "clio.voice.identifier")
+      UserDefaults.standard.set(speed, forKey: "clio.voice.speed")
+      return self.voiceSettings()
+    }.runOnQueue(.main)
+
     AsyncFunction("requestPermissions") { (promise: Promise) in
       self.requestPermissions(promise: promise)
     }.runOnQueue(.main)
@@ -391,7 +409,8 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     let voices = AVSpeechSynthesisVoice.speechVoices().filter {
       $0.language == "en-US" && $0.gender == .female
     }
-    let selectedVoice = voices.sorted { left, right in
+    let preferredIdentifier = UserDefaults.standard.string(forKey: "clio.voice.identifier") ?? ""
+    let selectedVoice = voices.first(where: { $0.identifier == preferredIdentifier }) ?? voices.sorted { left, right in
       if left.quality.rawValue != right.quality.rawValue {
         return left.quality.rawValue > right.quality.rawValue
       }
@@ -403,7 +422,8 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
 
     let utterance = AVSpeechUtterance(string: text)
     utterance.voice = selectedVoice
-    utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.88
+    let savedSpeed = UserDefaults.standard.object(forKey: "clio.voice.speed") as? Double ?? 0.88
+    utterance.rate = AVSpeechUtteranceDefaultSpeechRate * Float(min(1.15, max(0.7, savedSpeed)))
     utterance.pitchMultiplier = 1.0
     utterance.volume = 1.0
     emitDiagnostic(
@@ -411,6 +431,19 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       message: "Clio voice: \(selectedVoice?.name ?? "system default"); quality: \(selectedVoice?.quality.rawValue ?? 0)."
     )
     return utterance
+  }
+
+  private func voiceSettings() -> [String: Any] {
+    let voices = AVSpeechSynthesisVoice.speechVoices().filter {
+      $0.language == "en-US" && $0.gender == .female
+    }.sorted { $0.name < $1.name }
+    let saved = UserDefaults.standard.string(forKey: "clio.voice.identifier") ?? ""
+    return [
+      "identifier": voices.contains(where: { $0.identifier == saved }) ? saved : "",
+      "speed": UserDefaults.standard.object(forKey: "clio.voice.speed") as? Double ?? 0.88,
+      "voices": voices.map { ["identifier": $0.identifier, "name": $0.name,
+        "quality": $0.quality.rawValue] as [String: Any] }
+    ]
   }
 
   private func speakDiagnosticAcknowledgement() {
