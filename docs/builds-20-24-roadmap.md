@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 1: camera results now say Possible match rather than presenting a model
+  confidence score as certainty. Unmatched scenes have an explicit uncertain state.
+  Added local dismissal and deliberate new-photo retry, with clear disclosure that
+  dismissal is not an uploaded report. Dismissed facts/sources are removed so replay
+  does not repeat the rejected identification. Real-image testing remains pending.
+
 - October 1: Build 22 camera requests omit GPS fixes older than 15 seconds,
   future timestamps, accuracy worse than 50 meters, and malformed coordinates.
   Optional GPS collection stops blocking after four seconds; photo identification

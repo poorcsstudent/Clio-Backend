@@ -95,6 +95,7 @@ export default function HomeScreen() {
   const [transcript, setTranscript] = useState('');
   const [answer, setAnswer] = useState('');
   const [voicePreview, setVoicePreview] = useState('');
+  const [visionRejected, setVisionRejected] = useState(false);
   const requestInFlight = useRef(false);
   const submitQuestionRef = useRef<(value: string) => Promise<void>>(async () => {});
   const [sources, setSources] = useState<KnowledgeSource[]>([]);
@@ -423,6 +424,7 @@ export default function HomeScreen() {
     setQuestion(cleaned);
     setTranscript(cleaned);
     setVisionIdentification(null);
+    setVisionRejected(false);
     setStatus('Searching verified campus knowledge…');
     let answered = false;
     try {
@@ -459,6 +461,7 @@ export default function HomeScreen() {
     setAnswer('');
     setSources([]);
     setVisionIdentification(null);
+    setVisionRejected(false);
     setStatus('Preparing the glasses camera…');
     addVoiceDiagnostic('Visual command detected; stopping the microphone route before camera capture');
 
@@ -509,7 +512,9 @@ export default function HomeScreen() {
         photoUri,
         coordinates,
       );
-      setAnswer(result.answer);
+      setAnswer(result.identification.name
+        ? `This is a possible match, not a confirmed identification. ${result.answer}`
+        : result.answer);
       setSources(result.sources);
       setVisionIdentification(result.identification);
       setQuestion('');
@@ -945,12 +950,34 @@ export default function HomeScreen() {
               {(answer || transcript) && (
                 <View style={styles.answerCard}>
                   {transcript ? <Text style={styles.transcript}>“{transcript}”</Text> : null}
-                  {visionIdentification?.name ? (
+                  {visionIdentification ? (
                     <View style={styles.visionResultRow}>
-                      <Text style={styles.visionResultLabel}>VIEW IDENTIFIED</Text>
+                      <Text style={styles.visionResultLabel}>{visionRejected ? 'MATCH DISMISSED' : visionIdentification.name ? 'POSSIBLE MATCH' : 'VIEW UNCERTAIN'}</Text>
                       <Text style={styles.visionResultText}>
-                        {visionIdentification.name} · {Math.round(visionIdentification.confidence * 100)}%
+                        {visionRejected ? 'This identification is no longer accepted.' : visionIdentification.name ?? 'No confident building match'}
                       </Text>
+                      <Text style={styles.sourcesText}>Camera recognition can be wrong. Confirm visible signs; do not use it to judge crossings or obstacles.</Text>
+                      {visionIdentification.name && !visionRejected ? <Pressable
+                        accessibilityRole="button"
+                        disabled={phase !== 'ready'}
+                        accessibilityState={{ disabled: phase !== 'ready' }}
+                        style={styles.answerSpeechButton}
+                        onPress={() => {
+                          setVisionRejected(true);
+                          setSources([]);
+                          setAnswer('That camera match was dismissed. Face a visible building sign and choose Take another photo to try again.');
+                          setStatus('Match dismissed on this screen only. No feedback or photo was sent.');
+                          addVoiceDiagnostic('User dismissed a camera match locally; no feedback uploaded');
+                        }}><Text style={styles.answerSpeechButtonText}>That’s not right</Text></Pressable> : null}
+                      <Pressable accessibilityRole="button"
+                        accessibilityLabel="Take another glasses photo and send it for identification"
+                        disabled={phase !== 'ready'}
+                        accessibilityState={{ disabled: phase !== 'ready' }}
+                        style={styles.answerSpeechButton}
+                        onPress={() => submitVisualQuestion('Clio, what am I looking at?')}>
+                        <Text style={styles.answerSpeechButtonText}>Take another photo</Text>
+                      </Pressable>
+                      <Text style={styles.sourcesText}>Retry captures and sends a new photo for identification. Dismissing a match only changes this screen; it does not submit a report.</Text>
                     </View>
                   ) : null}
                   {answer ? <Text style={styles.answer}>{answer}</Text> : null}
