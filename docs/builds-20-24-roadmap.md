@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 1: session refresh now shares concurrent requests and has a 15-second
+  deadline, preventing startup from waiting indefinitely on an unreachable backend.
+  Failed refresh attempts do not stay cached. Offline tour caches and progress
+  persistence are still pending; this is not a complete offline mode.
+
 - October 1: question and camera API operations now have a 45-second deadline,
   including response parsing, with an actionable timeout message and abort signal.
   No automatic retry is added. Other API operations and offline caches remain pending.

@@ -2,6 +2,7 @@ import * as Crypto from 'expo-crypto';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { withRequestDeadline } from './requestDeadline';
+import { singleFlight } from './singleFlight';
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
   .replace(/\/$/, '');
@@ -199,18 +200,20 @@ async function saveSession(session: DeviceSession) {
   await writeStoredValue(REFRESH_TOKEN_KEY, session.refreshToken);
 }
 
-async function refreshSession() {
+const refreshSession = singleFlight(() => withRequestDeadline(async signal => {
   const refreshToken = await readStoredValue(REFRESH_TOKEN_KEY);
   if (!refreshToken) throw new ApiError('This device is not paired', 401);
 
   const response = await fetch(`${apiBaseUrl}/auth/refresh`, {
+    signal,
     method: 'POST',
     headers: { Authorization: `Bearer ${refreshToken}` },
   });
   const session = await parseResponse<DeviceSession>(response);
+  if (signal.aborted) throw new Error('Session refresh was cancelled');
   await saveSession(session);
   return session.accessToken;
-}
+}, 15000));
 
 async function getAccessToken() {
   if (accessToken && Date.now() < accessTokenExpiresAt) return accessToken;
