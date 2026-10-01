@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 1: question and camera API operations now have a 45-second deadline,
+  including response parsing, with an actionable timeout message and abort signal.
+  No automatic retry is added. Other API operations and offline caches remain pending.
+  Deadline tests cover success, failure, hanging work, body processing, and no retries.
+
 - October 1: camera results now say Possible match rather than presenting a model
   confidence score as certainty. Unmatched scenes have an explicit uncertain state.
   Added local dismissal and deliberate new-photo retry, with clear disclosure that

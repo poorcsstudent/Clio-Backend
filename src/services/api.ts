@@ -1,6 +1,7 @@
 import * as Crypto from 'expo-crypto';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
+import { withRequestDeadline } from './requestDeadline';
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
   .replace(/\/$/, '');
@@ -262,7 +263,9 @@ export async function disconnectDevice() {
 }
 
 export async function askCampusQuestion(question: string, currentStopId?: string) {
+  return withRequestDeadline(async signal => {
   const response = await authorizedFetch('/ai-guide/question', {
+    signal,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
@@ -272,6 +275,7 @@ export async function askCampusQuestion(question: string, currentStopId?: string
     }),
   });
   return parseResponse<CampusAnswer>(response);
+  });
 }
 
 export async function transcribeQuestion(uri: string) {
@@ -329,11 +333,14 @@ export async function identifyCampusView(
     type: 'image/jpeg',
   } as unknown as Blob);
 
+  return withRequestDeadline(async signal => {
   const response = await authorizedFetch('/vision/identify', {
+    signal,
     method: 'POST',
     body: form,
   });
   return parseResponse<CampusVisionResult>(response);
+  });
 }
 
 export async function getTourStops(tourId: string) {
