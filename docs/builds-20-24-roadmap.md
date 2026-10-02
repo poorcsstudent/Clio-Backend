@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 1: added an expandable first-use guide with live pairing, glasses, and
+  wake-mode status. Covers permission prompts, voice preview, camera privacy,
+  tour starting point, internet requirements, and unverified route warnings.
+  Clearly labels native glasses features as iOS-only outside iOS. This is guidance,
+  not completed Android parity or a substitute for new-user device testing.
+
 - October 1: session refresh now shares concurrent requests and has a 15-second
   deadline, preventing startup from waiting indefinitely on an unreachable backend.
   Failed refresh attempts do not stay cached. Offline tour caches and progress

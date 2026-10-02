@@ -26,6 +26,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BottomTabInset } from '@/constants/theme';
 import VoiceSettings from '@/components/voice-settings';
+import SetupGuide from '@/components/setup-guide';
 import { optionalPositionWithin, reliableVisionCoordinates } from '@/services/visionLocation';
 import {
   ApiError,
@@ -692,6 +693,7 @@ export default function HomeScreen() {
             <View style={[styles.statusDot, paired ? styles.statusDotReady : styles.statusDotIdle]} />
           </View>
 
+          <SetupGuide paired={paired} glassesConnected={Boolean(connectedMetaDevice)} listeningEnabled={wakeEnabled} />
           <VoiceSettings disabled={phase !== 'ready'} onPreview={() => {
             setVoicePreview('Hi, I’m Clio, your campus guide. Let’s explore Missouri S and T together.');
             setPhase('speaking');
