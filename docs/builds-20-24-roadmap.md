@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 2: added 15-second deadlines to pairing and tour start/end, and
+  45-second deadlines to transcription and server speech generation. No automatic
+  replay of these operations. A timed-out request may still have reached the server;
+  offline session reconciliation remains future work.
+
 - October 2: public catalog, stop and route responses are cached per API origin/path
   with timestamps and a 30-day maximum age. Network failures/timeouts can fall back
   to saved data with a visible warning. Live responses survive cache-write failure.

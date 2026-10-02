@@ -252,12 +252,17 @@ export async function restoreDeviceSession() {
 }
 
 export async function pairDevice(enrollmentCode: string) {
+  return withRequestDeadline(async signal => {
   const response = await fetch(`${apiBaseUrl}/auth/device-session`, {
+    signal,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ deviceId: await getDeviceId(), enrollmentCode }),
   });
-  await saveSession(await parseResponse<DeviceSession>(response));
+  const session = await parseResponse<DeviceSession>(response);
+  if (signal.aborted) throw new Error('Pairing request was cancelled');
+  await saveSession(session);
+  }, 15000);
 }
 
 export async function disconnectDevice() {
@@ -283,9 +288,10 @@ export async function askCampusQuestion(question: string, currentStopId?: string
 }
 
 export async function transcribeQuestion(uri: string) {
+  return withRequestDeadline(async signal => {
   const form = new FormData();
   if (Platform.OS === 'web') {
-    const blob = await fetch(uri).then(response => response.blob());
+    const blob = await fetch(uri, { signal }).then(response => response.blob());
     form.append('audio', blob, 'question.webm');
   } else {
     form.append('audio', {
@@ -296,14 +302,18 @@ export async function transcribeQuestion(uri: string) {
   }
 
   const response = await authorizedFetch('/voice/transcribe', {
+    signal,
     method: 'POST',
     body: form,
   });
   return parseResponse<{ text: string }>(response);
+  });
 }
 
 export async function createSpeechSource(text: string) {
+  return withRequestDeadline(async signal => {
   const response = await authorizedFetch('/voice/speech', {
+    signal,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text }),
@@ -314,6 +324,7 @@ export async function createSpeechSource(text: string) {
     headers: { Authorization: `Bearer ${await getAccessToken()}` },
     name: 'Clio campus guide',
   };
+  });
 }
 
 export async function getCampusTours() {
@@ -362,19 +373,25 @@ export async function getWalkingRoute(tourId: string) {
 }
 
 export async function startTour(tourId: string) {
+  return withRequestDeadline(async signal => {
   const response = await fetch(`${apiBaseUrl}/tour/start`, {
+    signal,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ campusId: 'missouri-s-and-t', tourId }),
   });
   return parseResponse<TourSession>(response);
+  }, 15000);
 }
 
 export async function endTour(sessionId: string) {
+  return withRequestDeadline(async signal => {
   const response = await fetch(`${apiBaseUrl}/tour/end`, {
+    signal,
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sessionId }),
   });
   return parseResponse<{ sessionId: string; status: 'ended' }>(response);
+  }, 15000);
 }
