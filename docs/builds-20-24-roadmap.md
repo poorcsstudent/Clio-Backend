@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 2: added user-initiated diagnostic sharing with an explicit field
+  allowlist: connection state, phase, and most recent request outcome/duration.
+  Excludes credentials, raw logs, questions/answers, photos, location, and device
+  names. Nothing is uploaded automatically. App typecheck and two allowlist tests
+  pass; native share-sheet testing remains pending.
+
 - October 1: added an expandable first-use guide with live pairing, glasses, and
   wake-mode status. Covers permission prompts, voice preview, camera privacy,
   tour starting point, internet requirements, and unverified route warnings.

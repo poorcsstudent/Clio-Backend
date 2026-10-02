@@ -17,6 +17,7 @@ import {
   Platform,
   Pressable,
   ScrollView,
+  Share,
   StyleSheet,
   Text,
   TextInput,
@@ -27,6 +28,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabInset } from '@/constants/theme';
 import VoiceSettings from '@/components/voice-settings';
 import SetupGuide from '@/components/setup-guide';
+import { diagnosticSummary, type DiagnosticSnapshot } from '@/services/diagnosticSummary';
 import { optionalPositionWithin, reliableVisionCoordinates } from '@/services/visionLocation';
 import {
   ApiError,
@@ -96,6 +98,7 @@ export default function HomeScreen() {
   const [transcript, setTranscript] = useState('');
   const [answer, setAnswer] = useState('');
   const [voicePreview, setVoicePreview] = useState('');
+  const [lastRequest, setLastRequest] = useState<DiagnosticSnapshot['lastRequest']>(null);
   const [visionRejected, setVisionRejected] = useState(false);
   const requestInFlight = useRef(false);
   const submitQuestionRef = useRef<(value: string) => Promise<void>>(async () => {});
@@ -421,6 +424,7 @@ export default function HomeScreen() {
     requestInFlight.current = true;
     await stopWakePhraseListening().catch(() => undefined);
     addVoiceDiagnostic(`Sending question to Clio: "${cleaned}"`);
+    const requestStarted = Date.now();
     setPhase('thinking');
     setQuestion(cleaned);
     setTranscript(cleaned);
@@ -444,6 +448,7 @@ export default function HomeScreen() {
       if (error instanceof ApiError && error.status === 401) setPaired(false);
       setStatus(error instanceof Error ? error.message : 'Clio could not answer');
     } finally {
+      setLastRequest({ kind: 'question', succeeded: answered, durationMs: Date.now() - requestStarted });
       requestInFlight.current = false;
       if (!answered) setPhase('ready');
     }
@@ -467,6 +472,7 @@ export default function HomeScreen() {
     addVoiceDiagnostic('Visual command detected; stopping the microphone route before camera capture');
 
     let photoUri = '';
+    const cameraStarted = Date.now();
     let answered = false;
     try {
       if (!metaState.devices.some(device => device.linkState === 'connected')) {
@@ -537,6 +543,7 @@ export default function HomeScreen() {
       if (photoUri) {
         await FileSystem.deleteAsync(photoUri, { idempotent: true }).catch(() => undefined);
       }
+      setLastRequest({ kind: 'camera', succeeded: answered, durationMs: Date.now() - cameraStarted });
       requestInFlight.current = false;
       if (!answered) setPhase('ready');
     }
@@ -807,6 +814,20 @@ export default function HomeScreen() {
               ) : (
                 <Text style={styles.debugEmpty}>Enable Hey Clio to begin collecting checkpoints.</Text>
               )}
+              <Pressable accessibilityRole="button" style={styles.answerSpeechButton}
+                onPress={async () => {
+                  try {
+                    await Share.share({ title: 'Clio diagnostic summary', message: diagnosticSummary({
+                      platform: Platform.OS, phase, paired, glassesConnected: Boolean(connectedMetaDevice),
+                      wakeEnabled, nativeSpeechAvailable: wakeState.moduleLoaded, lastRequest,
+                    }) });
+                  } catch {
+                    setStatus('Could not open sharing. Try again.');
+                  }
+                }}>
+                <Text style={styles.answerSpeechButtonText}>Share private-safe summary</Text>
+              </Pressable>
+              <Text style={styles.debugHelp}>Shares connection states and the latest request outcome/duration only. Raw logs, questions, photos, location, and credentials are excluded. Review the recipient before sending.</Text>
             </View>
           ) : null}
 
