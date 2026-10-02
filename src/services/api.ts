@@ -3,6 +3,7 @@ import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 import { withRequestDeadline } from './requestDeadline';
 import { singleFlight } from './singleFlight';
+import { cachedPublicData } from './publicCache';
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
   .replace(/\/$/, '');
@@ -316,8 +317,14 @@ export async function createSpeechSource(text: string) {
 }
 
 export async function getCampusTours() {
-  const response = await fetch(`${apiBaseUrl}/campuses/missouri-s-and-t/tours`);
-  return parseResponse<CampusTourCatalog>(response);
+  return publicTourData<CampusTourCatalog>('/campuses/missouri-s-and-t/tours');
+}
+
+function publicTourData<T>(path: string) {
+  return cachedPublicData(`${apiBaseUrl}${path}`, () => withRequestDeadline(async signal => {
+    const response = await fetch(`${apiBaseUrl}${path}`, { signal });
+    return parseResponse<T>(response);
+  }, 10000));
 }
 
 export async function identifyCampusView(
@@ -347,17 +354,11 @@ export async function identifyCampusView(
 }
 
 export async function getTourStops(tourId: string) {
-  const response = await fetch(
-    `${apiBaseUrl}/campuses/missouri-s-and-t/stops?tourId=${encodeURIComponent(tourId)}`,
-  );
-  return parseResponse<TourStop[]>(response);
+  return publicTourData<TourStop[]>(`/campuses/missouri-s-and-t/stops?tourId=${encodeURIComponent(tourId)}`);
 }
 
 export async function getWalkingRoute(tourId: string) {
-  const response = await fetch(
-    `${apiBaseUrl}/navigation/walking-route/${encodeURIComponent(tourId)}?campusId=missouri-s-and-t`,
-  );
-  return parseResponse<CampusWalkingRoute>(response);
+  return publicTourData<CampusWalkingRoute>(`/navigation/walking-route/${encodeURIComponent(tourId)}?campusId=missouri-s-and-t`);
 }
 
 export async function startTour(tourId: string) {

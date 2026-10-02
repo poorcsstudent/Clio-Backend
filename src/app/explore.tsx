@@ -15,6 +15,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { CampusRouteMap, type MapCoordinate } from '@/components/campus-route-map';
 import { BottomTabInset } from '@/constants/theme';
+import { subscribeCacheNotice } from '@/services/publicCache';
 import {
   getCampusTours,
   endTour,
@@ -98,6 +99,8 @@ function tourSpeechStatusCopy(status: TourSpeechStatus) {
 }
 
 export default function CampusScreen() {
+  const [cacheNotice, setCacheNotice] = useState('');
+  useEffect(() => subscribeCacheNotice(setCacheNotice), []);
   const { width } = useWindowDimensions();
   const [catalog, setCatalog] = useState<CampusTourCatalog | null>(null);
   const [selectedTourId, setSelectedTourId] = useState('');
@@ -506,6 +509,7 @@ export default function CampusScreen() {
           connected to that degree.
         </Text>
 
+        {cacheNotice ? <Text accessibilityLiveRegion="polite" style={styles.tourNotice}>{cacheNotice}</Text> : null}
         {loadingCatalog ? (
           <ActivityIndicator color="#7EE2AE" size="large" style={styles.loader} />
         ) : null}

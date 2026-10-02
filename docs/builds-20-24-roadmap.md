@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 2: public catalog, stop and route responses are cached per API origin/path
+  with timestamps and a 30-day maximum age. Network failures/timeouts can fall back
+  to saved data with a visible warning. Live responses survive cache-write failure.
+  No auth or camera data is cached. Offline start/progress restoration and device
+  airplane-mode verification remain unfinished; this is browse-only fallback.
+
 - October 2: added user-initiated diagnostic sharing with an explicit field
   allowlist: connection state, phase, and most recent request outcome/duration.
   Excludes credentials, raw logs, questions/answers, photos, location, and device
