@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 3: pausing a tour now stops its pending narration and resets its speech
+  state. Removed the tour's unconditional wake-listener restart after narration;
+  Ask Clio retains ownership of the user's listening preference. Native pause/audio
+  and wake-toggle interaction tests remain pending on the phone.
+
 - October 3: completed a source-based Android readiness audit in
   `docs/android-readiness-audit.md`. Confirmed the local wearable module is Apple-only,
   and Android wake/camera/native answer speech/tour narration are not implemented.

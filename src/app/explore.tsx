@@ -166,7 +166,8 @@ export default function CampusScreen() {
       } else if (event.stage === 'finished') {
         tourNarrationPending.current = false;
         setTourSpeechStatus('finished');
-        void startWakePhraseListening('hey clio').catch(() => undefined);
+        // The Ask Clio screen owns the user's wake-listening preference.
+        // Finishing tour narration must not enable the microphone on its own.
       } else if (event.stage === 'cancelled') {
         setTourSpeechStatus('idle');
       }
@@ -328,16 +329,21 @@ export default function CampusScreen() {
   }
 
   function toggleTourPaused() {
-    setTourPaused(current => {
-      const nextPaused = !current;
-      setGpsStatus(nextPaused ? 'paused' : 'requesting');
-      if (!nextPaused) {
-        setDistanceToCurrentStop(null);
-        setDistanceToActivePath(null);
-        setGpsAccuracy(null);
-      }
-      return nextPaused;
-    });
+    const nextPaused = !tourPaused;
+    setTourPaused(nextPaused);
+    setGpsStatus(nextPaused ? 'paused' : 'requesting');
+    if (nextPaused && tourNarrationPending.current) {
+      tourNarrationPending.current = false;
+      setTourSpeechStatus('idle');
+      void stopNativeSpeech().catch(() => {
+        setError('The tour is paused, but audio could not be stopped. Check the phone audio controls.');
+      });
+    }
+    if (!nextPaused) {
+      setDistanceToCurrentStop(null);
+      setDistanceToActivePath(null);
+      setGpsAccuracy(null);
+    }
   }
 
   async function openWalkingDirections(stop: TourStop) {
