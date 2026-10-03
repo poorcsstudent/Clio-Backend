@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 3: save active tour/stop locally and restore paused after restart, scoped
+  to the API origin with seven-day checkpoint expiry. Saves are serialized and
+  ending a tour clears the checkpoint. No microphone or GPS starts on restoration.
+  Storage failures are shown to the user. Offline start/end reconciliation and
+  real-device restart testing remain pending.
+
 - October 3: pausing a tour now stops its pending narration and resets its speech
   state. Removed the tour's unconditional wake-listener restart after narration;
   Ask Clio retains ownership of the user's listening preference. Native pause/audio

@@ -16,8 +16,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { CampusRouteMap, type MapCoordinate } from '@/components/campus-route-map';
 import { BottomTabInset } from '@/constants/theme';
 import { subscribeCacheNotice } from '@/services/publicCache';
+import { loadTourProgress, saveTourProgress } from '@/services/tourProgress';
 import {
   getCampusTours,
+  apiBaseUrl,
   endTour,
   getTourStops,
   getWalkingRoute,
@@ -127,6 +129,34 @@ export default function CampusScreen() {
   const [error, setError] = useState('');
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
   const tourNarrationPending = useRef(false);
+  const [progressLoaded, setProgressLoaded] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void loadTourProgress(apiBaseUrl).then(saved => {
+      if (!active) return;
+      if (saved) {
+        setTourPaused(true);
+        setGpsStatus('paused');
+        setActiveTour(saved.session);
+        setActiveStopIndex(saved.stopIndex);
+        setSelectedTourId(saved.session.tour.id);
+        setRoutesByTourId(current => ({ ...current, [saved.session.tour.id]: saved.session.stops }));
+        if (saved.route) setWalkingRoutesByTourId(current => ({ ...current, [saved.session.tour.id]: saved.route! }));
+        setTourNotice(`Saved tour restored paused at stop ${saved.stopIndex + 1}. Check your surroundings before resuming. Saved information may be outdated.`);
+      }
+      setProgressLoaded(true);
+    });
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!progressLoaded) return;
+    void saveTourProgress(activeTour ? {
+      origin: apiBaseUrl, savedAt: Date.now(), session: activeTour,
+      stopIndex: activeStopIndex, route: walkingRoutesByTourId[activeTour.tour.id] ?? null,
+    } : null).catch(() => setTourNotice('Tour progress could not be saved on this device. Keep the app open to preserve this session.'));
+  }, [progressLoaded, activeTour, activeStopIndex, walkingRoutesByTourId]);
 
   async function speakTourGuidance(text: string) {
     if (Platform.OS !== 'ios' || !text.trim()) return;
@@ -237,6 +267,7 @@ export default function CampusScreen() {
   }
 
   async function beginTour(tour: CampusTour) {
+    if (!progressLoaded) return;
     setStartingTourId(tour.id);
     setError('');
     setTourNotice('');
