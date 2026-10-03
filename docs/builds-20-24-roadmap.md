@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 3: completed a source-based Android readiness audit in
+  `docs/android-readiness-audit.md`. Confirmed the local wearable module is Apple-only,
+  and Android wake/camera/native answer speech/tour narration are not implemented.
+  Shared API, caching and GPS paths exist but are not Android-device verified.
+
 - October 2: hardened public-cache failure handling. If browser cryptography is
   unavailable, live loading still works without caching. Added regression tests
   for full storage, unreadable/missing/corrupt cache, fallback dates, and preserving
