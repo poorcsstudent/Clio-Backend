@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 2: hardened public-cache failure handling. If browser cryptography is
+  unavailable, live loading still works without caching. Added regression tests
+  for full storage, unreadable/missing/corrupt cache, fallback dates, and preserving
+  the original network error. Device filesystem/airplane-mode checks remain pending.
+
 - October 2: added 15-second deadlines to pairing and tour start/end, and
   45-second deadlines to transcription and server speech generation. No automatic
   replay of these operations. A timed-out request may still have reached the server;
