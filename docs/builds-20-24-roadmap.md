@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 3: manual End tour immediately pauses tracking and stops tour narration,
+  then clears the local active tour/checkpoint even if backend confirmation fails.
+  An explicit notice distinguishes a local end from a confirmed backend response;
+  no silent retry or synchronization claim. Automatic completion reconciliation
+  and new offline tour starts remain separate work.
+
 - October 3: save active tour/stop locally and restore paused after restart, scoped
   to the API origin with seven-day checkpoint expiry. Saves are serialized and
   ending a tour clears the checkpoint. No microphone or GPS starts on restoration.

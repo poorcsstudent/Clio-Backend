@@ -313,6 +313,13 @@ export default function CampusScreen() {
     if (!activeTour || endingTour) return;
     setEndingTour(true);
     setError('');
+    setTourPaused(true);
+    setGpsStatus('paused');
+    if (!completed && tourNarrationPending.current) {
+      tourNarrationPending.current = false;
+      setTourSpeechStatus('idle');
+      await stopNativeSpeech().catch(() => false);
+    }
 
     try {
       await endTour(activeTour.sessionId);
@@ -321,6 +328,10 @@ export default function CampusScreen() {
           ? `${activeTour.tour.name} completed.`
           : `${activeTour.tour.name} ended at stop ${activeStopIndex + 1}.`,
       );
+    } catch {
+      setTourNotice('Tour ended on this phone. The backend could not confirm the end request; no automatic retry is queued.');
+    } finally {
+      // A network failure must not trap the user in a restored/offline tour.
       setActiveTour(null);
       setActiveStopIndex(0);
       setActiveWalkingStepIndex(0);
@@ -330,9 +341,6 @@ export default function CampusScreen() {
       setDistanceToActivePath(null);
       setGpsAccuracy(null);
       setUserCoordinate(null);
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Could not end this tour');
-    } finally {
       setEndingTour(false);
     }
   }
