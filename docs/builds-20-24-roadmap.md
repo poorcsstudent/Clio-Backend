@@ -64,6 +64,10 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 4: checkpoint recovery now validates nested route coordinates, legs,
+  steps and distance/duration fields. Invalid route geometry is discarded while
+  valid saved tour progress can still restore paused. Added malformed-route tests.
+
 - October 4: added screen-reader labels to pairing/question inputs and the
   icon-only Send button, with a question-entry hint and disabled/busy states.
   Wake toggle now exposes its disabled state. Device screen-reader and large-text

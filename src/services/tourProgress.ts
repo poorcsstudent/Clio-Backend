@@ -1,7 +1,7 @@
 import * as FileSystem from 'expo-file-system/legacy';
 import { Platform } from 'react-native';
 import type { CampusWalkingRoute, TourSession } from './api';
-import { validTourProgress } from './tourProgressValidation';
+import { validTourProgress, validSavedRoute } from './tourProgressValidation';
 
 const KEY = 'clio.tour-progress.v1';
 let writes: Promise<void> = Promise.resolve();
@@ -20,8 +20,7 @@ export async function loadTourProgress(origin: string): Promise<TourProgress | n
     const value = raw ? JSON.parse(raw) : null;
     if (!validTourProgress(value, origin)) return null;
     // Route geometry is optional; don't trust a malformed snapshot for navigation.
-    if (value.route && (!Array.isArray(value.route.path) || !Array.isArray(value.route.legs)
-      || value.route.tourId !== value.session.tour.id)) value.route = null;
+    if (!validSavedRoute(value.route, value.session.tour.id)) value.route = null;
     return value;
   } catch { return null; }
 }
