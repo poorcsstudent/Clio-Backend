@@ -28,6 +28,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BottomTabInset } from '@/constants/theme';
 import VoiceSettings from '@/components/voice-settings';
 import SetupGuide from '@/components/setup-guide';
+import AiStatus from '@/components/ai-status';
 import { diagnosticSummary, type DiagnosticSnapshot } from '@/services/diagnosticSummary';
 import { optionalPositionWithin, reliableVisionCoordinates } from '@/services/visionLocation';
 import {
@@ -828,6 +829,7 @@ export default function HomeScreen() {
                 <Text style={styles.answerSpeechButtonText}>Share private-safe summary</Text>
               </Pressable>
               <Text style={styles.debugHelp}>Shares connection states and the latest request outcome/duration only. Raw logs, questions, photos, location, and credentials are excluded. Review the recipient before sending.</Text>
+              {paired ? <AiStatus /> : null}
             </View>
           ) : null}
 

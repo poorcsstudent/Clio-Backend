@@ -64,6 +64,14 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 4: Voice Debug now offers a paired-user, manual AI observation check
+  with a 15-second deadline and duplicate-tap guard. Only known status text is
+  rendered; unsupported/failed checks have a deliberate retry message. The UI
+  states this is a server-wide historical snapshot, not a live provider probe,
+  and sends no question, photo or audio. Full checks pass: 28 app tests, 24 backend
+  tests, app typecheck and backend compilation. Native UI validation and deployment
+  remain pending; no Expo submission performed.
+
 - October 4: checkpoint recovery now validates nested route coordinates, legs,
   steps and distance/duration fields. Invalid route geometry is discarded while
   valid saved tour progress can still restore paused. Added malformed-route tests.

@@ -271,6 +271,13 @@ export async function disconnectDevice() {
   await deleteStoredValue(REFRESH_TOKEN_KEY);
 }
 
+export async function getAiStatus(): Promise<unknown> {
+  return withRequestDeadline(async signal => {
+    const response = await authorizedFetch('/ai-guide/status', { signal });
+    return parseResponse<unknown>(response);
+  }, 15000);
+}
+
 export async function askCampusQuestion(question: string, currentStopId?: string) {
   return withRequestDeadline(async signal => {
   const response = await authorizedFetch('/ai-guide/question', {
