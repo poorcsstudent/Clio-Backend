@@ -179,6 +179,13 @@ field verification, further accessibility review, and provider operational healt
 reporting remain open. Cached browsing and paused checkpoint recovery are implemented;
 new offline tour starts and backend end reconciliation are not.
 
+October 4: added authenticated `/ai-guide/status` observations distinguishing provider
+responses, retrieval-only answers, failed requests, and no requests observed. Observations
+expire after five minutes and describe only the current server process, not a live probe.
+Public health now explicitly distinguishes credential presence from operational health.
+No prompts or credentials are included. App integration and production verification remain
+pending; these changes are local and do not change Railway until deployed.
+
 1. Typecheck and targeted regression tests pass.
 2. Review changes for secrets, privacy, and unrelated work.
 3. Commit the scoped changes; record the commit and deployment status.

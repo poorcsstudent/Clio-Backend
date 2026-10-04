@@ -43,6 +43,7 @@ app.get("/", (_req, res) => {
     message: "ClioVision API is running",
     version: "0.4.0",
     aiConfigured: Boolean(providerKey(config.aiProvider)),
+    providerHealthNote: 'Configured means credentials are present, not that the provider is operational. Authenticated observations: /ai-guide/status.',
     aiProvider: config.aiProvider,
     voiceConfigured: Boolean(providerKey(config.voiceProvider)),
     voiceProvider: config.voiceProvider,

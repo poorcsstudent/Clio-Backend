@@ -4,8 +4,16 @@ import { z } from "zod";
 import { campuses } from "../data/campuses";
 import { requireDevice } from "../middleware/auth";
 import { answerCampusQuestion } from "../services/ai";
+import { aiHealth } from "../services/aiHealth";
+import { config, providerKey } from "../config";
 
 const router = Router();
+
+router.get('/status', requireDevice, (_req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  res.json({ configured: Boolean(providerKey(config.aiProvider)), provider: config.aiProvider,
+    observation: aiHealth.snapshot() });
+});
 
 router.post("/question", requireDevice, async (req, res, next) => {
   const parsed = z
@@ -28,8 +36,10 @@ router.post("/question", requireDevice, async (req, res, next) => {
 
   try {
     const result = await answerCampusQuestion(parsed.data);
+    aiHealth.record(result.provider === 'retrieval-only' ? 'retrieval-only' : 'provider-response');
     res.json({ ...parsed.data, ...result });
   } catch (error) {
+    aiHealth.record('request-failed');
     next(error);
   }
 });

@@ -18,6 +18,7 @@ test("device enrollment protects the AI route", async () => {
     .post("/ai-guide/question")
     .send({ campusId: "missouri-s-and-t", question: "Where is Havener?" });
   assert.equal(unauthenticated.status, 401);
+  assert.equal((await request(app).get("/ai-guide/status")).status, 401);
 
   const enrollment = await request(app).post("/auth/device-session").send({
     deviceId: "test-device-1234567890",
@@ -53,6 +54,14 @@ test("device enrollment protects the AI route", async () => {
   assert.equal(answer.body.provider, "retrieval-only");
   assert.match(answer.body.answer, /Havener/i);
   assert.equal(answer.body.sources[0].id, "stop:havener-center");
+  const health = await request(app)
+    .get("/ai-guide/status")
+    .set("Authorization", `Bearer ${enrollment.body.accessToken}`);
+  assert.equal(health.status, 200);
+  assert.equal(health.headers["cache-control"], "no-store");
+  assert.equal(health.body.observation.lastOutcome, "retrieval-only");
+  assert.equal(health.body.observation.recent, true);
+  assert.equal(JSON.stringify(health.body).includes("Where is Havener"), false);
 });
 
 test("invalid enrollment codes are rejected", async () => {
