@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 4: added screen-reader labels to pairing/question inputs and the
+  icon-only Send button, with a question-entry hint and disabled/busy states.
+  Wake toggle now exposes its disabled state. Device screen-reader and large-text
+  testing remain pending; no accessibility-compliance claim is made.
+
 - October 3: manual End tour immediately pauses tracking and stops tour narration,
   then clears the local active tour/checkpoint even if backend confirmation fails.
   An explicit notice distinguishes a local end from a confirmed backend response;

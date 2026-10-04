@@ -839,6 +839,7 @@ export default function HomeScreen() {
               </Text>
               <TextInput
                 style={styles.pairingInput}
+                accessibilityLabel="Private Clio pairing code"
                 value={pairingCode}
                 onChangeText={setPairingCode}
                 placeholder="Enter pairing code"
@@ -867,7 +868,7 @@ export default function HomeScreen() {
                 <View style={styles.voiceArea}>
                   <Pressable
                     accessibilityRole="switch"
-                    accessibilityState={{ checked: wakeEnabled }}
+                    accessibilityState={{ checked: wakeEnabled, disabled: busy || phase === 'recording' }}
                     accessibilityLabel={wakeEnabled ? 'Disable Hey Clio' : 'Enable Hey Clio'}
                     style={({ pressed }) => [
                       styles.voiceHalo,
@@ -939,6 +940,8 @@ export default function HomeScreen() {
               <View style={styles.askRow}>
                 <TextInput
                   style={styles.questionInput}
+                  accessibilityLabel="Campus question"
+                  accessibilityHint="Type a question and activate Send question."
                   value={question}
                   onChangeText={setQuestion}
                   placeholder="Or type a campus question…"
@@ -949,6 +952,9 @@ export default function HomeScreen() {
                 />
                 <Pressable
                   style={({ pressed }) => [styles.sendButton, pressed && styles.pressed]}
+                  accessibilityRole="button"
+                  accessibilityLabel="Send question"
+                  accessibilityState={{ disabled: busy || !question.trim(), busy }}
                   onPress={() => submitQuestion()}
                   disabled={busy || !question.trim()}>
                   <Text style={styles.sendButtonText}>↑</Text>
