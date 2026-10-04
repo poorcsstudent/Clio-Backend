@@ -157,6 +157,19 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Release checklist (repeat for each build)
 
+Local validation: install the root and backend lockfiles with `npm ci` and
+`npm --prefix backend ci`, then run `npm run check` from the repository root.
+This fail-fast command runs app typechecking, app-service tests, backend compilation,
+and backend tests. It does not compile Swift, build Android, submit EAS, or replace
+visual/accessibility/device testing.
+
+October 3 checkpoint: 25 app-service tests and 23 backend tests pass, with app
+typecheck and backend compilation passing. The work remains local, not deployed.
+The roadmap is not complete: native/device validation, Android implementation,
+field verification, further accessibility review, and provider operational health
+reporting remain open. Cached browsing and paused checkpoint recovery are implemented;
+new offline tour starts and backend end reconciliation are not.
+
 1. Typecheck and targeted regression tests pass.
 2. Review changes for secrets, privacy, and unrelated work.
 3. Commit the scoped changes; record the commit and deployment status.

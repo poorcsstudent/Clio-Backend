@@ -46,6 +46,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "typecheck": "tsc --noEmit",
+    "test:app": "node backend/node_modules/tsx/dist/cli.mjs --test src/services/*.test.ts",
+    "check": "npm run typecheck && npm run test:app && npm --prefix backend run build && npm --prefix backend test",
     "export:web": "expo export --platform web",
     "doctor": "npx expo-doctor@latest",
     "build:all": "npx eas-cli@latest build --platform all"
