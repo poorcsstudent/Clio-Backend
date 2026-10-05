@@ -7,6 +7,7 @@ import { cachedPublicData } from './publicCache';
 import { ApiError, parseResponse } from './apiResponse';
 import { validateDeviceSession, type DeviceSession } from './deviceSession';
 import { validateCampusAnswer } from './campusAnswer';
+import { validateTranscription } from './transcription';
 export { ApiError } from './apiResponse';
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
@@ -294,7 +295,7 @@ export async function transcribeQuestion(uri: string) {
     method: 'POST',
     body: form,
   });
-  return parseResponse<{ text: string }>(response);
+  return validateTranscription(await parseResponse<unknown>(response));
   });
 }
 

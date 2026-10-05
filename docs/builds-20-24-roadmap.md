@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 5: recorded-question transcription now rejects non-string, blank, too-short,
+  and over-limit results before submission to AI. Valid speech is trimmed, never silently
+  truncated; messages distinguish retrying a recording from shortening a question.
+  Added boundary/malformed-response tests. Device microphone testing remains pending.
+
 - October 5: question responses now require nonblank answer text, a known provider,
   and well-formed source records before reaching display or native speech. Invalid
   responses use the existing failed-request recovery path with an explicit retry
