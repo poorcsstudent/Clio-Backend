@@ -5,6 +5,7 @@ import { withRequestDeadline } from './requestDeadline';
 import { singleFlight } from './singleFlight';
 import { cachedPublicData } from './publicCache';
 import { ApiError, parseResponse } from './apiResponse';
+import { validateDeviceSession, type DeviceSession } from './deviceSession';
 export { ApiError } from './apiResponse';
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
@@ -16,12 +17,6 @@ const REFRESH_TOKEN_KEY = 'clio.refresh-token';
 let accessToken: string | null = null;
 let accessTokenExpiresAt = 0;
 let webRefreshToken: string | null = null;
-
-interface DeviceSession {
-  accessToken: string;
-  accessTokenExpiresInSeconds: number;
-  refreshToken: string;
-}
 
 export interface KnowledgeSource {
   id: string;
@@ -180,9 +175,10 @@ async function getDeviceId() {
 }
 
 async function saveSession(session: DeviceSession) {
+  session = validateDeviceSession(session);
+  await writeStoredValue(REFRESH_TOKEN_KEY, session.refreshToken);
   accessToken = session.accessToken;
   accessTokenExpiresAt = Date.now() + (session.accessTokenExpiresInSeconds - 30) * 1000;
-  await writeStoredValue(REFRESH_TOKEN_KEY, session.refreshToken);
 }
 
 const refreshSession = singleFlight(() => withRequestDeadline(async signal => {

@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 5: pairing and refresh responses now validate nonempty tokens and usable
+  finite expiry before replacing credentials. In-memory activation occurs only after
+  secure storage succeeds. Added malformed-session and field-allowlist regression
+  tests. This does not yet resolve disconnect-versus-refresh concurrency; native
+  secure-storage failure testing and release validation remain pending.
+
 - October 5: shared API response parsing now rejects malformed JSON and null/scalar
   success bodies instead of returning an empty object. HTTP failure status is preserved
   even for HTML or null error bodies, so authentication handling remains consistent.
