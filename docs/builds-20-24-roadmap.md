@@ -198,6 +198,10 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Release checklist (repeat for each build)
 
+Use `docs/builds-20-24-device-acceptance.md` to record repeatable voice, camera,
+tour/offline, onboarding and accessibility checks. All physical test rows start
+Not run; record the actual source commit, native build and backend deployment.
+
 Local validation: install the root and backend lockfiles with `npm ci` and
 `npm --prefix backend ci`, then run `npm run check` from the repository root.
 This fail-fast command runs app typechecking, app-service tests, backend compilation,
