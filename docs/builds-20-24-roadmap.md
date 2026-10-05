@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 5: shared API response parsing now rejects malformed JSON and null/scalar
+  success bodies instead of returning an empty object. HTTP failure status is preserved
+  even for HTML or null error bodies, so authentication handling remains consistent.
+  Added parser regression tests. This is envelope validation, not complete endpoint
+  schema validation; native/device verification and deployment remain pending.
+
 - October 4: Voice Debug now offers a paired-user, manual AI observation check
   with a 15-second deadline and duplicate-tap guard. Only known status text is
   rendered; unsupported/failed checks have a deliberate retry message. The UI

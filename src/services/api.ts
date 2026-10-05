@@ -4,6 +4,8 @@ import { Platform } from 'react-native';
 import { withRequestDeadline } from './requestDeadline';
 import { singleFlight } from './singleFlight';
 import { cachedPublicData } from './publicCache';
+import { ApiError, parseResponse } from './apiResponse';
+export { ApiError } from './apiResponse';
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
   .replace(/\/$/, '');
@@ -138,15 +140,6 @@ export interface CampusWalkingRoute {
   sourceUrls?: string[];
 }
 
-export class ApiError extends Error {
-  constructor(
-    message: string,
-    readonly status: number,
-  ) {
-    super(message);
-  }
-}
-
 async function readStoredValue(key: string) {
   if (Platform.OS === 'web') {
     if (key === REFRESH_TOKEN_KEY) return webRefreshToken;
@@ -176,15 +169,6 @@ async function deleteStoredValue(key: string) {
     return;
   }
   await SecureStore.deleteItemAsync(key);
-}
-
-async function parseResponse<T>(response: Response): Promise<T> {
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const message = typeof body.error === 'string' ? body.error : `Request failed (${response.status})`;
-    throw new ApiError(message, response.status);
-  }
-  return body as T;
 }
 
 async function getDeviceId() {
