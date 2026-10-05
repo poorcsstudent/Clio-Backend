@@ -64,6 +64,13 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 5: question responses now require nonblank answer text, a known provider,
+  and well-formed source records before reaching display or native speech. Invalid
+  responses use the existing failed-request recovery path with an explicit retry
+  message; no automatic question replay. Valid retrieval-only answers remain accepted.
+  Full local validation passes, including new malformed-answer tests. No deployment,
+  Expo submission, or physical-device validation performed.
+
 - October 5: pairing and refresh responses now validate nonempty tokens and usable
   finite expiry before replacing credentials. In-memory activation occurs only after
   secure storage succeeds. Added malformed-session and field-allowlist regression

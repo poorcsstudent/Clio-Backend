@@ -6,6 +6,7 @@ import { singleFlight } from './singleFlight';
 import { cachedPublicData } from './publicCache';
 import { ApiError, parseResponse } from './apiResponse';
 import { validateDeviceSession, type DeviceSession } from './deviceSession';
+import { validateCampusAnswer } from './campusAnswer';
 export { ApiError } from './apiResponse';
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
@@ -270,7 +271,7 @@ export async function askCampusQuestion(question: string, currentStopId?: string
       currentStopId,
     }),
   });
-  return parseResponse<CampusAnswer>(response);
+  return validateCampusAnswer(await parseResponse<unknown>(response));
   });
 }
 
