@@ -8,6 +8,7 @@ import { ApiError, parseResponse } from './apiResponse';
 import { validateDeviceSession, type DeviceSession } from './deviceSession';
 import { validateCampusAnswer } from './campusAnswer';
 import { validateTranscription } from './transcription';
+import { createSessionMutations } from './sessionMutations';
 export { ApiError } from './apiResponse';
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
@@ -19,6 +20,7 @@ const REFRESH_TOKEN_KEY = 'clio.refresh-token';
 let accessToken: string | null = null;
 let accessTokenExpiresAt = 0;
 let webRefreshToken: string | null = null;
+const sessionMutations = createSessionMutations();
 
 export interface KnowledgeSource {
   id: string;
@@ -176,14 +178,21 @@ async function getDeviceId() {
   return created;
 }
 
-async function saveSession(session: DeviceSession) {
+async function saveSession(session: DeviceSession, ticket: number) {
   session = validateDeviceSession(session);
-  await writeStoredValue(REFRESH_TOKEN_KEY, session.refreshToken);
-  accessToken = session.accessToken;
-  accessTokenExpiresAt = Date.now() + (session.accessTokenExpiresInSeconds - 30) * 1000;
+  await sessionMutations.enqueue(async () => {
+    sessionMutations.assertCurrent(ticket);
+    await writeStoredValue(REFRESH_TOKEN_KEY, session.refreshToken);
+    sessionMutations.assertCurrent(ticket);
+    accessToken = session.accessToken;
+    accessTokenExpiresAt = Date.now() + (session.accessTokenExpiresInSeconds - 30) * 1000;
+  });
 }
 
-const refreshSession = singleFlight(() => withRequestDeadline(async signal => {
+const createRefreshAttempt = (ticket: number) => singleFlight(() => withRequestDeadline(async signal => {
+  sessionMutations.assertCurrent(ticket);
+  await sessionMutations.enqueue(async () => undefined);
+  sessionMutations.assertCurrent(ticket);
   const refreshToken = await readStoredValue(REFRESH_TOKEN_KEY);
   if (!refreshToken) throw new ApiError('This device is not paired', 401);
 
@@ -194,9 +203,20 @@ const refreshSession = singleFlight(() => withRequestDeadline(async signal => {
   });
   const session = await parseResponse<DeviceSession>(response);
   if (signal.aborted) throw new Error('Session refresh was cancelled');
-  await saveSession(session);
+  await saveSession(session, ticket);
   return session.accessToken;
 }, 15000));
+
+let refreshGeneration = -1;
+let refreshAttempt: (() => Promise<string>) | null = null;
+function refreshSession() {
+  const ticket = sessionMutations.current();
+  if (ticket !== refreshGeneration || !refreshAttempt) {
+    refreshGeneration = ticket;
+    refreshAttempt = createRefreshAttempt(ticket);
+  }
+  return refreshAttempt();
+}
 
 async function getAccessToken() {
   if (accessToken && Date.now() < accessTokenExpiresAt) return accessToken;
@@ -204,11 +224,14 @@ async function getAccessToken() {
 }
 
 async function authorizedFetch(path: string, init: RequestInit = {}, retry = true) {
+  const ticket = sessionMutations.current();
   const token = await getAccessToken();
+  sessionMutations.assertCurrent(ticket);
   const headers = new Headers(init.headers);
   headers.set('Authorization', `Bearer ${token}`);
 
   const response = await fetch(`${apiBaseUrl}${path}`, { ...init, headers });
+  sessionMutations.assertCurrent(ticket);
   if (response.status === 401 && retry) {
     accessToken = null;
     accessTokenExpiresAt = 0;
@@ -219,10 +242,12 @@ async function authorizedFetch(path: string, init: RequestInit = {}, retry = tru
 }
 
 export async function restoreDeviceSession() {
+  const ticket = sessionMutations.current();
   try {
     await refreshSession();
     return true;
   } catch (error) {
+    sessionMutations.assertCurrent(ticket);
     // Only an explicit authentication rejection invalidates pairing. A network
     // outage or provider failure must not delete a still-valid refresh token.
     if (error instanceof ApiError && error.status === 401) {
@@ -234,6 +259,7 @@ export async function restoreDeviceSession() {
 }
 
 export async function pairDevice(enrollmentCode: string) {
+  const ticket = sessionMutations.invalidate();
   return withRequestDeadline(async signal => {
   const response = await fetch(`${apiBaseUrl}/auth/device-session`, {
     signal,
@@ -243,14 +269,15 @@ export async function pairDevice(enrollmentCode: string) {
   });
   const session = await parseResponse<DeviceSession>(response);
   if (signal.aborted) throw new Error('Pairing request was cancelled');
-  await saveSession(session);
+  await saveSession(session, ticket);
   }, 15000);
 }
 
 export async function disconnectDevice() {
+  sessionMutations.invalidate();
   accessToken = null;
   accessTokenExpiresAt = 0;
-  await deleteStoredValue(REFRESH_TOKEN_KEY);
+  await sessionMutations.enqueue(() => deleteStoredValue(REFRESH_TOKEN_KEY));
 }
 
 export async function getAiStatus(): Promise<unknown> {

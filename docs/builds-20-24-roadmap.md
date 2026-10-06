@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 6: session operations now carry a generation guard. Disconnect/new pairing
+  invalidates older refresh results; persistent writes/deletes are serialized so a
+  removal follows an already-started write. Refresh sharing is scoped to a generation,
+  and stale unauthorized responses cannot clear a newer pairing. Added race/order
+  tests for the coordinator. Native storage/lifecycle testing remains pending.
+
 - October 5: recorded-question transcription now rejects non-string, blank, too-short,
   and over-limit results before submission to AI. Valid speech is trimmed, never silently
   truncated; messages distinguish retrying a recording from shortening a question.
