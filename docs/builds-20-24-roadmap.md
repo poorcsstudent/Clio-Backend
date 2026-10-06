@@ -64,6 +64,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 6: authenticated requests now check cancellation before and after token
+  acquisition and after the HTTP response. Expired work does not dispatch after
+  waiting for credentials or initiate a 401 refresh/retry after cancellation.
+  Shared refresh already in flight is not cancelled for other callers. Added
+  cancellation-checkpoint regression tests; device network testing remains pending.
+
 - October 6: credential saves waiting in the serialized queue now check their
   request's abort signal before touching storage. Added cancellation/queue-recovery
   regression coverage. A native storage write already in progress cannot be aborted;

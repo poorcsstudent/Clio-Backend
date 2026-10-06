@@ -1,7 +1,7 @@
 import * as Crypto from 'expo-crypto';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
-import { withRequestDeadline } from './requestDeadline';
+import { assertRequestActive, withRequestDeadline } from './requestDeadline';
 import { singleFlight } from './singleFlight';
 import { cachedPublicData } from './publicCache';
 import { ApiError, parseResponse } from './apiResponse';
@@ -227,13 +227,16 @@ async function getAccessToken() {
 }
 
 async function authorizedFetch(path: string, init: RequestInit = {}, retry = true) {
+  assertRequestActive(init.signal);
   const ticket = sessionMutations.current();
   const token = await getAccessToken();
+  assertRequestActive(init.signal);
   sessionMutations.assertCurrent(ticket);
   const headers = new Headers(init.headers);
   headers.set('Authorization', `Bearer ${token}`);
 
   const response = await fetch(`${apiBaseUrl}${path}`, { ...init, headers });
+  assertRequestActive(init.signal);
   sessionMutations.assertCurrent(ticket);
   if (response.status === 401 && retry) {
     accessToken = null;

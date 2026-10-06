@@ -5,6 +5,10 @@ export class RequestTimeoutError extends Error {
   }
 }
 
+export function assertRequestActive(signal?: AbortSignal | null) {
+  if (signal?.aborted) throw new RequestTimeoutError();
+}
+
 /** Bounds the whole operation, including body consumption. Never retries. */
 export async function withRequestDeadline<T>(operation: (signal: AbortSignal) => Promise<T>, timeoutMs = 45000): Promise<T> {
   const controller = new AbortController();
