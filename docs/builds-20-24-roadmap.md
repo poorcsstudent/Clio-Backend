@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 6: blocked authenticated work/refresh while a new pairing is pending,
+  preventing refresh of the previous credentials from competing with enrollment.
+  Pairing failure releases the gate; an older completion cannot release a newer
+  pairing's gate. Added regression coverage. Native lifecycle testing remains pending.
+
 - October 6: session operations now carry a generation guard. Disconnect/new pairing
   invalidates older refresh results; persistent writes/deletes are serialized so a
   removal follows an already-started write. Refresh sharing is scoped to a generation,

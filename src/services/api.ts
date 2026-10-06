@@ -190,6 +190,7 @@ async function saveSession(session: DeviceSession, ticket: number) {
 }
 
 const createRefreshAttempt = (ticket: number) => singleFlight(() => withRequestDeadline(async signal => {
+  sessionMutations.assertAvailable();
   sessionMutations.assertCurrent(ticket);
   await sessionMutations.enqueue(async () => undefined);
   sessionMutations.assertCurrent(ticket);
@@ -210,6 +211,7 @@ const createRefreshAttempt = (ticket: number) => singleFlight(() => withRequestD
 let refreshGeneration = -1;
 let refreshAttempt: (() => Promise<string>) | null = null;
 function refreshSession() {
+  sessionMutations.assertAvailable();
   const ticket = sessionMutations.current();
   if (ticket !== refreshGeneration || !refreshAttempt) {
     refreshGeneration = ticket;
@@ -219,6 +221,7 @@ function refreshSession() {
 }
 
 async function getAccessToken() {
+  sessionMutations.assertAvailable();
   if (accessToken && Date.now() < accessTokenExpiresAt) return accessToken;
   return refreshSession();
 }
@@ -259,8 +262,9 @@ export async function restoreDeviceSession() {
 }
 
 export async function pairDevice(enrollmentCode: string) {
-  const ticket = sessionMutations.invalidate();
-  return withRequestDeadline(async signal => {
+  const ticket = sessionMutations.beginPairing();
+  try {
+  return await withRequestDeadline(async signal => {
   const response = await fetch(`${apiBaseUrl}/auth/device-session`, {
     signal,
     method: 'POST',
@@ -271,6 +275,9 @@ export async function pairDevice(enrollmentCode: string) {
   if (signal.aborted) throw new Error('Pairing request was cancelled');
   await saveSession(session, ticket);
   }, 15000);
+  } finally {
+    sessionMutations.finishPairing(ticket);
+  }
 }
 
 export async function disconnectDevice() {

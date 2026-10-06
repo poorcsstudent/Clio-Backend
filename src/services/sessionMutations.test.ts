@@ -2,6 +2,20 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createSessionMutations } from './sessionMutations';
 
+test('pairing blocks refresh and an older completion cannot unlock a newer pairing', () => {
+  const state = createSessionMutations();
+  const first = state.beginPairing();
+  assert.throws(() => state.assertAvailable(), /in progress/);
+  const second = state.beginPairing();
+  state.finishPairing(first);
+  assert.throws(() => state.assertAvailable(), /in progress/);
+  state.finishPairing(second);
+  state.assertAvailable();
+  state.beginPairing();
+  state.invalidate();
+  state.assertAvailable();
+});
+
 test('old refresh cannot commit after disconnect invalidates it', async () => {
   const state = createSessionMutations();
   const ticket = state.current();
