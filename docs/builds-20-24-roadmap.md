@@ -64,6 +64,9 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+The dated entries below are historical checkpoints, not a current list of missing
+features. Use the current status table in the release checklist for release decisions.
+
 - October 6: authenticated requests now check cancellation before and after token
   acquisition and after the HTTP response. Expired work does not dispatch after
   waiting for credentials or initiate a 401 refresh/retry after cancellation.
@@ -230,19 +233,30 @@ This fail-fast command runs app typechecking, app-service tests, backend compila
 and backend tests. It does not compile Swift, build Android, submit EAS, or replace
 visual/accessibility/device testing.
 
-October 3 checkpoint: 25 app-service tests and 23 backend tests pass, with app
-typecheck and backend compilation passing. The work remains local, not deployed.
-The roadmap is not complete: native/device validation, Android implementation,
-field verification, further accessibility review, and provider operational health
-reporting remain open. Cached browsing and paused checkpoint recovery are implemented;
-new offline tour starts and backend end reconciliation are not.
+Current source checkpoint: October 6, commit `9e78642`. The latest full validation
+passed 42 app-service tests, 24 backend tests, app typecheck and backend compilation.
+These roadmap changes remain local, not deployed or submitted to Expo.
 
-October 4: added authenticated `/ai-guide/status` observations distinguishing provider
-responses, retrieval-only answers, failed requests, and no requests observed. Observations
-expire after five minutes and describe only the current server process, not a live probe.
-Public health now explicitly distinguishes credential presence from operational health.
-No prompts or credentials are included. App integration and production verification remain
-pending; these changes are local and do not change Railway until deployed.
+| Target | Implemented locally | Remaining acceptance / implementation |
+| --- | --- | --- |
+| 20 | Voice selection/speed/preview; request guards and response validation | Native compilation; repeated questions, interruptions, backgrounding and Bluetooth recovery on hardware |
+| 21 | Fresh-fix/dwell arrival checks; pause stops narration; manual controls | Physical route verification; lifecycle and GPS field testing |
+| 22 | GPS trust checks; possible-match language; local rejection and new-photo retry | Real-image viewpoint/unrelated-scene evaluation; pilot fact/source review |
+| 23 | Public cache; paused progress recovery; session race guards; deadlines; private-safe sharing; app/backend AI observations | Airplane-mode and secure-storage device tests; integration-level session race tests; recovery UI review |
+| 24 | Setup guide; input/control accessibility labels; Android source audit | Screen-reader/large-text/contrast review; new-user test; Android native implementation and device verification |
+
+AI observations are integrated in Voice Debug and backed by authenticated
+`/ai-guide/status`. They describe recent requests on one server process, not a live
+provider probe, and do not establish production availability. No prompts or credentials
+are included. Production verification remains pending.
+
+Cached browsing and paused checkpoint recovery do not imply fully offline AI or new
+offline tour starts. New offline starts and backend end reconciliation are not implemented.
+Do not expand that scope merely to label Build 23 complete.
+
+Next local validation priorities: integration-level authentication race tests, restored
+tour visibility when catalog loading fails, voice/tour lifecycle ownership, and a
+source-based accessibility pass. Hardware checks remain separate release gates.
 
 1. Typecheck and targeted regression tests pass.
 2. Review changes for secrets, privacy, and unrelated work.
