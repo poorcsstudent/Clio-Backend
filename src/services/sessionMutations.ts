@@ -14,8 +14,11 @@ export function createSessionMutations() {
     assertCurrent(ticket: number) {
       if (ticket !== generation) throw new Error('Pairing changed while the request was running. Please try again.');
     },
-    enqueue<T>(operation: () => Promise<T>): Promise<T> {
-      const result = tail.then(operation);
+    enqueue<T>(operation: () => Promise<T>, signal?: AbortSignal): Promise<T> {
+      const result = tail.then(() => {
+        if (signal?.aborted) throw new Error('Session operation was cancelled before saving.');
+        return operation();
+      });
       tail = result.then(() => undefined, () => undefined);
       return result;
     },

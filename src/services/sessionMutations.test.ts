@@ -2,6 +2,23 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { createSessionMutations } from './sessionMutations';
 
+test('cancelled queued save never touches storage and does not poison the queue', async () => {
+  const state = createSessionMutations();
+  const controller = new AbortController();
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  const first = state.enqueue(() => gate);
+  let writes = 0;
+  const save = state.enqueue(async () => { writes++; }, controller.signal);
+  controller.abort();
+  release();
+  await first;
+  await assert.rejects(save, /cancelled before saving/);
+  assert.equal(writes, 0);
+  await state.enqueue(async () => { writes++; });
+  assert.equal(writes, 1);
+});
+
 test('pairing blocks refresh and an older completion cannot unlock a newer pairing', () => {
   const state = createSessionMutations();
   const first = state.beginPairing();

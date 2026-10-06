@@ -178,7 +178,7 @@ async function getDeviceId() {
   return created;
 }
 
-async function saveSession(session: DeviceSession, ticket: number) {
+async function saveSession(session: DeviceSession, ticket: number, signal: AbortSignal) {
   session = validateDeviceSession(session);
   await sessionMutations.enqueue(async () => {
     sessionMutations.assertCurrent(ticket);
@@ -186,7 +186,7 @@ async function saveSession(session: DeviceSession, ticket: number) {
     sessionMutations.assertCurrent(ticket);
     accessToken = session.accessToken;
     accessTokenExpiresAt = Date.now() + (session.accessTokenExpiresInSeconds - 30) * 1000;
-  });
+  }, signal);
 }
 
 const createRefreshAttempt = (ticket: number) => singleFlight(() => withRequestDeadline(async signal => {
@@ -204,7 +204,7 @@ const createRefreshAttempt = (ticket: number) => singleFlight(() => withRequestD
   });
   const session = await parseResponse<DeviceSession>(response);
   if (signal.aborted) throw new Error('Session refresh was cancelled');
-  await saveSession(session, ticket);
+  await saveSession(session, ticket, signal);
   return session.accessToken;
 }, 15000));
 
@@ -273,7 +273,7 @@ export async function pairDevice(enrollmentCode: string) {
   });
   const session = await parseResponse<DeviceSession>(response);
   if (signal.aborted) throw new Error('Pairing request was cancelled');
-  await saveSession(session, ticket);
+  await saveSession(session, ticket, signal);
   }, 15000);
   } finally {
     sessionMutations.finishPairing(ticket);

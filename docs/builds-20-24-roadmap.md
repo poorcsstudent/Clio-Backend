@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 6: credential saves waiting in the serialized queue now check their
+  request's abort signal before touching storage. Added cancellation/queue-recovery
+  regression coverage. A native storage write already in progress cannot be aborted;
+  this change specifically prevents cancelled queued writes from starting.
+
 - October 6: blocked authenticated work/refresh while a new pairing is pending,
   preventing refresh of the previous credentials from competing with enrollment.
   Pairing failure releases the gate; an older completion cannot release a newer
