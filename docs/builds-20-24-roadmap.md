@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 7: saved active tours remain in the tour window when catalog loading
+  fails or a refreshed catalog omits the active tour. This preserves access to
+  existing resume/end/manual controls without fabricating catalog metadata.
+  Added list-recovery and deduplication tests. Device offline UI testing is pending.
+
 The dated entries below are historical checkpoints, not a current list of missing
 features. Use the current status table in the release checklist for release decisions.
 

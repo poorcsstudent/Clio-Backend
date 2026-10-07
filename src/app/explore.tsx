@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import * as Location from 'expo-location';
+import { visibleTours } from '@/services/visibleTours';
 import {
   ActivityIndicator,
   Linking,
@@ -561,20 +562,20 @@ export default function CampusScreen() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
         {tourNotice ? <Text style={styles.tourNotice}>{tourNotice}</Text> : null}
 
-        {catalog ? (
+        {catalog || activeTour ? (
           <View style={styles.tourWindow}>
             <View style={styles.tourWindowHeader}>
               <View style={styles.tourWindowHeaderCopy}>
-                <Text style={styles.tourWindowEyebrow}>AVAILABLE TOURS</Text>
+                <Text style={styles.tourWindowEyebrow}>{catalog ? 'AVAILABLE TOURS' : 'SAVED TOUR'}</Text>
                 <Text style={styles.tourWindowTitle}>Tap a program to reveal its stops</Text>
               </View>
               <View style={styles.tourCountPill}>
-                <Text style={styles.tourCountText}>{catalog.tours.length} tours</Text>
+                <Text style={styles.tourCountText}>{visibleTours(catalog?.tours, activeTour?.tour).length} tours</Text>
               </View>
             </View>
 
             <View style={styles.tourGrid}>
-              {catalog.tours.map(tour => {
+              {visibleTours(catalog?.tours, activeTour?.tour).map(tour => {
                 const expanded = tour.id === selectedTourId;
                 const route = routesByTourId[tour.id] ?? [];
                 const loadingRoute = loadingTourId === tour.id;
