@@ -421,7 +421,7 @@ export default function CampusScreen() {
     let arrivalHandled = false;
 
     function handleLocation(location: Location.LocationObject) {
-      if (cancelled || arrivalHandled) return;
+      if (cancelled || arrivalHandled || endingTourRef.current) return;
 
       const accuracy = location.coords.accuracy;
       const currentCoordinate = {
@@ -469,30 +469,9 @@ export default function CampusScreen() {
       }
 
       setTourNotice(`Arrived at ${stop.name}. Completing ${tourSession.tour.name}…`);
-      endingTourRef.current = true;
-      setEndingTour(true);
-      void endTour(tourSession.sessionId)
-        .then(() => {
-          if (cancelled) return;
-          setTourNotice(`${tourSession.tour.name} completed automatically at ${stop.name}.`);
-          setActiveTour(null);
-          setActiveStopIndex(0);
-          setActiveWalkingStepIndex(0);
-          setTourPaused(false);
-          setGpsStatus('idle');
-          setDistanceToCurrentStop(null);
-          setDistanceToActivePath(null);
-          setGpsAccuracy(null);
-        })
-        .catch(reason => {
-          if (cancelled) return;
-          setError(reason instanceof Error ? reason.message : 'Could not complete this tour');
-          setGpsStatus('error');
-        })
-        .finally(() => {
-          endingTourRef.current = false;
-          if (!cancelled) setEndingTour(false);
-        });
+      // Completion belongs to the session, not this GPS subscription's lifetime.
+      // Pausing tracking cleans up this effect; it must not discard end cleanup.
+      void closeActiveTour(true);
     }
 
     async function startTracking() {

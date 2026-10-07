@@ -42,6 +42,8 @@ screenshots of raw Voice Debug may not.
 | T5 | Load tours online, then use airplane mode | Cached data is labeled; pairing is not erased by network failure | Not run |
 | T6 | End an active tour while offline | Local session/checkpoint clears; backend confirmation is not falsely claimed | Not run |
 | T7 | Reconnect after T5 and ask a question | Deliberate retry succeeds without requiring new pairing for a mere outage | Not run |
+| T8 | At the final stop, trigger GPS arrival with the backend unavailable | Tracking stops; local tour/checkpoint clears after the request fails or times out; notice does not claim backend confirmation | Not run |
+| T9 | During a delayed manual or GPS completion, rapidly tap tour controls | No duplicate end, stop advance, or tracking resume; controls recover after cleanup | Not run |
 
 Field walk: record each leg's sidewalks, crossings, construction, entrance access,
 and actual stop location. Stop following the suggested route if it conflicts with

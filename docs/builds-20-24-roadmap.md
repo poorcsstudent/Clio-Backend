@@ -73,6 +73,14 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 7: GPS final-stop completion now shares manual completion's cleanup.
+  Tracking pauses immediately and local progress clears even if backend confirmation
+  fails, with an explicit unconfirmed-end notice and no automatic retry. Cleanup no
+  longer depends on the GPS effect remaining active. Late fixes cannot update the
+  screen during completion. Full checks pass (44 app-service and 24 backend tests);
+  these lifecycle interactions are source-reviewed, not device-tested. Added T8/T9
+  device acceptance cases. No deployment or Expo submission performed.
+
 - October 7: removed the End tour button's unconditional wake-listener restart.
   Ending a tour no longer independently enables listening. Added previous-stop
   and end-tour accessibility labels plus end-request disabled/busy state. Native
@@ -252,8 +260,9 @@ This fail-fast command runs app typechecking, app-service tests, backend compila
 and backend tests. It does not compile Swift, build Android, submit EAS, or replace
 visual/accessibility/device testing.
 
-Current source checkpoint: October 6, commit `9e78642`. The latest full validation
-passed 42 app-service tests, 24 backend tests, app typecheck and backend compilation.
+Current source checkpoint: October 7, including unified GPS/manual completion cleanup.
+The latest full validation passed 44 app-service tests, 24 backend tests, app typecheck
+and backend compilation.
 These roadmap changes remain local, not deployed or submitted to Expo.
 
 | Target | Implemented locally | Remaining acceptance / implementation |
