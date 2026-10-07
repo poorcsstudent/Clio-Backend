@@ -45,7 +45,6 @@ import {
 import {
   addNativeSpeechStateListener,
   startNativeAnswerSpeech,
-  startWakePhraseListening,
   stopNativeSpeech,
 } from '@/services/wake-phrase';
 
@@ -841,6 +840,7 @@ export default function CampusScreen() {
                               <Pressable
                                 accessibilityRole="button"
                                 accessibilityState={{ disabled: activeStopIndex === 0 }}
+                                accessibilityLabel="Go to previous tour stop"
                                 disabled={activeStopIndex === 0}
                                 style={({ pressed }) => [
                                   styles.secondaryControl,
@@ -890,6 +890,8 @@ export default function CampusScreen() {
                             <Pressable
                               accessibilityRole="button"
                               disabled={endingTour}
+                              accessibilityState={{ disabled: endingTour, busy: endingTour }}
+                              accessibilityLabel="End current tour"
                               style={({ pressed }) => [
                                 styles.endTourButton,
                                 pressed && styles.pressed,
@@ -899,7 +901,6 @@ export default function CampusScreen() {
                                 tourNarrationPending.current = false;
                                 await stopNativeSpeech().catch(() => false);
                                 await closeActiveTour(false);
-                                await startWakePhraseListening('hey clio').catch(() => undefined);
                               }}>
                               <Text style={styles.endTourButtonText}>
                                 {endingTour ? 'Ending tour…' : 'End tour'}

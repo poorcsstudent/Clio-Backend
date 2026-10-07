@@ -64,6 +64,11 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 7: removed the End tour button's unconditional wake-listener restart.
+  Ending a tour no longer independently enables listening. Added previous-stop
+  and end-tour accessibility labels plus end-request disabled/busy state. Native
+  wake preference and VoiceOver testing remain pending.
+
 - October 7: saved active tours remain in the tour window when catalog loading
   fails or a refreshed catalog omits the active tour. This preserves access to
   existing resume/end/manual controls without fabricating catalog metadata.
