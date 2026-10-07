@@ -118,6 +118,7 @@ export default function CampusScreen() {
   const [activeWalkingStepIndex, setActiveWalkingStepIndex] = useState(0);
   const [tourPaused, setTourPaused] = useState(false);
   const [endingTour, setEndingTour] = useState(false);
+  const endingTourRef = useRef(false);
   const [tourNotice, setTourNotice] = useState('');
   const [tourSpeechStatus, setTourSpeechStatus] =
     useState<TourSpeechStatus>('idle');
@@ -310,12 +311,13 @@ export default function CampusScreen() {
   }
 
   async function closeActiveTour(completed: boolean) {
-    if (!activeTour || endingTour) return;
+    if (!activeTour || endingTourRef.current) return;
+    endingTourRef.current = true;
     setEndingTour(true);
     setError('');
     setTourPaused(true);
     setGpsStatus('paused');
-    if (!completed && tourNarrationPending.current) {
+    if (!completed) {
       tourNarrationPending.current = false;
       setTourSpeechStatus('idle');
       await stopNativeSpeech().catch(() => false);
@@ -341,12 +343,13 @@ export default function CampusScreen() {
       setDistanceToActivePath(null);
       setGpsAccuracy(null);
       setUserCoordinate(null);
+      endingTourRef.current = false;
       setEndingTour(false);
     }
   }
 
   async function advanceTour() {
-    if (!activeTour) return;
+    if (!activeTour || endingTourRef.current) return;
     const currentStop = activeTour.stops[activeStopIndex];
     const finalStop = activeStopIndex >= activeTour.stops.length - 1;
     const nextStop = activeTour.stops[activeStopIndex + 1];
@@ -368,6 +371,7 @@ export default function CampusScreen() {
   }
 
   function toggleTourPaused() {
+    if (endingTourRef.current) return;
     const nextPaused = !tourPaused;
     setTourPaused(nextPaused);
     setGpsStatus(nextPaused ? 'paused' : 'requesting');
@@ -445,7 +449,7 @@ export default function CampusScreen() {
         setActiveWalkingStepIndex(0);
       }
 
-      if (!checkArrival(distance, accuracy, location.timestamp)) return;
+      if (endingTourRef.current || !checkArrival(distance, accuracy, location.timestamp)) return;
       arrivalHandled = true;
 
       const finalStop = activeStopIndex === tourSession.stops.length - 1;
@@ -465,6 +469,7 @@ export default function CampusScreen() {
       }
 
       setTourNotice(`Arrived at ${stop.name}. Completing ${tourSession.tour.name}…`);
+      endingTourRef.current = true;
       setEndingTour(true);
       void endTour(tourSession.sessionId)
         .then(() => {
@@ -485,6 +490,7 @@ export default function CampusScreen() {
           setGpsStatus('error');
         })
         .finally(() => {
+          endingTourRef.current = false;
           if (!cancelled) setEndingTour(false);
         });
     }
@@ -839,15 +845,16 @@ export default function CampusScreen() {
                             <View style={styles.tourControls}>
                               <Pressable
                                 accessibilityRole="button"
-                                accessibilityState={{ disabled: activeStopIndex === 0 }}
+                                accessibilityState={{ disabled: endingTour || activeStopIndex === 0 }}
                                 accessibilityLabel="Go to previous tour stop"
-                                disabled={activeStopIndex === 0}
+                                disabled={endingTour || activeStopIndex === 0}
                                 style={({ pressed }) => [
                                   styles.secondaryControl,
                                   pressed && styles.pressed,
-                                  activeStopIndex === 0 && styles.disabled,
+                                  (endingTour || activeStopIndex === 0) && styles.disabled,
                                 ]}
                                 onPress={() => {
+                                  if (endingTourRef.current) return;
                                   setActiveStopIndex(current => Math.max(0, current - 1));
                                   setActiveWalkingStepIndex(0);
                                   setDistanceToCurrentStop(null);
@@ -859,9 +866,12 @@ export default function CampusScreen() {
                               </Pressable>
                               <Pressable
                                 accessibilityRole="button"
+                                disabled={endingTour}
+                                accessibilityState={{ disabled: endingTour }}
                                 style={({ pressed }) => [
                                   styles.secondaryControl,
                                   tourPaused && styles.pauseControlActive,
+                                  endingTour && styles.disabled,
                                   pressed && styles.pressed,
                                 ]}
                                 onPress={toggleTourPaused}>
@@ -875,8 +885,11 @@ export default function CampusScreen() {
                               </Pressable>
                               <Pressable
                                 accessibilityRole="button"
+                                disabled={endingTour}
+                                accessibilityState={{ disabled: endingTour }}
                                 style={({ pressed }) => [
                                   styles.nextControl,
+                                  endingTour && styles.disabled,
                                   pressed && styles.pressed,
                                 ]}
                                 onPress={advanceTour}>
@@ -897,11 +910,7 @@ export default function CampusScreen() {
                                 pressed && styles.pressed,
                                 endingTour && styles.disabled,
                               ]}
-                              onPress={async () => {
-                                tourNarrationPending.current = false;
-                                await stopNativeSpeech().catch(() => false);
-                                await closeActiveTour(false);
-                              }}>
+                              onPress={() => closeActiveTour(false)}>
                               <Text style={styles.endTourButtonText}>
                                 {endingTour ? 'Ending tour…' : 'End tour'}
                               </Text>

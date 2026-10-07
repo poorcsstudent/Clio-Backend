@@ -18,6 +18,15 @@ speech fails; each question produces at most one request; listening resumes afte
 
 ## Build 21 — Walking pilot reliability
 
+October 7 local validation: tour ending now synchronously locks duplicate end
+requests and blocks Back, Pause/Resume, and Mark arrived/Finish until completion.
+The controls expose their disabled state to accessibility tools. Manual End locks
+before awaiting speech shutdown. GPS completion shares the same lock. Full
+`npm run check` passed (44 app-service tests, 24 backend tests, both TypeScript
+checks). This screen interaction is source-reviewed, not UI- or device-tested:
+verify rapid taps during a delayed/failed end request on the phone before release.
+Changes remain local; no Expo submission or deployment was performed.
+
 - Strengthen existing GPS arrival detection with fresh, distinct readings and dwell time.
 - Preserve pause/resume and replay; provide an explicit manual skip/arrival action.
 - Show the next stop, distance, GPS quality, and off-route guidance without implying precision the sensor lacks.
