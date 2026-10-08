@@ -1,12 +1,32 @@
+const text = (value: any) => typeof value === 'string';
+const identifier = (value: any) => text(value) && value.trim().length > 0;
+const strings = (value: any) => Array.isArray(value) && value.every(text);
+const optionalText = (value: any) => value === undefined || text(value);
+const optionalStrings = (value: any) => value === undefined || strings(value);
+
 export function validTourProgress(value: any, origin: string, now = Date.now()): boolean {
   return Boolean(value && value.origin === origin && Number.isFinite(value.savedAt)
     && value.savedAt <= now && now - value.savedAt <= 7 * 86400000
     && Array.isArray(value.session?.stops) && value.session.stops.length > 0
-    && value.session.stops.every((stop: any) => typeof stop?.id === 'string'
-      && typeof stop.name === 'string' && Number.isFinite(stop.latitude) && Math.abs(stop.latitude) <= 90
-      && Number.isFinite(stop.longitude) && Math.abs(stop.longitude) <= 180)
-    && typeof value.session?.tour?.id === 'string' && typeof value.session.tour.name === 'string'
-    && typeof value.session.sessionId === 'string'
+    && value.session.stops.every((stop: any) => identifier(stop?.id)
+      && identifier(stop.name) && Number.isFinite(stop.latitude) && Math.abs(stop.latitude) <= 90
+      && Number.isFinite(stop.longitude) && Math.abs(stop.longitude) <= 180
+      && identifier(stop.campusId) && strings(stop.tourTags) && text(stop.description)
+      && Number.isInteger(stop.order) && stop.order >= 0
+      && optionalText(stop.relevance) && optionalText(stop.audioScript)
+      && optionalText(stop.programCatalogUrl) && optionalStrings(stop.suggestedQuestions)
+      && (stop.distanceFromPreviousMeters === undefined
+        || (Number.isFinite(stop.distanceFromPreviousMeters) && stop.distanceFromPreviousMeters >= 0)))
+    && identifier(value.session?.tour?.id) && identifier(value.session.tour.name)
+    && text(value.session.tour.description)
+    && ['all-visitors', 'undergraduate-degree'].includes(value.session.tour.audience)
+    && ['curated', 'best-first-proximity'].includes(value.session.tour.routeStrategy)
+    && identifier(value.session.tour.rootStopId)
+    && optionalStrings(value.session.tour.degreeTypes) && optionalStrings(value.session.tour.emphasisAreas)
+    && optionalText(value.session.tour.catalogUrl)
+    && value.session.tour.stopCount === value.session.stops.length
+    && value.session.stopCount === value.session.stops.length
+    && identifier(value.session.campusId) && identifier(value.session.sessionId)
     && Number.isInteger(value.stopIndex) && value.stopIndex >= 0 && value.stopIndex < value.session.stops.length);
 }
 

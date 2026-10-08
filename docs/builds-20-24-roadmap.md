@@ -73,6 +73,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 7: saved-tour recovery now rejects malformed display/narration fields,
+  optional text lists, empty session identifiers, and inconsistent stop counts before
+  restoring the screen. Added two regression tests covering corrupt tour and stop
+  payloads. Full checks pass: 46 app-service tests, 24 backend tests, app typecheck
+  and backend compilation. Device restart/storage testing remains pending; local only.
+
 - October 7: GPS final-stop completion now shares manual completion's cleanup.
   Tracking pauses immediately and local progress clears even if backend confirmation
   fails, with an explicit unconfirmed-end notice and no automatic retry. Cleanup no
@@ -260,8 +266,8 @@ This fail-fast command runs app typechecking, app-service tests, backend compila
 and backend tests. It does not compile Swift, build Android, submit EAS, or replace
 visual/accessibility/device testing.
 
-Current source checkpoint: October 7, including unified GPS/manual completion cleanup.
-The latest full validation passed 44 app-service tests, 24 backend tests, app typecheck
+Current source checkpoint: October 7, including saved-tour payload validation.
+The latest full validation passed 46 app-service tests, 24 backend tests, app typecheck
 and backend compilation.
 These roadmap changes remain local, not deployed or submitted to Expo.
 

@@ -1,7 +1,33 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { validTourProgress, validSavedRoute } from './tourProgressValidation';
-const saved = { origin: 'api', savedAt: 1000, stopIndex: 0, session: { sessionId: 's', tour: { id: 'cs', name: 'CS' }, stops: [{ id: 'h', name: 'Havener', latitude: 37, longitude: -91 }] } };
+const saved = { origin: 'api', savedAt: 1000, stopIndex: 0, session: {
+  sessionId: 's', campusId: 'mst', stopCount: 1,
+  tour: { id: 'cs', name: 'CS', description: 'Tour', audience: 'undergraduate-degree',
+    rootStopId: 'h', routeStrategy: 'curated', stopCount: 1 },
+  stops: [{ id: 'h', name: 'Havener', latitude: 37, longitude: -91,
+    campusId: 'mst', tourTags: ['cs'], order: 0, description: 'Student center' }],
+} };
+
+test('checkpoint rejects malformed tour display fields and lists', () => {
+  for (const patch of [{ name: {} }, { description: null }, { degreeTypes: 'BS' },
+    { emphasisAreas: [{}] }, { catalogUrl: {} }, { audience: 'unknown' },
+    { routeStrategy: null }, { rootStopId: '' }, { stopCount: 2 }]) {
+    const session = { ...saved.session, tour: { ...saved.session.tour, ...patch } };
+    assert.equal(validTourProgress({ ...saved, session }, 'api', 2000), false);
+  }
+});
+
+test('checkpoint rejects malformed narration, stop lists, and session identity', () => {
+  for (const patch of [{ description: {} }, { audioScript: [] }, { suggestedQuestions: [null] },
+    { tourTags: null }, { order: NaN }, { distanceFromPreviousMeters: -1 }]) {
+    const session = { ...saved.session, stops: [{ ...saved.session.stops[0], ...patch }] };
+    assert.equal(validTourProgress({ ...saved, session }, 'api', 2000), false);
+  }
+  for (const patch of [{ sessionId: ' ' }, { campusId: null }, { stopCount: 3 }]) {
+    assert.equal(validTourProgress({ ...saved, session: { ...saved.session, ...patch } }, 'api', 2000), false);
+  }
+});
 test('saved routes reject malformed nested geometry and mismatched tours', () => {
   const point = { latitude: 37, longitude: -91 };
   const leg = { fromStopId: 'a', toStopId: 'b', path: [point], distanceMeters: 1, durationSeconds: 1, steps: [{ instruction: 'Walk', path: [point], distanceMeters: 1, durationSeconds: 1 }] };
