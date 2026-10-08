@@ -36,6 +36,8 @@ export function validSavedRoute(value: any, tourId: string): boolean {
   const path = (points: any) => Array.isArray(points) && points.length > 0 && points.every(coordinate);
   const metric = (number: any) => Number.isFinite(number) && number >= 0;
   return Boolean(value && value.tourId === tourId && value.travelMode === 'WALK'
+    && optionalText(value.warning) && optionalText(value.attribution)
+    && optionalText(value.lastReviewed) && optionalStrings(value.sourceUrls)
     && ['clio-campus-pilot', 'clio-coordinate-fallback'].includes(value.provider)
     && typeof value.fieldVerified === 'boolean' && path(value.path)
     && metric(value.distanceMeters) && metric(value.durationSeconds)
@@ -43,6 +45,6 @@ export function validSavedRoute(value: any, tourId: string): boolean {
       && typeof leg.fromStopId === 'string' && typeof leg.toStopId === 'string'
       && path(leg.path) && metric(leg.distanceMeters) && metric(leg.durationSeconds)
       && Array.isArray(leg.steps) && leg.steps.every((step: any) => step
-        && typeof step.instruction === 'string' && path(step.path)
+        && typeof step.instruction === 'string' && optionalText(step.maneuver) && path(step.path)
         && metric(step.distanceMeters) && metric(step.durationSeconds))));
 }

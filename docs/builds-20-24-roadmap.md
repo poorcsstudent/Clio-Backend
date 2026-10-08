@@ -73,6 +73,12 @@ controls are screen-reader accessible; Android-specific gaps are explicitly docu
 
 ## Implementation log
 
+- October 8: saved route validation now checks optional warning, attribution,
+  review/source metadata and maneuver text. Malformed route metadata is discarded
+  without discarding otherwise valid paused tour progress. Added regression coverage
+  for display metadata. Full checks pass: 47 app-service tests, 24 backend tests,
+  app typecheck and backend compilation. No device tests, deployment or Expo submission.
+
 - October 7: saved-tour recovery now rejects malformed display/narration fields,
   optional text lists, empty session identifiers, and inconsistent stop counts before
   restoring the screen. Added two regression tests covering corrupt tour and stop
@@ -266,8 +272,8 @@ This fail-fast command runs app typechecking, app-service tests, backend compila
 and backend tests. It does not compile Swift, build Android, submit EAS, or replace
 visual/accessibility/device testing.
 
-Current source checkpoint: October 7, including saved-tour payload validation.
-The latest full validation passed 46 app-service tests, 24 backend tests, app typecheck
+Current source checkpoint: October 8, including saved-route metadata validation.
+The latest full validation passed 47 app-service tests, 24 backend tests, app typecheck
 and backend compilation.
 These roadmap changes remain local, not deployed or submitted to Expo.
 

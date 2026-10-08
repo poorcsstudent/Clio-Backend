@@ -40,6 +40,18 @@ test('saved routes reject malformed nested geometry and mismatched tours', () =>
 test('tour progress accepts a current same-origin checkpoint', () => {
   assert.equal(validTourProgress(saved, 'api', 2000), true);
 });
+
+test('saved route display metadata rejects objects and malformed source lists', () => {
+  const route = { tourId: 'cs', travelMode: 'WALK', provider: 'clio-campus-pilot',
+    fieldVerified: false, path: [{ latitude: 37, longitude: -91 }],
+    distanceMeters: 0, durationSeconds: 0, legs: [] };
+  assert.equal(validSavedRoute({ ...route, warning: 'Check conditions', attribution: 'Campus map',
+    lastReviewed: '2026-10-08', sourceUrls: ['https://www.mst.edu/'] }, 'cs'), true);
+  for (const patch of [{ warning: {} }, { attribution: [] }, { lastReviewed: 123 },
+    { sourceUrls: 'https://www.mst.edu/' }, { sourceUrls: [null] }]) {
+    assert.equal(validSavedRoute({ ...route, ...patch }, 'cs'), false);
+  }
+});
 test('tour progress rejects stale, foreign, out-of-range and malformed checkpoints', () => {
   assert.equal(validTourProgress(saved, 'other', 2000), false);
   assert.equal(validTourProgress(saved, 'api', 999), false);
