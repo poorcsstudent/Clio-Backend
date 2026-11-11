@@ -165,7 +165,7 @@ const superseded=new Set(['south-tree-walk-west','south-tree-walk-east','cs-east
 for(let i=lines.length-1;i>=0;i--)if(superseded.has(lines[i][0]))lines.splice(i,1);
 // Source-image review confirms this crossing as the same sidewalk junction.
 // Insert the exact segment intersection into both polylines; no global snapping.
-const junctionPairs=[['southwest-diagonal','southwest-house-front'],['far-north-front-access','far-north-eastern-drive'],['southwest-gallery-west','south-gallery-south-entry']];
+const junctionPairs=[['southwest-diagonal','southwest-house-front'],['far-north-front-access','far-north-eastern-drive'],['southwest-gallery-west','south-gallery-south-entry'],['north-academic-garden-edge','north-sculpture-side-entry']];
 for(const [aName,bName] of junctionPairs){
  const a=lines.find(l=>l[0]===aName),b=lines.find(l=>l[0]===bName);
  for(let i=1;i<a[1].length;i++)for(let j=1;j<b[1].length;j++){
@@ -173,7 +173,13 @@ for(const [aName,bName] of junctionPairs){
   const den=r[0]*s[1]-r[1]*s[0];if(Math.abs(den)<1e-9)continue;
   const t=((q[0]-p[0])*s[1]-(q[1]-p[1])*s[0])/den;
   const u=((q[0]-p[0])*r[1]-(q[1]-p[1])*r[0])/den;
-  if(t>1e-6&&t<1-1e-6&&u>1e-6&&u<1-1e-6){const point=[p[0]+t*r[0],p[1]+t*r[1]];a[1].splice(i,0,point);b[1].splice(j,0,point);}
+  if(t>1e-6&&t<1-1e-6&&u>1e-6&&u<1-1e-6){
+   const point=[p[0]+t*r[0],p[1]+t*r[1]];
+   // Only on these explicitly reviewed junction pairs, trim subpixel terminal
+   // overshoot instead of creating a second node less than half a pixel away.
+   if(i===a[1].length-1&&Math.hypot(...r)*(1-t)*scale<.5)a[1][i]=point;else a[1].splice(i,0,point);
+   if(j===b[1].length-1&&Math.hypot(...s)*(1-u)*scale<.5)b[1][j]=point;else b[1].splice(j,0,point);
+  }
  }
 }
 // Reject unsupported roof-crossing approximations rather than treating them as
@@ -223,3 +229,6 @@ const visibleEdges=edges.filter(e=>e.status==='visible-path-draft');
 const usedNodes=new Set(visibleEdges.flatMap(e=>[e.from,e.to]));
 const visibleGeometry=visibleEdges.map(e=>`<polyline points="${e.points.map(p=>p.join(',')).join(' ')}"><title>${e.id}: ${e.label}</title></polyline>`).join('')+nodes.filter(n=>usedNodes.has(n.id)).map(n=>`<circle cx="${n.x}" cy="${n.y}" r="5"><title>${n.id}</title></circle>`).join('');
 fs.writeFileSync(path.join(__dirname,'visible-network.svg'),`<svg xmlns="http://www.w3.org/2000/svg" width="3114" height="1746" viewBox="0 0 3114 1746"><title>Visible path traces only — incomplete unapproved draft</title><style>${style}</style><rect width="3114" height="1746" fill="#f7faf9"/>${visibleGeometry}</svg>`);
+const edgeOnly=edges.map(e=>`<polyline points="${e.points.map(p=>p.join(',')).join(' ')}" class="${e.status==='needs-geometry-review'?'uncertain':''}"><title>${e.reviewKey}</title></polyline>`).join('');
+const nodeOnly=nodes.map(n=>`<circle cx="${n.x}" cy="${n.y}" r="5"><title>${n.id}</title></circle>`).join('');
+for(const [name,content]of [['edges-only',edgeOnly],['points-only',nodeOnly]])fs.writeFileSync(path.join(__dirname,name+'.svg'),`<svg xmlns="http://www.w3.org/2000/svg" width="3114" height="1746" viewBox="0 0 3114 1746"><title>Clio review draft: ${name}</title><style>${style}</style><rect width="3114" height="1746" fill="#f7faf9"/>${content}</svg>`);

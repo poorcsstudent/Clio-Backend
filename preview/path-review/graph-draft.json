@@ -735,726 +735,834 @@
     },
     {
       "id": "N122",
+      "x": 1961.91,
+      "y": 693.21,
+      "gps": null
+    },
+    {
+      "id": "N123",
       "x": 1987,
       "y": 699,
       "gps": null
     },
     {
-      "id": "N123",
+      "id": "N124",
       "x": 1796,
       "y": 772,
       "gps": null
     },
     {
-      "id": "N124",
+      "id": "N125",
       "x": 1839,
       "y": 787,
       "gps": null
     },
     {
-      "id": "N125",
+      "id": "N126",
       "x": 2029,
       "y": 816,
       "gps": null
     },
     {
-      "id": "N126",
+      "id": "N127",
+      "x": 2046,
+      "y": 820,
+      "gps": null
+    },
+    {
+      "id": "N128",
       "x": 2081,
       "y": 814,
       "gps": null
     },
     {
-      "id": "N127",
+      "id": "N129",
       "x": 2113,
       "y": 793,
       "gps": null
     },
     {
-      "id": "N128",
+      "id": "N130",
       "x": 2128,
       "y": 784,
       "gps": null
     },
     {
-      "id": "N129",
+      "id": "N131",
       "x": 2178,
       "y": 746,
       "gps": null
     },
     {
-      "id": "N130",
+      "id": "N132",
       "x": 2144,
       "y": 805,
       "gps": null
     },
     {
-      "id": "N131",
+      "id": "N133",
       "x": 2158,
       "y": 852,
       "gps": null
     },
     {
-      "id": "N132",
+      "id": "N134",
       "x": 2226,
       "y": 875,
       "gps": null
     },
     {
-      "id": "N133",
+      "id": "N135",
       "x": 2290,
       "y": 893,
       "gps": null
     },
     {
-      "id": "N134",
+      "id": "N136",
       "x": 2365,
       "y": 855,
       "gps": null
     },
     {
-      "id": "N135",
+      "id": "N137",
       "x": 2398,
       "y": 827,
       "gps": null
     },
     {
-      "id": "N136",
+      "id": "N138",
+      "x": 1923,
+      "y": 712,
+      "gps": null
+    },
+    {
+      "id": "N139",
+      "x": 1957,
+      "y": 705,
+      "gps": null
+    },
+    {
+      "id": "N140",
+      "x": 1995,
+      "y": 711,
+      "gps": null
+    },
+    {
+      "id": "N141",
+      "x": 2041,
+      "y": 726,
+      "gps": null
+    },
+    {
+      "id": "N142",
+      "x": 1863,
+      "y": 797,
+      "gps": null
+    },
+    {
+      "id": "N143",
+      "x": 2043,
+      "y": 805,
+      "gps": null
+    },
+    {
+      "id": "N144",
+      "x": 2151,
+      "y": 798,
+      "gps": null
+    },
+    {
+      "id": "N145",
+      "x": 2341,
+      "y": 842,
+      "gps": null
+    },
+    {
+      "id": "N146",
       "x": 255,
       "y": 1540,
       "gps": null
     },
     {
-      "id": "N137",
+      "id": "N147",
       "x": 1122,
       "y": 1217,
       "gps": null
     },
     {
-      "id": "N138",
+      "id": "N148",
       "x": 274,
       "y": 1513,
       "gps": null
     },
     {
-      "id": "N139",
+      "id": "N149",
       "x": 274,
       "y": 1491,
       "gps": null
     },
     {
-      "id": "N140",
+      "id": "N150",
       "x": 349,
       "y": 1495,
       "gps": null
     },
     {
-      "id": "N141",
+      "id": "N151",
       "x": 400,
       "y": 1494,
       "gps": null
     },
     {
-      "id": "N142",
+      "id": "N152",
       "x": 280,
       "y": 1435,
       "gps": null
     },
     {
-      "id": "N143",
+      "id": "N153",
       "x": 398,
       "y": 1448,
       "gps": null
     },
     {
-      "id": "N144",
+      "id": "N154",
       "x": 349,
       "y": 1475,
       "gps": null
     },
     {
-      "id": "N145",
+      "id": "N155",
       "x": 875,
       "y": 1203,
       "gps": null
     },
     {
-      "id": "N146",
+      "id": "N156",
       "x": 894,
       "y": 1189,
       "gps": null
     },
     {
-      "id": "N147",
+      "id": "N157",
       "x": 912,
       "y": 1173,
       "gps": null
     },
     {
-      "id": "N148",
+      "id": "N158",
       "x": 932,
       "y": 1194,
       "gps": null
     },
     {
-      "id": "N149",
+      "id": "N159",
       "x": 1238,
       "y": 1142,
       "gps": null
     },
     {
-      "id": "N150",
+      "id": "N160",
       "x": 1151,
       "y": 1129,
       "gps": null
     },
     {
-      "id": "N151",
+      "id": "N161",
       "x": 1151,
       "y": 1072,
       "gps": null
     },
     {
-      "id": "N152",
+      "id": "N162",
       "x": 1280,
       "y": 1120,
       "gps": null
     },
     {
-      "id": "N153",
+      "id": "N163",
       "x": 1295,
       "y": 1113,
       "gps": null
     },
     {
-      "id": "N154",
+      "id": "N164",
       "x": 681,
       "y": 996,
       "gps": null
     },
     {
-      "id": "N155",
+      "id": "N165",
       "x": 716,
       "y": 1010,
       "gps": null
     },
     {
-      "id": "N156",
+      "id": "N166",
       "x": 750,
       "y": 1022,
       "gps": null
     },
     {
-      "id": "N157",
+      "id": "N167",
       "x": 813,
       "y": 1046,
       "gps": null
     },
     {
-      "id": "N158",
+      "id": "N168",
       "x": 682,
       "y": 1037,
       "gps": null
     },
     {
-      "id": "N159",
+      "id": "N169",
       "x": 769,
       "y": 1004,
       "gps": null
     },
     {
-      "id": "N160",
+      "id": "N170",
       "x": 1401,
       "y": 1174,
       "gps": null
     },
     {
-      "id": "N161",
+      "id": "N171",
       "x": 1588,
       "y": 1239,
       "gps": null
     },
     {
-      "id": "N162",
+      "id": "N172",
       "x": 1667,
       "y": 1180,
       "gps": null
     },
     {
-      "id": "N163",
+      "id": "N173",
       "x": 1699,
       "y": 1155,
       "gps": null
     },
     {
-      "id": "N164",
+      "id": "N174",
       "x": 1726,
       "y": 1165,
       "gps": null
     },
     {
-      "id": "N165",
+      "id": "N175",
       "x": 1749,
       "y": 1175,
       "gps": null
     },
     {
-      "id": "N166",
+      "id": "N176",
       "x": 1735,
       "y": 1153,
       "gps": null
     },
     {
-      "id": "N167",
+      "id": "N177",
       "x": 1512,
       "y": 1298,
       "gps": null
     },
     {
-      "id": "N168",
+      "id": "N178",
       "x": 1558,
       "y": 1262,
       "gps": null
     },
     {
-      "id": "N169",
+      "id": "N179",
       "x": 1443,
       "y": 1301,
       "gps": null
     },
     {
-      "id": "N170",
+      "id": "N180",
       "x": 1686,
       "y": 1225,
       "gps": null
     },
     {
-      "id": "N171",
+      "id": "N181",
       "x": 1877,
       "y": 1211,
       "gps": null
     },
     {
-      "id": "N172",
+      "id": "N182",
       "x": 1925,
       "y": 1225,
       "gps": null
     },
     {
-      "id": "N173",
+      "id": "N183",
       "x": 1949,
       "y": 1232,
       "gps": null
     },
     {
-      "id": "N174",
+      "id": "N184",
       "x": 1973,
       "y": 1214,
       "gps": null
     },
     {
-      "id": "N175",
+      "id": "N185",
       "x": 1991,
       "y": 1199,
       "gps": null
     },
     {
-      "id": "N176",
+      "id": "N186",
       "x": 1936,
       "y": 1209,
       "gps": null
     },
     {
-      "id": "N177",
+      "id": "N187",
       "x": 2029,
       "y": 1231,
       "gps": null
     },
     {
-      "id": "N178",
+      "id": "N188",
       "x": 2183,
       "y": 1220,
       "gps": null
     },
     {
-      "id": "N179",
+      "id": "N189",
       "x": 2250,
       "y": 1162,
       "gps": null
     },
     {
-      "id": "N180",
+      "id": "N190",
       "x": 2279,
       "y": 1254,
       "gps": null
     },
     {
-      "id": "N181",
+      "id": "N191",
       "x": 2347,
       "y": 1271,
       "gps": null
     },
     {
-      "id": "N182",
+      "id": "N192",
       "x": 2363,
       "y": 1255,
       "gps": null
     },
     {
-      "id": "N183",
+      "id": "N193",
       "x": 2425,
       "y": 1206,
       "gps": null
     },
     {
-      "id": "N184",
+      "id": "N194",
       "x": 2344,
       "y": 1217,
       "gps": null
     },
     {
-      "id": "N185",
+      "id": "N195",
       "x": 2270,
       "y": 1214,
       "gps": null
     },
     {
-      "id": "N186",
+      "id": "N196",
       "x": 1512,
       "y": 1326,
       "gps": null
     },
     {
-      "id": "N187",
+      "id": "N197",
       "x": 1574,
       "y": 1270,
       "gps": null
     },
     {
-      "id": "N188",
+      "id": "N198",
       "x": 1731,
       "y": 1405,
       "gps": null
     },
     {
-      "id": "N189",
+      "id": "N199",
       "x": 1803,
       "y": 1343,
       "gps": null
     },
     {
-      "id": "N190",
+      "id": "N200",
       "x": 1767,
       "y": 1293,
       "gps": null
     },
     {
-      "id": "N191",
+      "id": "N201",
       "x": 1786,
       "y": 1269,
       "gps": null
     },
     {
-      "id": "N192",
+      "id": "N202",
       "x": 1862,
       "y": 1287,
       "gps": null
     },
     {
-      "id": "N193",
+      "id": "N203",
       "x": 1885,
       "y": 1260,
       "gps": null
     },
     {
-      "id": "N194",
+      "id": "N204",
       "x": 2279,
       "y": 1137,
       "gps": null
     },
     {
-      "id": "N195",
+      "id": "N205",
       "x": 2333,
       "y": 1159,
       "gps": null
     },
     {
-      "id": "N196",
+      "id": "N206",
       "x": 2327,
       "y": 1193,
       "gps": null
     },
     {
-      "id": "N197",
+      "id": "N207",
       "x": 2357,
       "y": 1188,
       "gps": null
     },
     {
-      "id": "N198",
+      "id": "N208",
       "x": 2391,
       "y": 1202,
       "gps": null
     },
     {
-      "id": "N199",
+      "id": "N209",
       "x": 2395,
       "y": 1188,
       "gps": null
     },
     {
-      "id": "N200",
+      "id": "N210",
       "x": 2235,
       "y": 1353,
       "gps": null
     },
     {
-      "id": "N201",
+      "id": "N211",
       "x": 2279,
       "y": 1313,
       "gps": null
     },
     {
-      "id": "N202",
+      "id": "N212",
       "x": 2262,
       "y": 1364,
       "gps": null
     },
     {
-      "id": "N203",
+      "id": "N213",
       "x": 2347,
       "y": 1397,
       "gps": null
     },
     {
-      "id": "N204",
+      "id": "N214",
       "x": 2401,
       "y": 1411,
       "gps": null
     },
     {
-      "id": "N205",
+      "id": "N215",
       "x": 2428,
       "y": 1382,
       "gps": null
     },
     {
-      "id": "N206",
+      "id": "N216",
       "x": 2271,
       "y": 1354,
       "gps": null
     },
     {
-      "id": "N207",
+      "id": "N217",
       "x": 2355,
       "y": 1384,
       "gps": null
     },
     {
-      "id": "N208",
+      "id": "N218",
       "x": 2134,
       "y": 1327,
       "gps": null
     },
     {
-      "id": "N209",
+      "id": "N219",
       "x": 2197,
       "y": 1348,
       "gps": null
     },
     {
-      "id": "N210",
+      "id": "N220",
       "x": 2225,
       "y": 1323,
       "gps": null
     },
     {
-      "id": "N211",
+      "id": "N221",
       "x": 2111,
       "y": 1314,
       "gps": null
     },
     {
-      "id": "N212",
+      "id": "N222",
       "x": 1300,
       "y": 581,
       "gps": null
     },
     {
-      "id": "N213",
+      "id": "N223",
       "x": 1515,
       "y": 296,
       "gps": null
     },
     {
-      "id": "N214",
+      "id": "N224",
+      "x": 1536,
+      "y": 302,
+      "gps": null
+    },
+    {
+      "id": "N225",
+      "x": 1583,
+      "y": 309,
+      "gps": null
+    },
+    {
+      "id": "N226",
       "x": 1672,
       "y": 332,
       "gps": null
     },
     {
-      "id": "N215",
+      "id": "N227",
+      "x": 1704,
+      "y": 339,
+      "gps": null
+    },
+    {
+      "id": "N228",
       "x": 1726,
       "y": 337,
       "gps": null
     },
     {
-      "id": "N216",
+      "id": "N229",
       "x": 1556,
       "y": 297,
       "gps": null
     },
     {
-      "id": "N217",
+      "id": "N230",
       "x": 1620,
       "y": 289,
       "gps": null
     },
     {
-      "id": "N218",
+      "id": "N231",
       "x": 1809,
       "y": 282,
       "gps": null
     },
     {
-      "id": "N219",
+      "id": "N232",
       "x": 1537,
       "y": 253,
       "gps": null
     },
     {
-      "id": "N220",
+      "id": "N233",
       "x": 1591,
       "y": 396,
       "gps": null
     },
     {
-      "id": "N221",
+      "id": "N234",
       "x": 1380,
       "y": 509,
       "gps": null
     },
     {
-      "id": "N222",
+      "id": "N235",
       "x": 1614,
       "y": 535,
       "gps": null
     },
     {
-      "id": "N223",
+      "id": "N236",
       "x": 1358,
       "y": 533,
       "gps": null
     },
     {
-      "id": "N224",
+      "id": "N237",
       "x": 1600,
       "y": 599,
       "gps": null
     },
     {
-      "id": "N225",
+      "id": "N238",
+      "x": 1373,
+      "y": 378,
+      "gps": null
+    },
+    {
+      "id": "N239",
+      "x": 1547,
+      "y": 437,
+      "gps": null
+    },
+    {
+      "id": "N240",
+      "x": 1535,
+      "y": 287,
+      "gps": null
+    },
+    {
+      "id": "N241",
+      "x": 1590,
+      "y": 300,
+      "gps": null
+    },
+    {
+      "id": "N242",
+      "x": 1710,
+      "y": 328,
+      "gps": null
+    },
+    {
+      "id": "N243",
       "x": 1074,
       "y": 1510,
       "gps": null
     },
     {
-      "id": "N226",
+      "id": "N244",
       "x": 1136,
       "y": 1593,
       "gps": null
     },
     {
-      "id": "N227",
+      "id": "N245",
       "x": 858,
       "y": 1664,
       "gps": null
     },
     {
-      "id": "N228",
+      "id": "N246",
       "x": 1086,
       "y": 1597,
       "gps": null
     },
     {
-      "id": "N229",
+      "id": "N247",
       "x": 1402,
       "y": 1616,
       "gps": null
     },
     {
-      "id": "N230",
+      "id": "N248",
       "x": 1404,
       "y": 1566,
       "gps": null
     },
     {
-      "id": "N231",
+      "id": "N249",
       "x": 1482,
       "y": 1649,
       "gps": null
     },
     {
-      "id": "N232",
+      "id": "N250",
       "x": 1853,
       "y": 1686,
       "gps": null
     },
     {
-      "id": "N233",
+      "id": "N251",
       "x": 1430,
       "y": 1519,
       "gps": null
     },
     {
-      "id": "N234",
+      "id": "N252",
       "x": 1574,
       "y": 1525,
       "gps": null
     },
     {
-      "id": "N235",
+      "id": "N253",
       "x": 1583,
       "y": 1563,
       "gps": null
     },
     {
-      "id": "N236",
+      "id": "N254",
       "x": 1767,
       "y": 1556,
       "gps": null
     },
     {
-      "id": "N237",
+      "id": "N255",
       "x": 1629,
       "y": 1508,
       "gps": null
     },
     {
-      "id": "N238",
+      "id": "N256",
       "x": 1441,
       "y": 1615,
       "gps": null
     },
     {
-      "id": "N239",
+      "id": "N257",
       "x": 2741,
       "y": 1601,
       "gps": null
     },
     {
-      "id": "N240",
+      "id": "N258",
       "x": 2836,
       "y": 1636,
       "gps": null
     },
     {
-      "id": "N241",
+      "id": "N259",
       "x": 2918,
       "y": 1547,
       "gps": null
     },
     {
-      "id": "N242",
+      "id": "N260",
       "x": 3008,
       "y": 1453,
       "gps": null
@@ -5322,8 +5430,8 @@
           693
         ],
         [
-          1987,
-          699
+          1961.91,
+          693.21
         ]
       ],
       "status": "needs-geometry-review",
@@ -5335,15 +5443,43 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 157.87
+      "lengthPixels": 132.12
     },
     {
       "id": "E111",
+      "trace": "north-academic-garden-edge",
+      "part": 2,
+      "label": "north-academic-garden-edge",
+      "from": "N122",
+      "to": "N123",
+      "points": [
+        [
+          1961.91,
+          693.21
+        ],
+        [
+          1987,
+          699
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-academic-garden-edge:2",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 25.75
+    },
+    {
+      "id": "E112",
       "trace": "north-academic-plaza-west",
       "part": 1,
       "label": "north-academic-plaza-west",
-      "from": "N123",
-      "to": "N124",
+      "from": "N124",
+      "to": "N125",
       "points": [
         [
           1796,
@@ -5374,17 +5510,41 @@
       "lengthPixels": 45.56
     },
     {
-      "id": "E112",
+      "id": "E113",
       "trace": "north-academic-plaza-east",
       "part": 1,
       "label": "north-academic-plaza-east",
-      "from": "N125",
-      "to": "N126",
+      "from": "N126",
+      "to": "N127",
       "points": [
         [
           2029,
           816
         ],
+        [
+          2046,
+          820
+        ]
+      ],
+      "status": "visible-path-draft",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-academic-plaza-east:1",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "visible-pedestrian-strip",
+      "lengthPixels": 17.46
+    },
+    {
+      "id": "E114",
+      "trace": "north-academic-plaza-east",
+      "part": 2,
+      "label": "north-academic-plaza-east",
+      "from": "N127",
+      "to": "N128",
+      "points": [
         [
           2046,
           820
@@ -5403,19 +5563,19 @@
       "accessibility": "unverified",
       "distanceMeters": null,
       "routingEligible": false,
-      "reviewKey": "north-academic-plaza-east:1",
+      "reviewKey": "north-academic-plaza-east:2",
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 53.3
+      "lengthPixels": 35.84
     },
     {
-      "id": "E113",
+      "id": "E115",
       "trace": "north-academic-plaza-east",
-      "part": 2,
+      "part": 3,
       "label": "north-academic-plaza-east",
-      "from": "N126",
-      "to": "N127",
+      "from": "N128",
+      "to": "N129",
       "points": [
         [
           2081,
@@ -5435,19 +5595,19 @@
       "accessibility": "unverified",
       "distanceMeters": null,
       "routingEligible": false,
-      "reviewKey": "north-academic-plaza-east:2",
+      "reviewKey": "north-academic-plaza-east:3",
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
       "lengthPixels": 38.28
     },
     {
-      "id": "E114",
+      "id": "E116",
       "trace": "north-academic-plaza-east",
-      "part": 3,
+      "part": 4,
       "label": "north-academic-plaza-east",
-      "from": "N127",
-      "to": "N128",
+      "from": "N129",
+      "to": "N130",
       "points": [
         [
           2113,
@@ -5463,19 +5623,19 @@
       "accessibility": "unverified",
       "distanceMeters": null,
       "routingEligible": false,
-      "reviewKey": "north-academic-plaza-east:3",
+      "reviewKey": "north-academic-plaza-east:4",
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
       "lengthPixels": 17.49
     },
     {
-      "id": "E115",
+      "id": "E117",
       "trace": "north-academic-stair-link",
       "part": 1,
       "label": "north-academic-stair-link",
-      "from": "N126",
-      "to": "N128",
+      "from": "N128",
+      "to": "N130",
       "points": [
         [
           2081,
@@ -5510,12 +5670,12 @@
       "lengthPixels": 56.3
     },
     {
-      "id": "E116",
+      "id": "E118",
       "trace": "north-academic-northeast-path",
       "part": 1,
       "label": "north-academic-northeast-path",
-      "from": "N128",
-      "to": "N129",
+      "from": "N130",
+      "to": "N131",
       "points": [
         [
           2128,
@@ -5546,12 +5706,12 @@
       "lengthPixels": 62.81
     },
     {
-      "id": "E117",
+      "id": "E119",
       "trace": "cs-west-approach",
       "part": 1,
       "label": "cs-west-approach",
-      "from": "N127",
-      "to": "N130",
+      "from": "N129",
+      "to": "N132",
       "points": [
         [
           2113,
@@ -5578,12 +5738,12 @@
       "lengthPixels": 33.35
     },
     {
-      "id": "E118",
+      "id": "E120",
       "trace": "cs-south-strip-west",
       "part": 1,
       "label": "cs-south-strip-west",
-      "from": "N131",
-      "to": "N132",
+      "from": "N133",
+      "to": "N134",
       "points": [
         [
           2158,
@@ -5614,12 +5774,12 @@
       "lengthPixels": 71.85
     },
     {
-      "id": "E119",
+      "id": "E121",
       "trace": "cs-south-strip-east",
       "part": 1,
       "label": "cs-south-strip-east",
-      "from": "N132",
-      "to": "N133",
+      "from": "N134",
+      "to": "N135",
       "points": [
         [
           2226,
@@ -5650,12 +5810,12 @@
       "lengthPixels": 66.65
     },
     {
-      "id": "E120",
+      "id": "E122",
       "trace": "cs-east-approach",
       "part": 1,
       "label": "cs-east-approach",
-      "from": "N134",
-      "to": "N135",
+      "from": "N136",
+      "to": "N137",
       "points": [
         [
           2365,
@@ -5682,12 +5842,260 @@
       "lengthPixels": 43.28
     },
     {
-      "id": "E121",
+      "id": "E123",
+      "trace": "north-sculpture-plaza",
+      "part": 1,
+      "label": "north-sculpture-plaza",
+      "from": "N138",
+      "to": "N139",
+      "points": [
+        [
+          1923,
+          712
+        ],
+        [
+          1940,
+          707
+        ],
+        [
+          1957,
+          705
+        ]
+      ],
+      "status": "visible-path-draft",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-sculpture-plaza:1",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "visible-pedestrian-strip",
+      "lengthPixels": 34.84
+    },
+    {
+      "id": "E124",
+      "trace": "north-sculpture-plaza",
+      "part": 2,
+      "label": "north-sculpture-plaza",
+      "from": "N139",
+      "to": "N140",
+      "points": [
+        [
+          1957,
+          705
+        ],
+        [
+          1977,
+          707
+        ],
+        [
+          1995,
+          711
+        ]
+      ],
+      "status": "visible-path-draft",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-sculpture-plaza:2",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "visible-pedestrian-strip",
+      "lengthPixels": 38.54
+    },
+    {
+      "id": "E125",
+      "trace": "north-sculpture-garden-edge",
+      "part": 1,
+      "label": "north-sculpture-garden-edge",
+      "from": "N140",
+      "to": "N141",
+      "points": [
+        [
+          1995,
+          711
+        ],
+        [
+          2009,
+          715
+        ],
+        [
+          2024,
+          720
+        ],
+        [
+          2041,
+          726
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-sculpture-garden-edge:1",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 48.4
+    },
+    {
+      "id": "E126",
+      "trace": "north-sculpture-side-entry",
+      "part": 1,
+      "label": "north-sculpture-side-entry",
+      "from": "N139",
+      "to": "N122",
+      "points": [
+        [
+          1957,
+          705
+        ],
+        [
+          1961.91,
+          693.21
+        ]
+      ],
+      "status": "visible-path-draft",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-sculpture-side-entry:1",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "visible-pedestrian-strip",
+      "lengthPixels": 12.77
+    },
+    {
+      "id": "E127",
+      "trace": "north-academic-front-door-approach",
+      "part": 1,
+      "label": "north-academic-front-door-approach",
+      "from": "N125",
+      "to": "N142",
+      "points": [
+        [
+          1839,
+          787
+        ],
+        [
+          1853,
+          792
+        ],
+        [
+          1863,
+          797
+        ]
+      ],
+      "status": "visible-path-draft",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-academic-front-door-approach:1",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "visible-pedestrian-strip",
+      "lengthPixels": 26.05
+    },
+    {
+      "id": "E128",
+      "trace": "north-academic-east-door-approach",
+      "part": 1,
+      "label": "north-academic-east-door-approach",
+      "from": "N127",
+      "to": "N143",
+      "points": [
+        [
+          2046,
+          820
+        ],
+        [
+          2043,
+          805
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-academic-east-door-approach:1",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 15.3
+    },
+    {
+      "id": "E129",
+      "trace": "cs-west-short-entry",
+      "part": 1,
+      "label": "cs-west-short-entry",
+      "from": "N132",
+      "to": "N144",
+      "points": [
+        [
+          2144,
+          805
+        ],
+        [
+          2151,
+          798
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "cs-west-short-entry:1",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 9.9
+    },
+    {
+      "id": "E130",
+      "trace": "cs-northeast-short-path",
+      "part": 1,
+      "label": "cs-northeast-short-path",
+      "from": "N136",
+      "to": "N145",
+      "points": [
+        [
+          2365,
+          855
+        ],
+        [
+          2353,
+          848
+        ],
+        [
+          2341,
+          842
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "cs-northeast-short-path:1",
+      "frame": "main",
+      "region": "academic-north",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 27.31
+    },
+    {
+      "id": "E131",
       "trace": "bishop-long-sidewalk",
       "part": 1,
       "label": "bishop-long-sidewalk",
-      "from": "N136",
-      "to": "N137",
+      "from": "N146",
+      "to": "N147",
       "points": [
         [
           255,
@@ -5758,12 +6166,12 @@
       "lengthPixels": 966.97
     },
     {
-      "id": "E122",
+      "id": "E132",
       "trace": "baseball-west-approach",
       "part": 1,
       "label": "baseball-west-approach",
-      "from": "N136",
-      "to": "N138",
+      "from": "N146",
+      "to": "N148",
       "points": [
         [
           255,
@@ -5790,12 +6198,12 @@
       "lengthPixels": 46
     },
     {
-      "id": "E123",
+      "id": "E133",
       "trace": "baseball-front-walk",
       "part": 1,
       "label": "baseball-front-walk",
-      "from": "N139",
-      "to": "N140",
+      "from": "N149",
+      "to": "N150",
       "points": [
         [
           274,
@@ -5822,12 +6230,12 @@
       "lengthPixels": 75.11
     },
     {
-      "id": "E124",
+      "id": "E134",
       "trace": "baseball-front-walk",
       "part": 2,
       "label": "baseball-front-walk",
-      "from": "N140",
-      "to": "N141",
+      "from": "N150",
+      "to": "N151",
       "points": [
         [
           349,
@@ -5850,12 +6258,12 @@
       "lengthPixels": 51.01
     },
     {
-      "id": "E125",
+      "id": "E135",
       "trace": "baseball-west-walk",
       "part": 1,
       "label": "baseball-west-walk",
-      "from": "N139",
-      "to": "N142",
+      "from": "N149",
+      "to": "N152",
       "points": [
         [
           274,
@@ -5882,12 +6290,12 @@
       "lengthPixels": 56.32
     },
     {
-      "id": "E126",
+      "id": "E136",
       "trace": "baseball-east-walk",
       "part": 1,
       "label": "baseball-east-walk",
-      "from": "N141",
-      "to": "N143",
+      "from": "N151",
+      "to": "N153",
       "points": [
         [
           400,
@@ -5914,12 +6322,12 @@
       "lengthPixels": 46.21
     },
     {
-      "id": "E127",
+      "id": "E137",
       "trace": "baseball-entry-walk",
       "part": 1,
       "label": "baseball-entry-walk",
-      "from": "N140",
-      "to": "N144",
+      "from": "N150",
+      "to": "N154",
       "points": [
         [
           349,
@@ -5942,12 +6350,12 @@
       "lengthPixels": 20
     },
     {
-      "id": "E128",
+      "id": "E138",
       "trace": "gym-southwest-walk",
       "part": 1,
       "label": "gym-southwest-walk",
-      "from": "N145",
-      "to": "N146",
+      "from": "N155",
+      "to": "N156",
       "points": [
         [
           875,
@@ -5970,12 +6378,12 @@
       "lengthPixels": 23.6
     },
     {
-      "id": "E129",
+      "id": "E139",
       "trace": "gym-southwest-walk",
       "part": 2,
       "label": "gym-southwest-walk",
-      "from": "N146",
-      "to": "N147",
+      "from": "N156",
+      "to": "N157",
       "points": [
         [
           894,
@@ -5998,12 +6406,12 @@
       "lengthPixels": 24.08
     },
     {
-      "id": "E130",
+      "id": "E140",
       "trace": "gym-south-entry",
       "part": 1,
       "label": "gym-south-entry",
-      "from": "N146",
-      "to": "N148",
+      "from": "N156",
+      "to": "N158",
       "points": [
         [
           894,
@@ -6030,12 +6438,12 @@
       "lengthPixels": 38.72
     },
     {
-      "id": "E131",
+      "id": "E141",
       "trace": "gym-south-frontage",
       "part": 1,
       "label": "gym-south-frontage",
-      "from": "N147",
-      "to": "N137",
+      "from": "N157",
+      "to": "N147",
       "points": [
         [
           912,
@@ -6078,12 +6486,12 @@
       "lengthPixels": 217.24
     },
     {
-      "id": "E132",
+      "id": "E142",
       "trace": "gym-east-frontage",
       "part": 1,
       "label": "gym-east-frontage",
-      "from": "N137",
-      "to": "N149",
+      "from": "N147",
+      "to": "N159",
       "points": [
         [
           1122,
@@ -6118,12 +6526,12 @@
       "lengthPixels": 138.72
     },
     {
-      "id": "E133",
+      "id": "E143",
       "trace": "gym-northeast-link",
       "part": 1,
       "label": "gym-northeast-link",
-      "from": "N149",
-      "to": "N150",
+      "from": "N159",
+      "to": "N160",
       "points": [
         [
           1238,
@@ -6154,12 +6562,12 @@
       "lengthPixels": 88.46
     },
     {
-      "id": "E134",
+      "id": "E144",
       "trace": "athletics-center-front",
       "part": 1,
       "label": "athletics-center-front",
-      "from": "N151",
-      "to": "N152",
+      "from": "N161",
+      "to": "N162",
       "points": [
         [
           1151,
@@ -6194,12 +6602,12 @@
       "lengthPixels": 137.75
     },
     {
-      "id": "E135",
+      "id": "E145",
       "trace": "athletics-center-east-end",
       "part": 1,
       "label": "athletics-center-east-end",
-      "from": "N152",
-      "to": "N153",
+      "from": "N162",
+      "to": "N163",
       "points": [
         [
           1280,
@@ -6222,12 +6630,12 @@
       "lengthPixels": 16.55
     },
     {
-      "id": "E136",
+      "id": "E146",
       "trace": "stadium-north-connection",
       "part": 1,
       "label": "stadium-north-connection",
-      "from": "N154",
-      "to": "N155",
+      "from": "N164",
+      "to": "N165",
       "points": [
         [
           681,
@@ -6250,12 +6658,12 @@
       "lengthPixels": 37.7
     },
     {
-      "id": "E137",
+      "id": "E147",
       "trace": "stadium-north-connection",
       "part": 2,
       "label": "stadium-north-connection",
-      "from": "N155",
-      "to": "N156",
+      "from": "N165",
+      "to": "N166",
       "points": [
         [
           716,
@@ -6278,12 +6686,12 @@
       "lengthPixels": 36.06
     },
     {
-      "id": "E138",
+      "id": "E148",
       "trace": "stadium-north-connection",
       "part": 3,
       "label": "stadium-north-connection",
-      "from": "N156",
-      "to": "N157",
+      "from": "N166",
+      "to": "N167",
       "points": [
         [
           750,
@@ -6310,12 +6718,12 @@
       "lengthPixels": 67.42
     },
     {
-      "id": "E139",
+      "id": "E149",
       "trace": "stadium-entry-spur",
       "part": 1,
       "label": "stadium-entry-spur",
-      "from": "N155",
-      "to": "N158",
+      "from": "N165",
+      "to": "N168",
       "points": [
         [
           716,
@@ -6342,12 +6750,12 @@
       "lengthPixels": 43.46
     },
     {
-      "id": "E140",
+      "id": "E150",
       "trace": "stadium-northeast-stair",
       "part": 1,
       "label": "stadium-northeast-stair",
-      "from": "N156",
-      "to": "N159",
+      "from": "N166",
+      "to": "N169",
       "points": [
         [
           750,
@@ -6374,12 +6782,12 @@
       "lengthPixels": 26.18
     },
     {
-      "id": "E141",
+      "id": "E151",
       "trace": "southwest-lawn-border",
       "part": 1,
       "label": "southwest-lawn-border",
-      "from": "N160",
-      "to": "N161",
+      "from": "N170",
+      "to": "N171",
       "points": [
         [
           1401,
@@ -6414,12 +6822,12 @@
       "lengthPixels": 198.29
     },
     {
-      "id": "E142",
+      "id": "E152",
       "trace": "southwest-lawn-east",
       "part": 1,
       "label": "southwest-lawn-east",
-      "from": "N161",
-      "to": "N162",
+      "from": "N171",
+      "to": "N172",
       "points": [
         [
           1588,
@@ -6450,12 +6858,12 @@
       "lengthPixels": 98.61
     },
     {
-      "id": "E143",
+      "id": "E153",
       "trace": "southwest-house-approach",
       "part": 1,
       "label": "southwest-house-approach",
-      "from": "N162",
-      "to": "N163",
+      "from": "N172",
+      "to": "N173",
       "points": [
         [
           1667,
@@ -6482,11 +6890,11 @@
       "lengthPixels": 40.61
     },
     {
-      "id": "E144",
+      "id": "E154",
       "trace": "southwest-house-front",
       "part": 1,
       "label": "southwest-house-front",
-      "from": "N163",
+      "from": "N173",
       "to": "N023",
       "points": [
         [
@@ -6510,12 +6918,12 @@
       "lengthPixels": 7.97
     },
     {
-      "id": "E145",
+      "id": "E155",
       "trace": "southwest-house-front",
       "part": 2,
       "label": "southwest-house-front",
       "from": "N023",
-      "to": "N164",
+      "to": "N174",
       "points": [
         [
           1706.47,
@@ -6538,12 +6946,12 @@
       "lengthPixels": 20.83
     },
     {
-      "id": "E146",
+      "id": "E156",
       "trace": "southwest-house-front",
       "part": 3,
       "label": "southwest-house-front",
-      "from": "N164",
-      "to": "N165",
+      "from": "N174",
+      "to": "N175",
       "points": [
         [
           1726,
@@ -6566,12 +6974,12 @@
       "lengthPixels": 25.08
     },
     {
-      "id": "E147",
+      "id": "E157",
       "trace": "southwest-house-entry",
       "part": 1,
       "label": "southwest-house-entry",
-      "from": "N164",
-      "to": "N166",
+      "from": "N174",
+      "to": "N176",
       "points": [
         [
           1726,
@@ -6594,12 +7002,12 @@
       "lengthPixels": 15
     },
     {
-      "id": "E148",
+      "id": "E158",
       "trace": "south-building-front",
       "part": 1,
       "label": "south-building-front",
-      "from": "N167",
-      "to": "N168",
+      "from": "N177",
+      "to": "N178",
       "points": [
         [
           1512,
@@ -6626,12 +7034,12 @@
       "lengthPixels": 58.53
     },
     {
-      "id": "E149",
+      "id": "E159",
       "trace": "south-building-west-side",
       "part": 1,
       "label": "south-building-west-side",
-      "from": "N167",
-      "to": "N169",
+      "from": "N177",
+      "to": "N179",
       "points": [
         [
           1512,
@@ -6662,12 +7070,12 @@
       "lengthPixels": 77.07
     },
     {
-      "id": "E150",
+      "id": "E160",
       "trace": "south-sculpture-branch",
       "part": 1,
       "label": "south-sculpture-branch",
       "from": "N073",
-      "to": "N170",
+      "to": "N180",
       "points": [
         [
           1651,
@@ -6698,12 +7106,12 @@
       "lengthPixels": 40.12
     },
     {
-      "id": "E151",
+      "id": "E161",
       "trace": "south-library-front-west",
       "part": 1,
       "label": "south-library-front-west",
-      "from": "N171",
-      "to": "N172",
+      "from": "N181",
+      "to": "N182",
       "points": [
         [
           1877,
@@ -6730,12 +7138,12 @@
       "lengthPixels": 50.15
     },
     {
-      "id": "E152",
+      "id": "E162",
       "trace": "south-library-front-west",
       "part": 2,
       "label": "south-library-front-west",
-      "from": "N172",
-      "to": "N173",
+      "from": "N182",
+      "to": "N183",
       "points": [
         [
           1925,
@@ -6758,12 +7166,12 @@
       "lengthPixels": 25
     },
     {
-      "id": "E153",
+      "id": "E163",
       "trace": "south-library-front-east",
       "part": 1,
       "label": "south-library-front-east",
-      "from": "N173",
-      "to": "N174",
+      "from": "N183",
+      "to": "N184",
       "points": [
         [
           1949,
@@ -6786,12 +7194,12 @@
       "lengthPixels": 30
     },
     {
-      "id": "E154",
+      "id": "E164",
       "trace": "south-library-front-east",
       "part": 2,
       "label": "south-library-front-east",
-      "from": "N174",
-      "to": "N175",
+      "from": "N184",
+      "to": "N185",
       "points": [
         [
           1973,
@@ -6814,12 +7222,12 @@
       "lengthPixels": 23.43
     },
     {
-      "id": "E155",
+      "id": "E165",
       "trace": "south-library-mid-entry",
       "part": 1,
       "label": "south-library-mid-entry",
-      "from": "N172",
-      "to": "N176",
+      "from": "N182",
+      "to": "N186",
       "points": [
         [
           1925,
@@ -6842,12 +7250,12 @@
       "lengthPixels": 19.42
     },
     {
-      "id": "E156",
+      "id": "E166",
       "trace": "south-library-east-branch",
       "part": 1,
       "label": "south-library-east-branch",
-      "from": "N174",
-      "to": "N177",
+      "from": "N184",
+      "to": "N187",
       "points": [
         [
           1973,
@@ -6874,12 +7282,12 @@
       "lengthPixels": 58.53
     },
     {
-      "id": "E157",
+      "id": "E167",
       "trace": "south-east-quad-diagonal",
       "part": 1,
       "label": "south-east-quad-diagonal",
-      "from": "N178",
-      "to": "N179",
+      "from": "N188",
+      "to": "N189",
       "points": [
         [
           2183,
@@ -6910,12 +7318,12 @@
       "lengthPixels": 88.64
     },
     {
-      "id": "E158",
+      "id": "E168",
       "trace": "south-east-quad-edge",
       "part": 1,
       "label": "south-east-quad-edge",
-      "from": "N178",
-      "to": "N180",
+      "from": "N188",
+      "to": "N190",
       "points": [
         [
           2183,
@@ -6946,12 +7354,12 @@
       "lengthPixels": 101.87
     },
     {
-      "id": "E159",
+      "id": "E169",
       "trace": "south-east-quad-edge",
       "part": 2,
       "label": "south-east-quad-edge",
-      "from": "N180",
-      "to": "N181",
+      "from": "N190",
+      "to": "N191",
       "points": [
         [
           2279,
@@ -6978,12 +7386,12 @@
       "lengthPixels": 70.42
     },
     {
-      "id": "E160",
+      "id": "E170",
       "trace": "south-east-house-walk",
       "part": 1,
       "label": "south-east-house-walk",
-      "from": "N181",
-      "to": "N182",
+      "from": "N191",
+      "to": "N192",
       "points": [
         [
           2347,
@@ -7006,12 +7414,12 @@
       "lengthPixels": 22.63
     },
     {
-      "id": "E161",
+      "id": "E171",
       "trace": "south-east-house-walk",
       "part": 2,
       "label": "south-east-house-walk",
-      "from": "N182",
-      "to": "N183",
+      "from": "N192",
+      "to": "N193",
       "points": [
         [
           2363,
@@ -7042,12 +7450,12 @@
       "lengthPixels": 79.03
     },
     {
-      "id": "E162",
+      "id": "E172",
       "trace": "south-east-house-entry",
       "part": 1,
       "label": "south-east-house-entry",
-      "from": "N182",
-      "to": "N184",
+      "from": "N192",
+      "to": "N194",
       "points": [
         [
           2363,
@@ -7074,12 +7482,12 @@
       "lengthPixels": 42.53
     },
     {
-      "id": "E163",
+      "id": "E173",
       "trace": "south-east-center-spur",
       "part": 1,
       "label": "south-east-center-spur",
-      "from": "N180",
-      "to": "N185",
+      "from": "N190",
+      "to": "N195",
       "points": [
         [
           2279,
@@ -7106,12 +7514,12 @@
       "lengthPixels": 41.04
     },
     {
-      "id": "E164",
+      "id": "E174",
       "trace": "south-parking-west-boundary",
       "part": 1,
       "label": "south-parking-west-boundary",
-      "from": "N186",
-      "to": "N187",
+      "from": "N196",
+      "to": "N197",
       "points": [
         [
           1512,
@@ -7146,12 +7554,12 @@
       "lengthPixels": 84.9
     },
     {
-      "id": "E165",
+      "id": "E175",
       "trace": "south-parking-south-boundary",
       "part": 1,
       "label": "south-parking-south-boundary",
-      "from": "N186",
-      "to": "N188",
+      "from": "N196",
+      "to": "N198",
       "points": [
         [
           1512,
@@ -7194,12 +7602,12 @@
       "lengthPixels": 232.88
     },
     {
-      "id": "E166",
+      "id": "E176",
       "trace": "south-parking-east-boundary",
       "part": 1,
       "label": "south-parking-east-boundary",
-      "from": "N188",
-      "to": "N189",
+      "from": "N198",
+      "to": "N199",
       "points": [
         [
           1731,
@@ -7234,12 +7642,12 @@
       "lengthPixels": 95.05
     },
     {
-      "id": "E167",
+      "id": "E177",
       "trace": "south-parking-north-boundary",
       "part": 1,
       "label": "south-parking-north-boundary",
-      "from": "N187",
-      "to": "N189",
+      "from": "N197",
+      "to": "N199",
       "points": [
         [
           1574,
@@ -7282,11 +7690,11 @@
       "lengthPixels": 241.17
     },
     {
-      "id": "E168",
+      "id": "E178",
       "trace": "south-gallery-south-entry",
       "part": 1,
       "label": "south-gallery-south-entry",
-      "from": "N189",
+      "from": "N199",
       "to": "N075",
       "points": [
         [
@@ -7314,12 +7722,12 @@
       "lengthPixels": 35.81
     },
     {
-      "id": "E169",
+      "id": "E179",
       "trace": "south-gallery-front-entrance",
       "part": 1,
       "label": "south-gallery-front-entrance",
-      "from": "N190",
-      "to": "N191",
+      "from": "N200",
+      "to": "N201",
       "points": [
         [
           1767,
@@ -7346,12 +7754,12 @@
       "lengthPixels": 30.62
     },
     {
-      "id": "E170",
+      "id": "E180",
       "trace": "south-gallery-east-entry",
       "part": 1,
       "label": "south-gallery-east-entry",
-      "from": "N192",
-      "to": "N193",
+      "from": "N202",
+      "to": "N203",
       "points": [
         [
           1862,
@@ -7378,12 +7786,12 @@
       "lengthPixels": 35.97
     },
     {
-      "id": "E171",
+      "id": "E181",
       "trace": "south-east-house-garden-west",
       "part": 1,
       "label": "south-east-house-garden-west",
-      "from": "N179",
-      "to": "N194",
+      "from": "N189",
+      "to": "N204",
       "points": [
         [
           2250,
@@ -7410,12 +7818,12 @@
       "lengthPixels": 40.41
     },
     {
-      "id": "E172",
+      "id": "E182",
       "trace": "south-east-house-garden-north",
       "part": 1,
       "label": "south-east-house-garden-north",
-      "from": "N194",
-      "to": "N195",
+      "from": "N204",
+      "to": "N205",
       "points": [
         [
           2279,
@@ -7446,12 +7854,12 @@
       "lengthPixels": 58.32
     },
     {
-      "id": "E173",
+      "id": "E183",
       "trace": "south-east-house-garden-diagonal",
       "part": 1,
       "label": "south-east-house-garden-diagonal",
-      "from": "N179",
-      "to": "N196",
+      "from": "N189",
+      "to": "N206",
       "points": [
         [
           2250,
@@ -7486,12 +7894,12 @@
       "lengthPixels": 83.21
     },
     {
-      "id": "E174",
+      "id": "E184",
       "trace": "south-east-house-cross-path",
       "part": 1,
       "label": "south-east-house-cross-path",
-      "from": "N196",
-      "to": "N180",
+      "from": "N206",
+      "to": "N190",
       "points": [
         [
           2327,
@@ -7522,12 +7930,12 @@
       "lengthPixels": 78.12
     },
     {
-      "id": "E175",
+      "id": "E185",
       "trace": "south-east-house-east-garden",
       "part": 1,
       "label": "south-east-house-east-garden",
-      "from": "N196",
-      "to": "N184",
+      "from": "N206",
+      "to": "N194",
       "points": [
         [
           2327,
@@ -7550,12 +7958,12 @@
       "lengthPixels": 29.41
     },
     {
-      "id": "E176",
+      "id": "E186",
       "trace": "south-east-upper-house-link",
       "part": 1,
       "label": "south-east-upper-house-link",
-      "from": "N195",
-      "to": "N197",
+      "from": "N205",
+      "to": "N207",
       "points": [
         [
           2333,
@@ -7582,12 +7990,12 @@
       "lengthPixels": 37.64
     },
     {
-      "id": "E177",
+      "id": "E187",
       "trace": "south-east-garden-border",
       "part": 1,
       "label": "south-east-garden-border",
-      "from": "N197",
-      "to": "N198",
+      "from": "N207",
+      "to": "N208",
       "points": [
         [
           2357,
@@ -7614,12 +8022,12 @@
       "lengthPixels": 36.92
     },
     {
-      "id": "E178",
+      "id": "E188",
       "trace": "south-east-garden-border",
       "part": 2,
       "label": "south-east-garden-border",
-      "from": "N198",
-      "to": "N183",
+      "from": "N208",
+      "to": "N193",
       "points": [
         [
           2391,
@@ -7646,12 +8054,12 @@
       "lengthPixels": 35.71
     },
     {
-      "id": "E179",
+      "id": "E189",
       "trace": "south-east-porch-branch",
       "part": 1,
       "label": "south-east-porch-branch",
-      "from": "N198",
-      "to": "N199",
+      "from": "N208",
+      "to": "N209",
       "points": [
         [
           2391,
@@ -7674,12 +8082,12 @@
       "lengthPixels": 14.56
     },
     {
-      "id": "E180",
+      "id": "E190",
       "trace": "south-lower-houses-west-walk",
       "part": 1,
       "label": "south-lower-houses-west-walk",
-      "from": "N200",
-      "to": "N201",
+      "from": "N210",
+      "to": "N211",
       "points": [
         [
           2235,
@@ -7710,12 +8118,12 @@
       "lengthPixels": 59.49
     },
     {
-      "id": "E181",
+      "id": "E191",
       "trace": "south-lower-houses-front",
       "part": 1,
       "label": "south-lower-houses-front",
-      "from": "N200",
-      "to": "N202",
+      "from": "N210",
+      "to": "N212",
       "points": [
         [
           2235,
@@ -7738,12 +8146,12 @@
       "lengthPixels": 29.15
     },
     {
-      "id": "E182",
+      "id": "E192",
       "trace": "south-lower-houses-front",
       "part": 2,
       "label": "south-lower-houses-front",
-      "from": "N202",
-      "to": "N203",
+      "from": "N212",
+      "to": "N213",
       "points": [
         [
           2262,
@@ -7774,12 +8182,12 @@
       "lengthPixels": 91.18
     },
     {
-      "id": "E183",
+      "id": "E193",
       "trace": "south-lower-houses-front",
       "part": 3,
       "label": "south-lower-houses-front",
-      "from": "N203",
-      "to": "N204",
+      "from": "N213",
+      "to": "N214",
       "points": [
         [
           2347,
@@ -7806,12 +8214,12 @@
       "lengthPixels": 55.95
     },
     {
-      "id": "E184",
+      "id": "E194",
       "trace": "south-lower-houses-east-walk",
       "part": 1,
       "label": "south-lower-houses-east-walk",
-      "from": "N204",
-      "to": "N205",
+      "from": "N214",
+      "to": "N215",
       "points": [
         [
           2401,
@@ -7838,12 +8246,12 @@
       "lengthPixels": 39.65
     },
     {
-      "id": "E185",
+      "id": "E195",
       "trace": "south-lower-house-entry-west",
       "part": 1,
       "label": "south-lower-house-entry-west",
-      "from": "N202",
-      "to": "N206",
+      "from": "N212",
+      "to": "N216",
       "points": [
         [
           2262,
@@ -7866,12 +8274,12 @@
       "lengthPixels": 13.45
     },
     {
-      "id": "E186",
+      "id": "E196",
       "trace": "south-lower-house-entry-east",
       "part": 1,
       "label": "south-lower-house-entry-east",
-      "from": "N203",
-      "to": "N207",
+      "from": "N213",
+      "to": "N217",
       "points": [
         [
           2347,
@@ -7894,12 +8302,12 @@
       "lengthPixels": 15.26
     },
     {
-      "id": "E187",
+      "id": "E197",
       "trace": "south-brick-building-south",
       "part": 1,
       "label": "south-brick-building-south",
-      "from": "N208",
-      "to": "N209",
+      "from": "N218",
+      "to": "N219",
       "points": [
         [
           2134,
@@ -7930,12 +8338,12 @@
       "lengthPixels": 66.41
     },
     {
-      "id": "E188",
+      "id": "E198",
       "trace": "south-brick-building-east",
       "part": 1,
       "label": "south-brick-building-east",
-      "from": "N209",
-      "to": "N210",
+      "from": "N219",
+      "to": "N220",
       "points": [
         [
           2197,
@@ -7962,12 +8370,12 @@
       "lengthPixels": 37.54
     },
     {
-      "id": "E189",
+      "id": "E199",
       "trace": "south-brick-building-west",
       "part": 1,
       "label": "south-brick-building-west",
-      "from": "N208",
-      "to": "N211",
+      "from": "N218",
+      "to": "N221",
       "points": [
         [
           2134,
@@ -7994,7 +8402,7 @@
       "lengthPixels": 26.73
     },
     {
-      "id": "E190",
+      "id": "E200",
       "trace": "bridge-visible-east-strip",
       "part": 1,
       "label": "bridge-visible-east-strip",
@@ -8038,7 +8446,7 @@
       "lengthPixels": 100.44
     },
     {
-      "id": "E191",
+      "id": "E201",
       "trace": "residence-west-parking-walk",
       "part": 1,
       "label": "residence-west-parking-walk",
@@ -8074,12 +8482,12 @@
       "lengthPixels": 73.67
     },
     {
-      "id": "E192",
+      "id": "E202",
       "trace": "residence-parking-entry",
       "part": 1,
       "label": "residence-parking-entry",
       "from": "N053",
-      "to": "N212",
+      "to": "N222",
       "points": [
         [
           1291,
@@ -8102,12 +8510,12 @@
       "lengthPixels": 12.04
     },
     {
-      "id": "E193",
+      "id": "E203",
       "trace": "north-apartment-front",
       "part": 1,
       "label": "north-apartment-front",
-      "from": "N213",
-      "to": "N214",
+      "from": "N223",
+      "to": "N224",
       "points": [
         [
           1515,
@@ -8116,11 +8524,59 @@
         [
           1536,
           302
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-apartment-front:1",
+      "frame": "main",
+      "region": "north-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 21.84
+    },
+    {
+      "id": "E204",
+      "trace": "north-apartment-front",
+      "part": 2,
+      "label": "north-apartment-front",
+      "from": "N224",
+      "to": "N225",
+      "points": [
+        [
+          1536,
+          302
         ],
         [
           1559,
           305
         ],
+        [
+          1583,
+          309
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-apartment-front:2",
+      "frame": "main",
+      "region": "north-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 47.53
+    },
+    {
+      "id": "E205",
+      "trace": "north-apartment-front",
+      "part": 3,
+      "label": "north-apartment-front",
+      "from": "N225",
+      "to": "N226",
+      "points": [
         [
           1583,
           309
@@ -8143,24 +8599,48 @@
       "accessibility": "unverified",
       "distanceMeters": null,
       "routingEligible": false,
-      "reviewKey": "north-apartment-front:1",
+      "reviewKey": "north-apartment-front:3",
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 161.41
+      "lengthPixels": 92.04
     },
     {
-      "id": "E194",
+      "id": "E206",
       "trace": "north-apartment-front",
-      "part": 2,
+      "part": 4,
       "label": "north-apartment-front",
-      "from": "N214",
-      "to": "N215",
+      "from": "N226",
+      "to": "N227",
       "points": [
         [
           1672,
           332
         ],
+        [
+          1704,
+          339
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-apartment-front:4",
+      "frame": "main",
+      "region": "north-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 32.76
+    },
+    {
+      "id": "E207",
+      "trace": "north-apartment-front",
+      "part": 5,
+      "label": "north-apartment-front",
+      "from": "N227",
+      "to": "N228",
+      "points": [
         [
           1704,
           339
@@ -8175,19 +8655,19 @@
       "accessibility": "unverified",
       "distanceMeters": null,
       "routingEligible": false,
-      "reviewKey": "north-apartment-front:2",
+      "reviewKey": "north-apartment-front:5",
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 54.85
+      "lengthPixels": 22.09
     },
     {
-      "id": "E195",
+      "id": "E208",
       "trace": "north-apartment-plaza",
       "part": 1,
       "label": "north-apartment-plaza",
-      "from": "N216",
-      "to": "N217",
+      "from": "N229",
+      "to": "N230",
       "points": [
         [
           1556,
@@ -8222,12 +8702,12 @@
       "lengthPixels": 69.08
     },
     {
-      "id": "E196",
+      "id": "E209",
       "trace": "north-apartment-east-drive",
       "part": 1,
       "label": "north-apartment-east-drive",
-      "from": "N215",
-      "to": "N218",
+      "from": "N228",
+      "to": "N231",
       "points": [
         [
           1726,
@@ -8266,12 +8746,12 @@
       "lengthPixels": 100.51
     },
     {
-      "id": "E197",
+      "id": "E210",
       "trace": "north-apartment-west-drive",
       "part": 1,
       "label": "north-apartment-west-drive",
-      "from": "N213",
-      "to": "N219",
+      "from": "N223",
+      "to": "N232",
       "points": [
         [
           1515,
@@ -8302,12 +8782,12 @@
       "lengthPixels": 56.36
     },
     {
-      "id": "E198",
+      "id": "E211",
       "trace": "north-shared-access",
       "part": 1,
       "label": "north-shared-access",
-      "from": "N214",
-      "to": "N220",
+      "from": "N226",
+      "to": "N233",
       "points": [
         [
           1672,
@@ -8342,12 +8822,12 @@
       "lengthPixels": 103.57
     },
     {
-      "id": "E199",
+      "id": "E212",
       "trace": "residence-north-parking-edge",
       "part": 1,
       "label": "residence-north-parking-edge",
-      "from": "N221",
-      "to": "N222",
+      "from": "N234",
+      "to": "N235",
       "points": [
         [
           1380,
@@ -8394,12 +8874,12 @@
       "lengthPixels": 235.47
     },
     {
-      "id": "E200",
+      "id": "E213",
       "trace": "residence-north-parking-entry",
       "part": 1,
       "label": "residence-north-parking-entry",
-      "from": "N221",
-      "to": "N223",
+      "from": "N234",
+      "to": "N236",
       "points": [
         [
           1380,
@@ -8426,12 +8906,12 @@
       "lengthPixels": 32.59
     },
     {
-      "id": "E201",
+      "id": "E214",
       "trace": "residence-east-green-branch",
       "part": 1,
       "label": "residence-east-green-branch",
-      "from": "N222",
-      "to": "N224",
+      "from": "N235",
+      "to": "N237",
       "points": [
         [
           1614,
@@ -8462,12 +8942,176 @@
       "lengthPixels": 67.98
     },
     {
-      "id": "E202",
+      "id": "E215",
+      "trace": "north-long-building-front",
+      "part": 1,
+      "label": "north-long-building-front",
+      "from": "N238",
+      "to": "N239",
+      "points": [
+        [
+          1373,
+          378
+        ],
+        [
+          1407,
+          392
+        ],
+        [
+          1442,
+          405
+        ],
+        [
+          1476,
+          418
+        ],
+        [
+          1511,
+          430
+        ],
+        [
+          1547,
+          437
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-long-building-front:1",
+      "frame": "main",
+      "region": "north-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 184.18
+    },
+    {
+      "id": "E216",
+      "trace": "north-long-building-east-end",
+      "part": 1,
+      "label": "north-long-building-east-end",
+      "from": "N239",
+      "to": "N233",
+      "points": [
+        [
+          1547,
+          437
+        ],
+        [
+          1564,
+          424
+        ],
+        [
+          1578,
+          413
+        ],
+        [
+          1591,
+          396
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-long-building-east-end:1",
+      "frame": "main",
+      "region": "north-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 60.61
+    },
+    {
+      "id": "E217",
+      "trace": "north-apartment-west-entry",
+      "part": 1,
+      "label": "north-apartment-west-entry",
+      "from": "N224",
+      "to": "N240",
+      "points": [
+        [
+          1536,
+          302
+        ],
+        [
+          1535,
+          287
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-apartment-west-entry:1",
+      "frame": "main",
+      "region": "north-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 15.03
+    },
+    {
+      "id": "E218",
+      "trace": "north-apartment-center-entry",
+      "part": 1,
+      "label": "north-apartment-center-entry",
+      "from": "N225",
+      "to": "N241",
+      "points": [
+        [
+          1583,
+          309
+        ],
+        [
+          1590,
+          300
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-apartment-center-entry:1",
+      "frame": "main",
+      "region": "north-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 11.4
+    },
+    {
+      "id": "E219",
+      "trace": "north-apartment-east-entry",
+      "part": 1,
+      "label": "north-apartment-east-entry",
+      "from": "N227",
+      "to": "N242",
+      "points": [
+        [
+          1704,
+          339
+        ],
+        [
+          1710,
+          328
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "north-apartment-east-entry:1",
+      "frame": "main",
+      "region": "north-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 12.53
+    },
+    {
+      "id": "E220",
       "trace": "inset-west-entry-drive",
       "part": 1,
       "label": "inset-west-entry-drive",
-      "from": "N225",
-      "to": "N226",
+      "from": "N243",
+      "to": "N244",
       "points": [
         [
           1074,
@@ -8502,12 +9146,12 @@
       "lengthPixels": 106.85
     },
     {
-      "id": "E203",
+      "id": "E221",
       "trace": "inset-west-west-drive",
       "part": 1,
       "label": "inset-west-west-drive",
-      "from": "N227",
-      "to": "N228",
+      "from": "N245",
+      "to": "N246",
       "points": [
         [
           858,
@@ -8550,12 +9194,12 @@
       "lengthPixels": 245.04
     },
     {
-      "id": "E204",
+      "id": "E222",
       "trace": "inset-west-central-drive",
       "part": 1,
       "label": "inset-west-central-drive",
-      "from": "N226",
-      "to": "N229",
+      "from": "N244",
+      "to": "N247",
       "points": [
         [
           1136,
@@ -8598,12 +9242,12 @@
       "lengthPixels": 269.9
     },
     {
-      "id": "E205",
+      "id": "E223",
       "trace": "inset-west-central-drive",
       "part": 2,
       "label": "inset-west-central-drive",
-      "from": "N229",
-      "to": "N230",
+      "from": "N247",
+      "to": "N248",
       "points": [
         [
           1402,
@@ -8634,12 +9278,12 @@
       "lengthPixels": 51.75
     },
     {
-      "id": "E206",
+      "id": "E224",
       "trace": "inset-west-center-branch",
       "part": 1,
       "label": "inset-west-center-branch",
-      "from": "N229",
-      "to": "N231",
+      "from": "N247",
+      "to": "N249",
       "points": [
         [
           1402,
@@ -8674,12 +9318,12 @@
       "lengthPixels": 95.6
     },
     {
-      "id": "E207",
+      "id": "E225",
       "trace": "inset-west-east-drive",
       "part": 1,
       "label": "inset-west-east-drive",
-      "from": "N231",
-      "to": "N232",
+      "from": "N249",
+      "to": "N250",
       "points": [
         [
           1482,
@@ -8754,12 +9398,12 @@
       "lengthPixels": 425.99
     },
     {
-      "id": "E208",
+      "id": "E226",
       "trace": "inset-west-upper-left",
       "part": 1,
       "label": "inset-west-upper-left",
-      "from": "N233",
-      "to": "N234",
+      "from": "N251",
+      "to": "N252",
       "points": [
         [
           1430,
@@ -8798,12 +9442,12 @@
       "lengthPixels": 154.08
     },
     {
-      "id": "E209",
+      "id": "E227",
       "trace": "inset-west-upper-join",
       "part": 1,
       "label": "inset-west-upper-join",
-      "from": "N234",
-      "to": "N235",
+      "from": "N252",
+      "to": "N253",
       "points": [
         [
           1574,
@@ -8834,12 +9478,12 @@
       "lengthPixels": 54.18
     },
     {
-      "id": "E210",
+      "id": "E228",
       "trace": "inset-west-upper-arc",
       "part": 1,
       "label": "inset-west-upper-arc",
-      "from": "N235",
-      "to": "N236",
+      "from": "N253",
+      "to": "N254",
       "points": [
         [
           1583,
@@ -8882,12 +9526,12 @@
       "lengthPixels": 198
     },
     {
-      "id": "E211",
+      "id": "E229",
       "trace": "inset-west-upper-return",
       "part": 1,
       "label": "inset-west-upper-return",
-      "from": "N236",
-      "to": "N237",
+      "from": "N254",
+      "to": "N255",
       "points": [
         [
           1767,
@@ -8926,12 +9570,12 @@
       "lengthPixels": 148.25
     },
     {
-      "id": "E212",
+      "id": "E230",
       "trace": "inset-west-lawn-path",
       "part": 1,
       "label": "inset-west-lawn-path",
-      "from": "N235",
-      "to": "N238",
+      "from": "N253",
+      "to": "N256",
       "points": [
         [
           1583,
@@ -8970,12 +9614,12 @@
       "lengthPixels": 154.5
     },
     {
-      "id": "E213",
+      "id": "E231",
       "trace": "inset-east-building-front",
       "part": 1,
       "label": "inset-east-building-front",
-      "from": "N239",
-      "to": "N240",
+      "from": "N257",
+      "to": "N258",
       "points": [
         [
           2741,
@@ -9010,12 +9654,12 @@
       "lengthPixels": 101.46
     },
     {
-      "id": "E214",
+      "id": "E232",
       "trace": "inset-east-building-side",
       "part": 1,
       "label": "inset-east-building-side",
-      "from": "N240",
-      "to": "N241",
+      "from": "N258",
+      "to": "N259",
       "points": [
         [
           2836,
@@ -9050,12 +9694,12 @@
       "lengthPixels": 121.04
     },
     {
-      "id": "E215",
+      "id": "E233",
       "trace": "inset-east-roadside",
       "part": 1,
       "label": "inset-east-roadside",
-      "from": "N241",
-      "to": "N242",
+      "from": "N259",
+      "to": "N260",
       "points": [
         [
           2918,
@@ -9121,27 +9765,22 @@
     "E107",
     "E108",
     "E110",
-    "E118",
-    "E119",
+    "E111",
     "E120",
-    "E131",
-    "E156",
-    "E163",
-    "E171",
-    "E172",
-    "E176",
-    "E185",
+    "E121",
+    "E122",
+    "E125",
+    "E128",
+    "E129",
+    "E130",
+    "E141",
+    "E166",
+    "E173",
+    "E181",
+    "E182",
     "E186",
-    "E193",
-    "E194",
     "E195",
     "E196",
-    "E197",
-    "E198",
-    "E199",
-    "E200",
-    "E201",
-    "E202",
     "E203",
     "E204",
     "E205",
@@ -9151,7 +9790,25 @@
     "E209",
     "E210",
     "E211",
-    "E212"
+    "E212",
+    "E213",
+    "E214",
+    "E215",
+    "E216",
+    "E217",
+    "E218",
+    "E219",
+    "E220",
+    "E221",
+    "E222",
+    "E223",
+    "E224",
+    "E225",
+    "E226",
+    "E227",
+    "E228",
+    "E229",
+    "E230"
   ],
   "visibleDraftEdgeIds": [
     "E001",
@@ -9234,23 +9891,19 @@
     "E104",
     "E106",
     "E109",
-    "E111",
     "E112",
     "E113",
     "E114",
     "E115",
     "E116",
     "E117",
-    "E121",
-    "E122",
+    "E118",
+    "E119",
     "E123",
     "E124",
-    "E125",
     "E126",
     "E127",
-    "E128",
-    "E129",
-    "E130",
+    "E131",
     "E132",
     "E133",
     "E134",
@@ -9260,7 +9913,6 @@
     "E138",
     "E139",
     "E140",
-    "E141",
     "E142",
     "E143",
     "E144",
@@ -9275,38 +9927,48 @@
     "E153",
     "E154",
     "E155",
+    "E156",
     "E157",
     "E158",
     "E159",
     "E160",
     "E161",
     "E162",
+    "E163",
     "E164",
     "E165",
-    "E166",
     "E167",
     "E168",
     "E169",
     "E170",
-    "E173",
+    "E171",
+    "E172",
     "E174",
     "E175",
+    "E176",
     "E177",
     "E178",
     "E179",
     "E180",
-    "E181",
-    "E182",
     "E183",
     "E184",
+    "E185",
     "E187",
     "E188",
     "E189",
     "E190",
     "E191",
     "E192",
-    "E213",
-    "E214",
-    "E215"
+    "E193",
+    "E194",
+    "E197",
+    "E198",
+    "E199",
+    "E200",
+    "E201",
+    "E202",
+    "E231",
+    "E232",
+    "E233"
   ]
 }

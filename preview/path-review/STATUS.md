@@ -6,6 +6,8 @@ Latest continuation: southern parking perimeter, garden branches, house approach
 
 Topology continuation: added pure, non-mutating image-space endpoint diagnostics and synthetic tests, including cross-frame isolation. Explicitly reconciled the residential approach junction and the southern gallery corner with their regional traces. Removed resulting microsegment duplication. Added a visible quad-to-oval connection; rejected a proposed small-building approach after rendered inspection showed roof overlap. Reviewer now displays crossing, endpoint-on-edge, near-endpoint and component counts. An eight-pixel near-endpoint tolerance is a diagnostic threshold, not a ground-distance tolerance. No proximity-based automatic snapping is performed.
 
+Entrance-branch continuation: northern academic sculpture/plaza branches and apartment access candidates added. The sculpture side-entry crossing is explicitly represented as a junction with the garden-edge draft. Obscured apartment and building-door approaches remain candidates, not approved entrances. Added separate full-frame `edges-only.svg` and `points-only.svg` exports, preserving the exact same coordinate frame as the combined overlay. Source inspection continues; these additions do not establish exhaustive coverage.
+
 Generated from `generate.cjs`; current exact counts are in `validation.json`. Coverage includes academic core, residential lawn, partial southern/athletics approaches and a candidate bridge approach. Source artwork is 3114 × 1746 pixels. Coordinates are image coordinates, not GPS. The trace was manually sampled from a 2048-pixel-wide rendering and scaled uniformly to original dimensions. This preserves the source frame, but does not establish surveyed centerline precision.
 
 Outputs:
