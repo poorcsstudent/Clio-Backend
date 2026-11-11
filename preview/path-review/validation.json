@@ -1,169 +1,201 @@
 {
   "structuralChecks": "passed",
-  "nodes": 92,
-  "edges": 92,
+  "nodes": 93,
+  "edges": 88,
   "components": [
     {
-      "size": 48,
+      "size": 32,
       "nodes": [
         "N001",
         "N004",
         "N006",
         "N007",
-        "N030",
-        "N032",
-        "N033",
-        "N031",
-        "N073",
+        "N022",
+        "N023",
         "N074",
-        "N076",
-        "N071",
+        "N075",
         "N077",
         "N072",
-        "N075",
-        "N055",
-        "N056",
+        "N078",
+        "N073",
+        "N076",
+        "N044",
+        "N045",
         "N005",
         "N003",
         "N009",
         "N017",
         "N016",
         "N014",
-        "N021",
-        "N022",
-        "N023",
-        "N024",
-        "N018",
-        "N019",
-        "N020",
-        "N025",
-        "N026",
         "N013",
         "N012",
         "N015",
         "N010",
         "N011",
         "N008",
-        "N027",
-        "N028",
-        "N029",
-        "N034",
-        "N035",
-        "N048",
-        "N051",
-        "N050",
-        "N049",
+        "N037",
+        "N040",
+        "N039",
+        "N038",
         "N002"
+      ]
+    },
+    {
+      "size": 4,
+      "nodes": [
+        "N018",
+        "N019",
+        "N020",
+        "N021"
+      ]
+    },
+    {
+      "size": 2,
+      "nodes": [
+        "N024",
+        "N025"
       ]
     },
     {
       "size": 11,
       "nodes": [
-        "N036",
-        "N069",
-        "N068",
-        "N067",
-        "N070",
-        "N039",
-        "N042",
-        "N041",
-        "N038",
-        "N040",
-        "N037"
-      ]
-    },
-    {
-      "size": 5,
-      "nodes": [
-        "N043",
-        "N045",
-        "N044",
-        "N046",
-        "N047"
-      ]
-    },
-    {
-      "size": 3,
-      "nodes": [
-        "N052",
-        "N053",
-        "N054"
-      ]
-    },
-    {
-      "size": 3,
-      "nodes": [
-        "N057",
+        "N026",
         "N058",
-        "N061"
+        "N057",
+        "N056",
+        "N059",
+        "N029",
+        "N032",
+        "N031",
+        "N028",
+        "N030",
+        "N027"
+      ]
+    },
+    {
+      "size": 4,
+      "nodes": [
+        "N033",
+        "N034",
+        "N035",
+        "N036"
+      ]
+    },
+    {
+      "size": 3,
+      "nodes": [
+        "N041",
+        "N042",
+        "N043"
+      ]
+    },
+    {
+      "size": 3,
+      "nodes": [
+        "N046",
+        "N047",
+        "N050"
       ]
     },
     {
       "size": 2,
       "nodes": [
-        "N059",
-        "N060"
+        "N048",
+        "N049"
       ]
     },
     {
       "size": 5,
       "nodes": [
-        "N062",
-        "N063",
-        "N065",
+        "N051",
+        "N052",
+        "N054",
+        "N055",
+        "N053"
+      ]
+    },
+    {
+      "size": 7,
+      "nodes": [
+        "N060",
+        "N061",
+        "N064",
         "N066",
-        "N064"
+        "N065",
+        "N062",
+        "N063"
+      ]
+    },
+    {
+      "size": 2,
+      "nodes": [
+        "N067",
+        "N068"
       ]
     },
     {
       "size": 3,
       "nodes": [
-        "N078",
+        "N069",
+        "N070",
+        "N071"
+      ]
+    },
+    {
+      "size": 3,
+      "nodes": [
         "N079",
-        "N080"
+        "N080",
+        "N081"
       ]
     },
     {
       "size": 5,
       "nodes": [
-        "N081",
-        "N084",
         "N082",
         "N085",
-        "N083"
+        "N083",
+        "N086",
+        "N084"
       ]
     },
     {
       "size": 2,
       "nodes": [
-        "N086",
-        "N087"
+        "N087",
+        "N088"
       ]
     },
     {
       "size": 5,
       "nodes": [
-        "N088",
         "N089",
-        "N092",
         "N090",
-        "N091"
+        "N093",
+        "N091",
+        "N092"
       ]
     }
   ],
-  "unresolvedCrossings": [
-    {
-      "edges": [
-        "E037",
-        "E080"
-      ],
-      "point": [
-        1909.72,
-        1232.16
-      ],
-      "status": "review-junction-or-grade-separation"
-    }
-  ],
+  "unresolvedCrossings": [],
   "geometryApproved": false,
-  "geographicAccuracyValidated": false
+  "geographicAccuracyValidated": false,
+  "quality": {
+    "accuracyPercent": null,
+    "targetAccuracyPercent": 90,
+    "targetAchieved": false,
+    "reason": "No independent reference centerlines, approved entrance associations, or per-segment user review. Trace counts and pixel lengths are not accuracy measurements.",
+    "visibleDraftEdges": 61,
+    "uncertainCandidateEdges": 27,
+    "visibleLengthPixels": 4246.63,
+    "campusCoveragePercent": null,
+    "requiredBeforeRouting": [
+      "Complete coverage inventory",
+      "Review each retained trace against artwork",
+      "Approve building entrance connections",
+      "Resolve disconnected destinations",
+      "Calibrate GPS distances independently",
+      "User approval to integrate"
+    ]
+  }
 }

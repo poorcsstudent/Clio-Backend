@@ -4,10 +4,11 @@
 <style>
 body{font:16px system-ui;margin:24px;background:#f7faf9;color:#153447}h1{margin-bottom:8px}button,select{padding:9px;margin:3px}#sheet{border:1px solid #789;overflow:auto}svg{width:100%;min-width:580px;height:auto;display:block}polyline{fill:none;stroke:#007e85;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.uncertain{stroke:#cc6500;stroke-dasharray:9 6}circle{fill:white;stroke:#143e58;stroke-width:2}text{display:none;font:11px monospace;fill:#153447;paint-order:stroke;stroke:white;stroke-width:3}.labels text{display:block}polyline:hover{stroke:#dc0081;stroke-width:7}#detail{min-height:2em}a{color:#005f67}
 </style>
-<h1>Pedestrian network · review draft 3</h1>
+<h1>Pedestrian network · review draft 4</h1>
 <p id="summary">Loading draft…</p>
+<p id="quality">Accuracy target: 90% · not yet measured or achieved.</p>
 <p>Teal: visible-path draft. Orange dashes: closer geometry review needed. All accessibility unverified. This is not a navigation map.</p>
-<button id="base">Hide artwork</button><button id="labels">Show IDs</button><button id="candidates">Hide candidate connections</button>
+<button id="base">Hide artwork</button><button id="labels">Show IDs</button><button id="candidates" data-hidden="true">Show candidate connections</button>
 <label>Region <select id="region"><option value="0 0 3114 1746">Whole illustration</option><option value="1570 810 920 560">Academic core</option><option value="1290 590 650 220">Residential lawn</option><option value="620 950 650 350">Athletics approaches</option><option value="1490 1110 900 300">Southern campus</option><option value="1570 810 430 270">Havener plaza</option></select></label>
 <label>Artwork opacity <input id="opacity" type="range" min="0" max="100" value="65"></label>
 <p><a href="visible-network.svg">Visible paths only SVG</a> · <a href="network.svg">All draft geometry SVG</a> · <a href="overlay.svg">Overlay SVG</a> · <a href="network-review.png">Network PNG</a> · <a href="overlay-review.png">Overlay PNG</a> · <a href="graph-draft.json">Graph data</a> · <a href="validation.json">Structural review report</a></p>
@@ -21,6 +22,8 @@ fetch('graph-draft.json').then(r=>{if(!r.ok)throw Error('Cannot load graph');ret
  const visibleNodes=new Set(g.edges.filter(e=>e.status==='visible-path-draft').flatMap(e=>[e.from,e.to]));
  for(const e of g.edges){const group=el('g',{'data-candidate':e.status==='needs-geometry-review'},network);const p=el('polyline',{points:e.points.map(p=>p.join(',')).join(' '),class:e.status==='needs-geometry-review'?'uncertain':'',tabindex:0,role:'button','aria-label':`${e.id} ${e.label}`},group);el('title',{},p).textContent=e.id+' '+e.label;const inspect=()=>document.querySelector('#detail').textContent=`${e.id} · ${e.reviewKey} · ${e.from} → ${e.to} · ${e.status} · ${e.sampling} · accessibility unverified`;p.onclick=inspect;p.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();inspect();}};const middle=e.points[Math.floor(e.points.length/2)];el('text',{x:middle[0],y:middle[1]-8},group).textContent=e.id;}
  for(const n of g.nodes){const group=el('g',{'data-candidate':!visibleNodes.has(n.id)},network);el('circle',{cx:n.x,cy:n.y,r:5},group);el('text',{x:n.x+7,y:n.y+12},group).textContent=n.id;}
+ network.querySelectorAll('[data-candidate="true"]').forEach(n=>n.style.display='none');
+ document.querySelector('#quality').textContent=`Accuracy target: 90% — not measured. ${g.visibleDraftEdgeIds.length} visible draft segments; ${g.candidateEdgeIds.length} candidate segments hidden. Counts do not measure accuracy or campus coverage.`;
 }).catch(e=>document.querySelector('#summary').textContent=e.message);
 document.querySelector('#base').onclick=function(){art.style.display=art.style.display==='none'?'':'none';this.textContent=art.style.display==='none'?'Show artwork':'Hide artwork'};
 document.querySelector('#labels').onclick=function(){map.classList.toggle('labels');this.textContent=map.classList.contains('labels')?'Hide IDs':'Show IDs'};

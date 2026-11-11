@@ -41,5 +41,17 @@ for(let i=0;i<g.edges.length;i++)for(let j=i+1;j<g.edges.length;j++){
  }
 }
 const report={structuralChecks:'passed',nodes:g.nodes.length,edges:g.edges.length,components:components.map(n=>({size:n.length,nodes:n})),unresolvedCrossings:crossings,geometryApproved:false,geographicAccuracyValidated:false};
+const visible=g.edges.filter(e=>e.status==='visible-path-draft');
+report.quality={
+ accuracyPercent:null,
+ targetAccuracyPercent:90,
+ targetAchieved:false,
+ reason:'No independent reference centerlines, approved entrance associations, or per-segment user review. Trace counts and pixel lengths are not accuracy measurements.',
+ visibleDraftEdges:visible.length,
+ uncertainCandidateEdges:g.edges.length-visible.length,
+ visibleLengthPixels:+visible.reduce((sum,e)=>sum+e.lengthPixels,0).toFixed(2),
+ campusCoveragePercent:null,
+ requiredBeforeRouting:['Complete coverage inventory','Review each retained trace against artwork','Approve building entrance connections','Resolve disconnected destinations','Calibrate GPS distances independently','User approval to integrate'],
+};
 fs.writeFileSync(path.join(__dirname,'validation.json'),JSON.stringify(report,null,2));
 console.log(JSON.stringify({nodes:report.nodes,edges:report.edges,components:components.length,unresolvedCrossings:crossings.length,structuralChecks:'passed'}));

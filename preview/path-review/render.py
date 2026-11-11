@@ -46,4 +46,5 @@ for overlay in (False, True):
     rendered.save(root / f'{name}-review.png')
     rendered.crop((1650,800,2450,1120)).resize((1200,480)).save(root / f'{name}-core.png')
 render(False,False).save(root / 'visible-network.png')
+render(True,False).crop((1650,800,2450,1120)).resize((1200,480)).save(root / 'visible-overlay-core.png')
 print('Rendered full-size and core review PNGs; no geospatial claims.')

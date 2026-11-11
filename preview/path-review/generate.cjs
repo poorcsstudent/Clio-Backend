@@ -27,7 +27,7 @@ const lines = [
  ['library-east', [[1400,625],[1428,635],[1455,643]], true],
  ['east-court', [[1455,643],[1475,631],[1492,625]], false],
  ['cs-south', [[1402,574],[1425,580],[1454,589],[1476,585]], true],
- ['cs-east', [[1476,585],[1508,567],[1524,565]], false],
+ ['cs-east', [[1476,585],[1508,567],[1524,565]], true],
  ['east-walk', [[1524,565],[1540,579],[1560,584],[1580,590]], true],
  ['library-cs', [[1329,602],[1352,589],[1381,577],[1402,574]], true],
  ['east-court-north', [[1492,625],[1501,611],[1515,607]], true],
@@ -75,6 +75,14 @@ const lines = [
 // Full-resolution refinements. These coordinates are measured directly in the
 // 3114x1746 source frame, unlike the initial reduced-image sampling above.
 const refined = [
+ ['east-courtyard-west-approach', [[2220,955],[2240,962],[2258,966]], false],
+ ['east-courtyard-loop-south', [[2258,966],[2270,970],[2281,970],[2291,966],[2298,960]], false],
+ ['east-courtyard-loop-north', [[2298,960],[2295,954],[2287,950],[2277,949],[2267,952]], false],
+ ['east-courtyard-south-link', [[2258,966],[2254,973],[2242,980],[2226,985],[2217,990]], false],
+ ['east-courtyard-branch', [[2242,980],[2251,986],[2262,990]], false],
+ ['south-library-garden', [[2150,1077],[2166,1072],[2185,1065]], false],
+ ['south-library-circle-west', [[2093,1117],[2102,1107],[2115,1100],[2128,1096],[2142,1098]], false],
+ ['south-library-circle-east', [[2142,1098],[2154,1103],[2163,1111]], false],
  ['quad-west', [[1886,908],[1916,924],[1923,946],[1932,977]], false],
  ['quad-middle-west', [[1916,924],[1957,941]], false],
  ['quad-middle-east', [[1957,941],[1998,926],[2023,918]], false],
@@ -125,7 +133,7 @@ const movedJunctions = new Map(Object.entries({
 }));
 for(const line of lines)line[1]=line[1].map(p=>movedJunctions.has(p.join(','))?movedJunctions.get(p.join(',')).map(v=>v/scale):p);
 // Superseded overview traces are removed rather than doubled on the drawing.
-for(const label of ['south-front','main-street-front-walk']){
+for(const label of ['south-front','main-street-front-walk','east-court','south-circle-west','south-circle-east']){
  const i=lines.findIndex(line=>line[0]===label);if(i>=0)lines.splice(i,1);
 }
 for(const [label,points,uncertain] of refined){
@@ -134,6 +142,17 @@ for(const [label,points,uncertain] of refined){
  if(existing>=0)lines[existing]=entry;else lines.push(entry);
 }
 const refinedLabels=new Set(refined.map(r=>r[0]));
+// Reject unsupported roof-crossing approximations rather than treating them as
+// plausible routing links. Keep their source geometry in a separate audit file.
+const rejectedLabels=new Set(['library-front','library-east','library-cs',
+ 'east-court-north','east-cross','south-quad','south-court',
+ 'east-south-court','east-green','residential-north-link']);
+const rejected=lines.filter(line=>rejectedLabels.has(line[0])).map(([label,points])=>({
+ label,points:points.map(p=>p.map(v=>+(v*scale).toFixed(2))),
+ reason:'Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval.'
+}));
+for(let i=lines.length-1;i>=0;i--)if(rejectedLabels.has(lines[i][0]))lines.splice(i,1);
+fs.writeFileSync(path.join(__dirname,'rejected-traces.json'),JSON.stringify(rejected,null,2));
 const nodes = [], edges = [], lookup = new Map();
 function node(p) { const key=p.join(','); if(!lookup.has(key)){ const id='N'+String(nodes.length+1).padStart(3,'0');lookup.set(key,id);nodes.push({id,x:+(p[0]*scale).toFixed(2),y:+(p[1]*scale).toFixed(2),gps:null}); } return lookup.get(key); }
 // A junction appearing inside another trace must split that trace. Do not
@@ -149,10 +168,10 @@ for(const [label,points,uncertain] of lines){
    status:uncertain?'needs-geometry-review':'visible-path-draft',sampling:refinedLabels.has(label)?'full-resolution-source':'reduced-overview',accessibility:'unverified',distanceMeters:null});
  }
 }
-const graph={version:2,status:'DRAFT_NOT_APPROVED_NOT_ROUTABLE',scope:'Academic core, residential lawn, partial south and athletics approaches; incomplete',width:3114,height:1746,source:'https://assets.codepen.io/220427/mapmap-bg_2.png',walkabilityBasis:'User confirms visible campus paths are walkable; individual traces have not been reviewed.',nodes,edges};
+const graph={version:4,status:'DRAFT_NOT_APPROVED_NOT_ROUTABLE',scope:'Academic core, residential lawn, partial south and athletics approaches; incomplete',width:3114,height:1746,source:'https://assets.codepen.io/220427/mapmap-bg_2.png',walkabilityBasis:'User confirms visible campus paths are walkable; individual traces have not been reviewed.',nodes,edges};
 // Preserve candidate geometry for review, but explicitly exclude it from any
 // future graph import until the user approves each connection.
-for(const edge of edges){edge.routingEligible=false;edge.reviewKey=edge.trace+':'+edge.part;}
+for(const edge of edges){edge.routingEligible=false;edge.reviewKey=edge.trace+':'+edge.part;edge.lengthPixels=+edge.points.slice(1).reduce((sum,p,i)=>sum+Math.hypot(p[0]-edge.points[i][0],p[1]-edge.points[i][1]),0).toFixed(2);}
 graph.candidateEdgeIds=edges.filter(e=>e.status==='needs-geometry-review').map(e=>e.id);
 graph.visibleDraftEdgeIds=edges.filter(e=>e.status==='visible-path-draft').map(e=>e.id);
 fs.writeFileSync(path.join(__dirname,'graph-draft.json'),JSON.stringify(graph,null,2));
