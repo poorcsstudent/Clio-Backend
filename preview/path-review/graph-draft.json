@@ -1,0 +1,2577 @@
+{
+  "version": 2,
+  "status": "DRAFT_NOT_APPROVED_NOT_ROUTABLE",
+  "scope": "Academic core, residential lawn, partial south and athletics approaches; incomplete",
+  "width": 3114,
+  "height": 1746,
+  "source": "https://assets.codepen.io/220427/mapmap-bg_2.png",
+  "walkabilityBasis": "User confirms visible campus paths are walkable; individual traces have not been reviewed.",
+  "nodes": [
+    {
+      "id": "N001",
+      "x": 1680.16,
+      "y": 982.25,
+      "gps": null
+    },
+    {
+      "id": "N002",
+      "x": 1778.99,
+      "y": 973.13,
+      "gps": null
+    },
+    {
+      "id": "N003",
+      "x": 1847.42,
+      "y": 983.77,
+      "gps": null
+    },
+    {
+      "id": "N004",
+      "x": 1713.61,
+      "y": 992.89,
+      "gps": null
+    },
+    {
+      "id": "N005",
+      "x": 1718.17,
+      "y": 1020.26,
+      "gps": null
+    },
+    {
+      "id": "N006",
+      "x": 1778.99,
+      "y": 1067.4,
+      "gps": null
+    },
+    {
+      "id": "N007",
+      "x": 1877.83,
+      "y": 998.97,
+      "gps": null
+    },
+    {
+      "id": "N008",
+      "x": 1946.25,
+      "y": 1070.44,
+      "gps": null
+    },
+    {
+      "id": "N009",
+      "x": 1871.75,
+      "y": 954.88,
+      "gps": null
+    },
+    {
+      "id": "N010",
+      "x": 1897.59,
+      "y": 924.47,
+      "gps": null
+    },
+    {
+      "id": "N011",
+      "x": 1885.43,
+      "y": 875.81,
+      "gps": null
+    },
+    {
+      "id": "N012",
+      "x": 1949.29,
+      "y": 872.77,
+      "gps": null
+    },
+    {
+      "id": "N013",
+      "x": 2020.75,
+      "y": 915.35,
+      "gps": null
+    },
+    {
+      "id": "N014",
+      "x": 1935.61,
+      "y": 938.15,
+      "gps": null
+    },
+    {
+      "id": "N015",
+      "x": 1955.37,
+      "y": 970.08,
+      "gps": null
+    },
+    {
+      "id": "N016",
+      "x": 2128.71,
+      "y": 950.32,
+      "gps": null
+    },
+    {
+      "id": "N017",
+      "x": 2212.34,
+      "y": 977.69,
+      "gps": null
+    },
+    {
+      "id": "N018",
+      "x": 2268.6,
+      "y": 950.32,
+      "gps": null
+    },
+    {
+      "id": "N019",
+      "x": 2131.75,
+      "y": 872.77,
+      "gps": null
+    },
+    {
+      "id": "N020",
+      "x": 2244.27,
+      "y": 889.5,
+      "gps": null
+    },
+    {
+      "id": "N021",
+      "x": 2317.25,
+      "y": 859.09,
+      "gps": null
+    },
+    {
+      "id": "N022",
+      "x": 2402.4,
+      "y": 897.1,
+      "gps": null
+    },
+    {
+      "id": "N023",
+      "x": 2303.57,
+      "y": 922.95,
+      "gps": null
+    },
+    {
+      "id": "N024",
+      "x": 2408.48,
+      "y": 967.04,
+      "gps": null
+    },
+    {
+      "id": "N025",
+      "x": 2064.85,
+      "y": 1108.45,
+      "gps": null
+    },
+    {
+      "id": "N026",
+      "x": 2118.07,
+      "y": 1109.97,
+      "gps": null
+    },
+    {
+      "id": "N027",
+      "x": 2159.12,
+      "y": 1128.22,
+      "gps": null
+    },
+    {
+      "id": "N028",
+      "x": 1713.61,
+      "y": 1151.02,
+      "gps": null
+    },
+    {
+      "id": "N029",
+      "x": 1619.34,
+      "y": 1239.21,
+      "gps": null
+    },
+    {
+      "id": "N030",
+      "x": 1835.25,
+      "y": 1312.2,
+      "gps": null
+    },
+    {
+      "id": "N031",
+      "x": 1912.8,
+      "y": 1233.13,
+      "gps": null
+    },
+    {
+      "id": "N032",
+      "x": 2045.08,
+      "y": 1265.06,
+      "gps": null
+    },
+    {
+      "id": "N033",
+      "x": 2238.19,
+      "y": 1170.79,
+      "gps": null
+    },
+    {
+      "id": "N034",
+      "x": 2343.1,
+      "y": 1204.24,
+      "gps": null
+    },
+    {
+      "id": "N035",
+      "x": 1336.53,
+      "y": 623.41,
+      "gps": null
+    },
+    {
+      "id": "N036",
+      "x": 1341.09,
+      "y": 658.38,
+      "gps": null
+    },
+    {
+      "id": "N037",
+      "x": 1357.81,
+      "y": 681.19,
+      "gps": null
+    },
+    {
+      "id": "N038",
+      "x": 1386.7,
+      "y": 647.74,
+      "gps": null
+    },
+    {
+      "id": "N039",
+      "x": 1496.18,
+      "y": 631.01,
+      "gps": null
+    },
+    {
+      "id": "N040",
+      "x": 1608.7,
+      "y": 758.73,
+      "gps": null
+    },
+    {
+      "id": "N041",
+      "x": 1614.78,
+      "y": 725.28,
+      "gps": null
+    },
+    {
+      "id": "N042",
+      "x": 1664.96,
+      "y": 743.53,
+      "gps": null
+    },
+    {
+      "id": "N043",
+      "x": 1810.92,
+      "y": 713.12,
+      "gps": null
+    },
+    {
+      "id": "N044",
+      "x": 1706.01,
+      "y": 687.27,
+      "gps": null
+    },
+    {
+      "id": "N045",
+      "x": 2026.84,
+      "y": 690.31,
+      "gps": null
+    },
+    {
+      "id": "N046",
+      "x": 2156.08,
+      "y": 731.36,
+      "gps": null
+    },
+    {
+      "id": "N047",
+      "x": 1654.31,
+      "y": 971.6,
+      "gps": null
+    },
+    {
+      "id": "N048",
+      "x": 1652.79,
+      "y": 891.02,
+      "gps": null
+    },
+    {
+      "id": "N049",
+      "x": 1692.33,
+      "y": 935.11,
+      "gps": null
+    },
+    {
+      "id": "N050",
+      "x": 1525.07,
+      "y": 982.25,
+      "gps": null
+    },
+    {
+      "id": "N051",
+      "x": 1491.62,
+      "y": 959.44,
+      "gps": null
+    },
+    {
+      "id": "N052",
+      "x": 1429.28,
+      "y": 883.42,
+      "gps": null
+    },
+    {
+      "id": "N053",
+      "x": 1287.87,
+      "y": 880.37,
+      "gps": null
+    },
+    {
+      "id": "N054",
+      "x": 1525.07,
+      "y": 1321.32,
+      "gps": null
+    },
+    {
+      "id": "N055",
+      "x": 1727.3,
+      "y": 1394.31,
+      "gps": null
+    },
+    {
+      "id": "N056",
+      "x": 1137.34,
+      "y": 1192.08,
+      "gps": null
+    },
+    {
+      "id": "N057",
+      "x": 1240.73,
+      "y": 1137.34,
+      "gps": null
+    },
+    {
+      "id": "N058",
+      "x": 1091.72,
+      "y": 1029.38,
+      "gps": null
+    },
+    {
+      "id": "N059",
+      "x": 1170.79,
+      "y": 1012.66,
+      "gps": null
+    },
+    {
+      "id": "N060",
+      "x": 1154.07,
+      "y": 1109.97,
+      "gps": null
+    },
+    {
+      "id": "N061",
+      "x": 691.83,
+      "y": 976.17,
+      "gps": null
+    },
+    {
+      "id": "N062",
+      "x": 769.38,
+      "y": 1020.26,
+      "gps": null
+    },
+    {
+      "id": "N063",
+      "x": 816.51,
+      "y": 1041.55,
+      "gps": null
+    },
+    {
+      "id": "N064",
+      "x": 717.68,
+      "y": 1102.37,
+      "gps": null
+    },
+    {
+      "id": "N065",
+      "x": 638.61,
+      "y": 1131.26,
+      "gps": null
+    },
+    {
+      "id": "N066",
+      "x": 1141.9,
+      "y": 387.73,
+      "gps": null
+    },
+    {
+      "id": "N067",
+      "x": 1189.04,
+      "y": 469.84,
+      "gps": null
+    },
+    {
+      "id": "N068",
+      "x": 1287.87,
+      "y": 586.92,
+      "gps": null
+    },
+    {
+      "id": "N069",
+      "x": 1123.66,
+      "y": 357.32,
+      "gps": null
+    }
+  ],
+  "edges": [
+    {
+      "id": "E001",
+      "trace": "plaza-west",
+      "part": 1,
+      "label": "plaza-west",
+      "from": "N001",
+      "to": "N002",
+      "points": [
+        [
+          1680.16,
+          982.25
+        ],
+        [
+          1709.05,
+          965.52
+        ],
+        [
+          1740.98,
+          962.48
+        ],
+        [
+          1778.99,
+          973.13
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E002",
+      "trace": "plaza-north",
+      "part": 1,
+      "label": "plaza-north",
+      "from": "N002",
+      "to": "N003",
+      "points": [
+        [
+          1778.99,
+          973.13
+        ],
+        [
+          1812.45,
+          976.17
+        ],
+        [
+          1847.42,
+          983.77
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E003",
+      "trace": "oval-north",
+      "part": 1,
+      "label": "oval-north",
+      "from": "N001",
+      "to": "N004",
+      "points": [
+        [
+          1680.16,
+          982.25
+        ],
+        [
+          1713.61,
+          992.89
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E004",
+      "trace": "oval-north",
+      "part": 2,
+      "label": "oval-north",
+      "from": "N004",
+      "to": "N003",
+      "points": [
+        [
+          1713.61,
+          992.89
+        ],
+        [
+          1748.58,
+          983.77
+        ],
+        [
+          1794.2,
+          985.29
+        ],
+        [
+          1847.42,
+          983.77
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E005",
+      "trace": "oval-southwest",
+      "part": 1,
+      "label": "oval-southwest",
+      "from": "N004",
+      "to": "N005",
+      "points": [
+        [
+          1713.61,
+          992.89
+        ],
+        [
+          1718.17,
+          1020.26
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E006",
+      "trace": "oval-southwest",
+      "part": 2,
+      "label": "oval-southwest",
+      "from": "N005",
+      "to": "N006",
+      "points": [
+        [
+          1718.17,
+          1020.26
+        ],
+        [
+          1740.98,
+          1044.59
+        ],
+        [
+          1778.99,
+          1067.4
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E007",
+      "trace": "oval-cross",
+      "part": 1,
+      "label": "oval-cross",
+      "from": "N005",
+      "to": "N007",
+      "points": [
+        [
+          1718.17,
+          1020.26
+        ],
+        [
+          1775.95,
+          1027.86
+        ],
+        [
+          1824.61,
+          1020.26
+        ],
+        [
+          1877.83,
+          998.97
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E008",
+      "trace": "oval-east",
+      "part": 1,
+      "label": "oval-east",
+      "from": "N003",
+      "to": "N007",
+      "points": [
+        [
+          1847.42,
+          983.77
+        ],
+        [
+          1877.83,
+          998.97
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E009",
+      "trace": "oval-east",
+      "part": 2,
+      "label": "oval-east",
+      "from": "N007",
+      "to": "N008",
+      "points": [
+        [
+          1877.83,
+          998.97
+        ],
+        [
+          1915.84,
+          1030.9
+        ],
+        [
+          1946.25,
+          1070.44
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E010",
+      "trace": "oval-diagonal",
+      "part": 1,
+      "label": "oval-diagonal",
+      "from": "N006",
+      "to": "N007",
+      "points": [
+        [
+          1778.99,
+          1067.4
+        ],
+        [
+          1824.61,
+          1033.95
+        ],
+        [
+          1877.83,
+          998.97
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E011",
+      "trace": "havener-east",
+      "part": 1,
+      "label": "havener-east",
+      "from": "N003",
+      "to": "N009",
+      "points": [
+        [
+          1847.42,
+          983.77
+        ],
+        [
+          1871.75,
+          954.88
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E012",
+      "trace": "havener-east",
+      "part": 2,
+      "label": "havener-east",
+      "from": "N009",
+      "to": "N010",
+      "points": [
+        [
+          1871.75,
+          954.88
+        ],
+        [
+          1897.59,
+          924.47
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E013",
+      "trace": "quad-west",
+      "part": 1,
+      "label": "quad-west",
+      "from": "N010",
+      "to": "N011",
+      "points": [
+        [
+          1897.59,
+          924.47
+        ],
+        [
+          1886.95,
+          897.1
+        ],
+        [
+          1885.43,
+          875.81
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E014",
+      "trace": "quad-northwest",
+      "part": 1,
+      "label": "quad-northwest",
+      "from": "N011",
+      "to": "N012",
+      "points": [
+        [
+          1885.43,
+          875.81
+        ],
+        [
+          1918.88,
+          875.81
+        ],
+        [
+          1949.29,
+          872.77
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E015",
+      "trace": "quad-north",
+      "part": 1,
+      "label": "quad-north",
+      "from": "N012",
+      "to": "N013",
+      "points": [
+        [
+          1949.29,
+          872.77
+        ],
+        [
+          1987.3,
+          891.02
+        ],
+        [
+          2020.75,
+          915.35
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E016",
+      "trace": "quad-middle-west",
+      "part": 1,
+      "label": "quad-middle-west",
+      "from": "N010",
+      "to": "N014",
+      "points": [
+        [
+          1897.59,
+          924.47
+        ],
+        [
+          1935.61,
+          938.15
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E017",
+      "trace": "quad-middle-east",
+      "part": 1,
+      "label": "quad-middle-east",
+      "from": "N014",
+      "to": "N013",
+      "points": [
+        [
+          1935.61,
+          938.15
+        ],
+        [
+          1979.7,
+          925.99
+        ],
+        [
+          2020.75,
+          915.35
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E018",
+      "trace": "quad-diagonal-nw",
+      "part": 1,
+      "label": "quad-diagonal-nw",
+      "from": "N011",
+      "to": "N014",
+      "points": [
+        [
+          1885.43,
+          875.81
+        ],
+        [
+          1911.28,
+          906.22
+        ],
+        [
+          1935.61,
+          938.15
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E019",
+      "trace": "quad-diagonal-se",
+      "part": 1,
+      "label": "quad-diagonal-se",
+      "from": "N014",
+      "to": "N015",
+      "points": [
+        [
+          1935.61,
+          938.15
+        ],
+        [
+          1955.37,
+          970.08
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E020",
+      "trace": "quad-south",
+      "part": 1,
+      "label": "quad-south",
+      "from": "N009",
+      "to": "N015",
+      "points": [
+        [
+          1871.75,
+          954.88
+        ],
+        [
+          1906.72,
+          957.92
+        ],
+        [
+          1955.37,
+          970.08
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E021",
+      "trace": "quad-diagonal-ne",
+      "part": 1,
+      "label": "quad-diagonal-ne",
+      "from": "N012",
+      "to": "N014",
+      "points": [
+        [
+          1949.29,
+          872.77
+        ],
+        [
+          1944.73,
+          903.18
+        ],
+        [
+          1935.61,
+          938.15
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E022",
+      "trace": "quad-east",
+      "part": 1,
+      "label": "quad-east",
+      "from": "N013",
+      "to": "N015",
+      "points": [
+        [
+          2020.75,
+          915.35
+        ],
+        [
+          1987.3,
+          942.71
+        ],
+        [
+          1955.37,
+          970.08
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E023",
+      "trace": "library-front",
+      "part": 1,
+      "label": "library-front",
+      "from": "N013",
+      "to": "N016",
+      "points": [
+        [
+          2020.75,
+          915.35
+        ],
+        [
+          2054.21,
+          921.43
+        ],
+        [
+          2098.3,
+          938.15
+        ],
+        [
+          2128.71,
+          950.32
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E024",
+      "trace": "library-east",
+      "part": 1,
+      "label": "library-east",
+      "from": "N016",
+      "to": "N017",
+      "points": [
+        [
+          2128.71,
+          950.32
+        ],
+        [
+          2171.29,
+          965.52
+        ],
+        [
+          2212.34,
+          977.69
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E025",
+      "trace": "east-court",
+      "part": 1,
+      "label": "east-court",
+      "from": "N017",
+      "to": "N018",
+      "points": [
+        [
+          2212.34,
+          977.69
+        ],
+        [
+          2242.75,
+          959.44
+        ],
+        [
+          2268.6,
+          950.32
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E026",
+      "trace": "cs-south",
+      "part": 1,
+      "label": "cs-south",
+      "from": "N019",
+      "to": "N020",
+      "points": [
+        [
+          2131.75,
+          872.77
+        ],
+        [
+          2166.72,
+          881.89
+        ],
+        [
+          2210.82,
+          895.58
+        ],
+        [
+          2244.27,
+          889.5
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E027",
+      "trace": "cs-east",
+      "part": 1,
+      "label": "cs-east",
+      "from": "N020",
+      "to": "N021",
+      "points": [
+        [
+          2244.27,
+          889.5
+        ],
+        [
+          2292.93,
+          862.13
+        ],
+        [
+          2317.25,
+          859.09
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E028",
+      "trace": "east-walk",
+      "part": 1,
+      "label": "east-walk",
+      "from": "N021",
+      "to": "N022",
+      "points": [
+        [
+          2317.25,
+          859.09
+        ],
+        [
+          2341.58,
+          880.37
+        ],
+        [
+          2371.99,
+          887.98
+        ],
+        [
+          2402.4,
+          897.1
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E029",
+      "trace": "library-cs",
+      "part": 1,
+      "label": "library-cs",
+      "from": "N013",
+      "to": "N019",
+      "points": [
+        [
+          2020.75,
+          915.35
+        ],
+        [
+          2055.73,
+          895.58
+        ],
+        [
+          2099.82,
+          877.33
+        ],
+        [
+          2131.75,
+          872.77
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E030",
+      "trace": "east-court-north",
+      "part": 1,
+      "label": "east-court-north",
+      "from": "N018",
+      "to": "N023",
+      "points": [
+        [
+          2268.6,
+          950.32
+        ],
+        [
+          2282.28,
+          929.03
+        ],
+        [
+          2303.57,
+          922.95
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E031",
+      "trace": "east-cross",
+      "part": 1,
+      "label": "east-cross",
+      "from": "N023",
+      "to": "N024",
+      "points": [
+        [
+          2303.57,
+          922.95
+        ],
+        [
+          2344.62,
+          935.11
+        ],
+        [
+          2371.99,
+          954.88
+        ],
+        [
+          2408.48,
+          967.04
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E032",
+      "trace": "south-court",
+      "part": 1,
+      "label": "south-court",
+      "from": "N008",
+      "to": "N025",
+      "points": [
+        [
+          1946.25,
+          1070.44
+        ],
+        [
+          1976.66,
+          1088.68
+        ],
+        [
+          2017.71,
+          1094.77
+        ],
+        [
+          2064.85,
+          1108.45
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E033",
+      "trace": "south-circle-west",
+      "part": 1,
+      "label": "south-circle-west",
+      "from": "N025",
+      "to": "N026",
+      "points": [
+        [
+          2064.85,
+          1108.45
+        ],
+        [
+          2099.82,
+          1103.89
+        ],
+        [
+          2118.07,
+          1109.97
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E034",
+      "trace": "south-circle-east",
+      "part": 1,
+      "label": "south-circle-east",
+      "from": "N026",
+      "to": "N027",
+      "points": [
+        [
+          2118.07,
+          1109.97
+        ],
+        [
+          2139.35,
+          1116.05
+        ],
+        [
+          2159.12,
+          1128.22
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E035",
+      "trace": "southwest-walk",
+      "part": 1,
+      "label": "southwest-walk",
+      "from": "N006",
+      "to": "N028",
+      "points": [
+        [
+          1778.99,
+          1067.4
+        ],
+        [
+          1751.63,
+          1096.29
+        ],
+        [
+          1731.86,
+          1126.7
+        ],
+        [
+          1713.61,
+          1151.02
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E036",
+      "trace": "southwest-diagonal",
+      "part": 1,
+      "label": "southwest-diagonal",
+      "from": "N028",
+      "to": "N029",
+      "points": [
+        [
+          1713.61,
+          1151.02
+        ],
+        [
+          1658.87,
+          1202.72
+        ],
+        [
+          1619.34,
+          1239.21
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E037",
+      "trace": "south-front",
+      "part": 1,
+      "label": "south-front",
+      "from": "N029",
+      "to": "N030",
+      "points": [
+        [
+          1619.34,
+          1239.21
+        ],
+        [
+          1658.87,
+          1249.86
+        ],
+        [
+          1701.45,
+          1263.54
+        ],
+        [
+          1754.67,
+          1281.79
+        ],
+        [
+          1795.72,
+          1295.47
+        ],
+        [
+          1835.25,
+          1312.2
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E038",
+      "trace": "south-quad",
+      "part": 1,
+      "label": "south-quad",
+      "from": "N028",
+      "to": "N031",
+      "points": [
+        [
+          1713.61,
+          1151.02
+        ],
+        [
+          1760.75,
+          1170.79
+        ],
+        [
+          1810.92,
+          1192.08
+        ],
+        [
+          1859.58,
+          1216.41
+        ],
+        [
+          1912.8,
+          1233.13
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E039",
+      "trace": "south-east",
+      "part": 1,
+      "label": "south-east",
+      "from": "N031",
+      "to": "N032",
+      "points": [
+        [
+          1912.8,
+          1233.13
+        ],
+        [
+          1961.46,
+          1237.69
+        ],
+        [
+          2007.07,
+          1251.38
+        ],
+        [
+          2045.08,
+          1265.06
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E040",
+      "trace": "east-south-court",
+      "part": 1,
+      "label": "east-south-court",
+      "from": "N027",
+      "to": "N033",
+      "points": [
+        [
+          2159.12,
+          1128.22
+        ],
+        [
+          2197.13,
+          1151.02
+        ],
+        [
+          2238.19,
+          1170.79
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E041",
+      "trace": "east-green",
+      "part": 1,
+      "label": "east-green",
+      "from": "N033",
+      "to": "N034",
+      "points": [
+        [
+          2238.19,
+          1170.79
+        ],
+        [
+          2291.41,
+          1184.48
+        ],
+        [
+          2343.1,
+          1204.24
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E042",
+      "trace": "residential-west-verge",
+      "part": 1,
+      "label": "residential-west-verge",
+      "from": "N035",
+      "to": "N036",
+      "points": [
+        [
+          1336.53,
+          623.41
+        ],
+        [
+          1341.09,
+          658.38
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E043",
+      "trace": "residential-west-verge",
+      "part": 2,
+      "label": "residential-west-verge",
+      "from": "N036",
+      "to": "N037",
+      "points": [
+        [
+          1341.09,
+          658.38
+        ],
+        [
+          1357.81,
+          681.19
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E044",
+      "trace": "residential-lawn-north",
+      "part": 1,
+      "label": "residential-lawn-north",
+      "from": "N035",
+      "to": "N038",
+      "points": [
+        [
+          1336.53,
+          623.41
+        ],
+        [
+          1368.46,
+          632.53
+        ],
+        [
+          1386.7,
+          647.74
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E045",
+      "trace": "residential-lawn-cross",
+      "part": 1,
+      "label": "residential-lawn-cross",
+      "from": "N036",
+      "to": "N038",
+      "points": [
+        [
+          1341.09,
+          658.38
+        ],
+        [
+          1386.7,
+          647.74
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E046",
+      "trace": "residential-lawn-cross",
+      "part": 2,
+      "label": "residential-lawn-cross",
+      "from": "N038",
+      "to": "N039",
+      "points": [
+        [
+          1386.7,
+          647.74
+        ],
+        [
+          1442.96,
+          638.61
+        ],
+        [
+          1496.18,
+          631.01
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E047",
+      "trace": "residential-lawn-south",
+      "part": 1,
+      "label": "residential-lawn-south",
+      "from": "N037",
+      "to": "N040",
+      "points": [
+        [
+          1357.81,
+          681.19
+        ],
+        [
+          1403.43,
+          694.87
+        ],
+        [
+          1465.77,
+          714.64
+        ],
+        [
+          1526.59,
+          735.93
+        ],
+        [
+          1608.7,
+          758.73
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E048",
+      "trace": "residential-lawn-diagonal",
+      "part": 1,
+      "label": "residential-lawn-diagonal",
+      "from": "N038",
+      "to": "N041",
+      "points": [
+        [
+          1386.7,
+          647.74
+        ],
+        [
+          1438.4,
+          665.98
+        ],
+        [
+          1488.58,
+          685.75
+        ],
+        [
+          1541.79,
+          704
+        ],
+        [
+          1614.78,
+          725.28
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E049",
+      "trace": "residential-east-link",
+      "part": 1,
+      "label": "residential-east-link",
+      "from": "N041",
+      "to": "N040",
+      "points": [
+        [
+          1614.78,
+          725.28
+        ],
+        [
+          1608.7,
+          758.73
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E050",
+      "trace": "residential-front-walk",
+      "part": 1,
+      "label": "residential-front-walk",
+      "from": "N039",
+      "to": "N041",
+      "points": [
+        [
+          1496.18,
+          631.01
+        ],
+        [
+          1505.3,
+          667.5
+        ],
+        [
+          1532.67,
+          678.15
+        ],
+        [
+          1555.48,
+          682.71
+        ],
+        [
+          1578.29,
+          697.91
+        ],
+        [
+          1614.78,
+          707.04
+        ],
+        [
+          1614.78,
+          725.28
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E051",
+      "trace": "residential-east-garden",
+      "part": 1,
+      "label": "residential-east-garden",
+      "from": "N042",
+      "to": "N043",
+      "points": [
+        [
+          1664.96,
+          743.53
+        ],
+        [
+          1690.8,
+          760.25
+        ],
+        [
+          1722.74,
+          767.86
+        ],
+        [
+          1760.75,
+          754.17
+        ],
+        [
+          1792.68,
+          732.88
+        ],
+        [
+          1810.92,
+          713.12
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E052",
+      "trace": "residential-north-link",
+      "part": 1,
+      "label": "residential-north-link",
+      "from": "N042",
+      "to": "N044",
+      "points": [
+        [
+          1664.96,
+          743.53
+        ],
+        [
+          1681.68,
+          710.08
+        ],
+        [
+          1706.01,
+          687.27
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E053",
+      "trace": "north-academic-verge",
+      "part": 1,
+      "label": "north-academic-verge",
+      "from": "N043",
+      "to": "N045",
+      "points": [
+        [
+          1810.92,
+          713.12
+        ],
+        [
+          1853.5,
+          702.47
+        ],
+        [
+          1893.03,
+          687.27
+        ],
+        [
+          1935.61,
+          679.67
+        ],
+        [
+          1981.22,
+          681.19
+        ],
+        [
+          2026.84,
+          690.31
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E054",
+      "trace": "north-academic-front",
+      "part": 1,
+      "label": "north-academic-front",
+      "from": "N045",
+      "to": "N046",
+      "points": [
+        [
+          2026.84,
+          690.31
+        ],
+        [
+          2066.37,
+          702.47
+        ],
+        [
+          2110.46,
+          714.64
+        ],
+        [
+          2156.08,
+          731.36
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E055",
+      "trace": "havener-west-verge",
+      "part": 1,
+      "label": "havener-west-verge",
+      "from": "N001",
+      "to": "N047",
+      "points": [
+        [
+          1680.16,
+          982.25
+        ],
+        [
+          1654.31,
+          971.6
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E056",
+      "trace": "havener-west-verge",
+      "part": 2,
+      "label": "havener-west-verge",
+      "from": "N047",
+      "to": "N048",
+      "points": [
+        [
+          1654.31,
+          971.6
+        ],
+        [
+          1633.03,
+          953.36
+        ],
+        [
+          1642.15,
+          921.43
+        ],
+        [
+          1652.79,
+          891.02
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E057",
+      "trace": "havener-south-approach",
+      "part": 1,
+      "label": "havener-south-approach",
+      "from": "N047",
+      "to": "N049",
+      "points": [
+        [
+          1654.31,
+          971.6
+        ],
+        [
+          1674.08,
+          948.8
+        ],
+        [
+          1692.33,
+          935.11
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E058",
+      "trace": "roundabout-south-verge",
+      "part": 1,
+      "label": "roundabout-south-verge",
+      "from": "N047",
+      "to": "N050",
+      "points": [
+        [
+          1654.31,
+          971.6
+        ],
+        [
+          1617.82,
+          967.04
+        ],
+        [
+          1569.16,
+          974.65
+        ],
+        [
+          1525.07,
+          982.25
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E059",
+      "trace": "roundabout-northwest-verge",
+      "part": 1,
+      "label": "roundabout-northwest-verge",
+      "from": "N051",
+      "to": "N052",
+      "points": [
+        [
+          1491.62,
+          959.44
+        ],
+        [
+          1473.37,
+          927.51
+        ],
+        [
+          1456.65,
+          901.66
+        ],
+        [
+          1429.28,
+          883.42
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E060",
+      "trace": "tim-bradley-west-footpath",
+      "part": 1,
+      "label": "tim-bradley-west-footpath",
+      "from": "N052",
+      "to": "N053",
+      "points": [
+        [
+          1429.28,
+          883.42
+        ],
+        [
+          1395.83,
+          865.17
+        ],
+        [
+          1365.42,
+          843.88
+        ],
+        [
+          1338.05,
+          833.24
+        ],
+        [
+          1313.72,
+          836.28
+        ],
+        [
+          1310.68,
+          857.57
+        ],
+        [
+          1287.87,
+          880.37
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E061",
+      "trace": "southwest-residence-walk",
+      "part": 1,
+      "label": "southwest-residence-walk",
+      "from": "N029",
+      "to": "N054",
+      "points": [
+        [
+          1619.34,
+          1239.21
+        ],
+        [
+          1590.45,
+          1265.06
+        ],
+        [
+          1572.21,
+          1283.31
+        ],
+        [
+          1543.32,
+          1309.16
+        ],
+        [
+          1525.07,
+          1321.32
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E062",
+      "trace": "south-boundary-walk",
+      "part": 1,
+      "label": "south-boundary-walk",
+      "from": "N054",
+      "to": "N055",
+      "points": [
+        [
+          1525.07,
+          1321.32
+        ],
+        [
+          1578.29,
+          1341.09
+        ],
+        [
+          1631.5,
+          1360.85
+        ],
+        [
+          1680.16,
+          1377.58
+        ],
+        [
+          1727.3,
+          1394.31
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E063",
+      "trace": "main-street-front-walk",
+      "part": 1,
+      "label": "main-street-front-walk",
+      "from": "N055",
+      "to": "N030",
+      "points": [
+        [
+          1727.3,
+          1394.31
+        ],
+        [
+          1768.35,
+          1359.33
+        ],
+        [
+          1798.76,
+          1336.53
+        ],
+        [
+          1835.25,
+          1312.2
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E064",
+      "trace": "athletics-approach",
+      "part": 1,
+      "label": "athletics-approach",
+      "from": "N056",
+      "to": "N057",
+      "points": [
+        [
+          1137.34,
+          1192.08
+        ],
+        [
+          1182.96,
+          1164.71
+        ],
+        [
+          1211.84,
+          1140.38
+        ],
+        [
+          1240.73,
+          1137.34
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E065",
+      "trace": "athletics-north-path",
+      "part": 1,
+      "label": "athletics-north-path",
+      "from": "N058",
+      "to": "N059",
+      "points": [
+        [
+          1091.72,
+          1029.38
+        ],
+        [
+          1113.01,
+          1017.22
+        ],
+        [
+          1141.9,
+          1011.14
+        ],
+        [
+          1170.79,
+          1012.66
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E066",
+      "trace": "gym-east-walk",
+      "part": 1,
+      "label": "gym-east-walk",
+      "from": "N057",
+      "to": "N060",
+      "points": [
+        [
+          1240.73,
+          1137.34
+        ],
+        [
+          1214.89,
+          1125.18
+        ],
+        [
+          1182.96,
+          1114.53
+        ],
+        [
+          1154.07,
+          1109.97
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E067",
+      "trace": "stadium-northeast-walk",
+      "part": 1,
+      "label": "stadium-northeast-walk",
+      "from": "N061",
+      "to": "N062",
+      "points": [
+        [
+          691.83,
+          976.17
+        ],
+        [
+          732.88,
+          1005.06
+        ],
+        [
+          769.38,
+          1020.26
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E068",
+      "trace": "stadium-northeast-walk",
+      "part": 2,
+      "label": "stadium-northeast-walk",
+      "from": "N062",
+      "to": "N063",
+      "points": [
+        [
+          769.38,
+          1020.26
+        ],
+        [
+          816.51,
+          1041.55
+        ]
+      ],
+      "status": "visible-path-draft",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E069",
+      "trace": "stadium-east-path",
+      "part": 1,
+      "label": "stadium-east-path",
+      "from": "N062",
+      "to": "N064",
+      "points": [
+        [
+          769.38,
+          1020.26
+        ],
+        [
+          757.21,
+          1053.71
+        ],
+        [
+          735.93,
+          1082.6
+        ],
+        [
+          717.68,
+          1102.37
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E070",
+      "trace": "recreation-front-path",
+      "part": 1,
+      "label": "recreation-front-path",
+      "from": "N064",
+      "to": "N065",
+      "points": [
+        [
+          717.68,
+          1102.37
+        ],
+        [
+          675.11,
+          1119.09
+        ],
+        [
+          638.61,
+          1131.26
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E071",
+      "trace": "bridge-deck-candidate",
+      "part": 1,
+      "label": "bridge-deck-candidate",
+      "from": "N066",
+      "to": "N067",
+      "points": [
+        [
+          1141.9,
+          387.73
+        ],
+        [
+          1158.63,
+          407.5
+        ],
+        [
+          1173.83,
+          437.91
+        ],
+        [
+          1189.04,
+          469.84
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E072",
+      "trace": "bridge-south-approach-candidate",
+      "part": 1,
+      "label": "bridge-south-approach-candidate",
+      "from": "N067",
+      "to": "N068",
+      "points": [
+        [
+          1189.04,
+          469.84
+        ],
+        [
+          1198.16,
+          497.21
+        ],
+        [
+          1230.09,
+          524.58
+        ],
+        [
+          1262.02,
+          554.99
+        ],
+        [
+          1287.87,
+          586.92
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E073",
+      "trace": "bridge-north-approach-candidate",
+      "part": 1,
+      "label": "bridge-north-approach-candidate",
+      "from": "N066",
+      "to": "N069",
+      "points": [
+        [
+          1141.9,
+          387.73
+        ],
+        [
+          1129.74,
+          371
+        ],
+        [
+          1123.66,
+          357.32
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    },
+    {
+      "id": "E074",
+      "trace": "residential-southwest-entry",
+      "part": 1,
+      "label": "residential-southwest-entry",
+      "from": "N068",
+      "to": "N035",
+      "points": [
+        [
+          1287.87,
+          586.92
+        ],
+        [
+          1312.2,
+          612.76
+        ],
+        [
+          1336.53,
+          623.41
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false
+    }
+  ],
+  "candidateEdgeIds": [
+    "E011",
+    "E012",
+    "E024",
+    "E026",
+    "E028",
+    "E029",
+    "E030",
+    "E031",
+    "E032",
+    "E035",
+    "E038",
+    "E039",
+    "E040",
+    "E041",
+    "E047",
+    "E050",
+    "E051",
+    "E052",
+    "E053",
+    "E054",
+    "E057",
+    "E061",
+    "E062",
+    "E063",
+    "E064",
+    "E065",
+    "E066",
+    "E069",
+    "E070",
+    "E071",
+    "E072",
+    "E073",
+    "E074"
+  ],
+  "visibleDraftEdgeIds": [
+    "E001",
+    "E002",
+    "E003",
+    "E004",
+    "E005",
+    "E006",
+    "E007",
+    "E008",
+    "E009",
+    "E010",
+    "E013",
+    "E014",
+    "E015",
+    "E016",
+    "E017",
+    "E018",
+    "E019",
+    "E020",
+    "E021",
+    "E022",
+    "E023",
+    "E025",
+    "E027",
+    "E033",
+    "E034",
+    "E036",
+    "E037",
+    "E042",
+    "E043",
+    "E044",
+    "E045",
+    "E046",
+    "E048",
+    "E049",
+    "E055",
+    "E056",
+    "E058",
+    "E059",
+    "E060",
+    "E067",
+    "E068"
+  ]
+}
