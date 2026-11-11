@@ -75,6 +75,8 @@ const lines = [
 // Full-resolution refinements. These coordinates are measured directly in the
 // 3114x1746 source frame, unlike the initial reduced-image sampling above.
 const refined = [
+ ['quad-to-oval-visible-walk', [[1932,977],[1915,990],[1904,1000],[1885,1017]], false],
+ ['quad-south-small-building-approach', [[1932,977],[1950,984],[1964,990]], false],
  ['bridge-south-approach-candidate', [[1186,476],[1195,498],[1222,522],[1237,539]], true],
  ['bridge-north-approach-candidate', [[1138,388],[1129,374],[1123,357]], true],
  ['east-building-east-frontage', [[2637,1068],[2668,1058],[2703,1036],[2729,1016],[2758,996],[2780,984],[2794,978]], false],
@@ -130,6 +132,7 @@ const refined = [
 // Move shared junctions with refinements rather than leaving the old endpoints
 // disconnected. These are explicit correspondences, not proximity snapping.
 const movedJunctions = new Map(Object.entries({
+ '847,386':[1291,589],
  '1105,646':[1670,977], '1170,640':[1777,972], '1215,647':[1859,996],
  '1127,653':[1710,990], '1130,671':[1719,1020], '1170,702':[1806,1077],
  '1235,657':[1885,1017], '1280,704':[1945,1082],
@@ -177,7 +180,7 @@ for(const [aName,bName] of junctionPairs){
 // plausible routing links. Keep their source geometry in a separate audit file.
 const rejectedLabels=new Set(['library-front','library-east','library-cs',
  'east-court-north','east-cross','south-quad','south-court',
- 'east-south-court','east-green','residential-north-link','quad-diagonal-ne']);
+ 'east-south-court','east-green','residential-north-link','quad-diagonal-ne','quad-south-small-building-approach']);
 const rejected=lines.filter(line=>rejectedLabels.has(line[0])).map(([label,points])=>({
  label,points:points.map(p=>p.map(v=>+(v*scale).toFixed(2))),
  reason:'Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval.'

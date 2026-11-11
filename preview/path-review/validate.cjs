@@ -43,6 +43,7 @@ for(let i=0;i<g.edges.length;i++)for(let j=i+1;j<g.edges.length;j++){
  }
 }
 const report={structuralChecks:'passed',nodes:g.nodes.length,edges:g.edges.length,components:components.map(n=>({size:n.length,nodes:n})),unresolvedCrossings:crossings,geometryApproved:false,geographicAccuracyValidated:false};
+report.topologyAudit=require('./topology.cjs').audit(g);
 const visible=g.edges.filter(e=>e.status==='visible-path-draft');
 report.quality={
  accuracyPercent:null,

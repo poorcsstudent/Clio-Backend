@@ -220,5 +220,23 @@
       ]
     ],
     "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "quad-south-small-building-approach",
+    "points": [
+      [
+        1932,
+        977
+      ],
+      [
+        1950,
+        984
+      ],
+      [
+        1964,
+        990
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
   }
 ]

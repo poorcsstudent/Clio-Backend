@@ -7,6 +7,7 @@ body{font:16px system-ui;margin:24px;background:#f7faf9;color:#153447}h1{margin-
 <h1>Pedestrian network · campus-wide draft 5</h1>
 <p id="summary">Loading draft…</p>
 <p id="quality">Accuracy target: 90% · not yet measured or achieved.</p>
+<p id="topology">Loading graph diagnostics…</p>
 <p>Teal: visible-path draft. Orange dashes: closer geometry review needed. All accessibility unverified. This is not a navigation map.</p>
 <button id="base">Hide artwork</button><button id="labels">Show IDs</button><button id="candidates" data-hidden="true">Show candidate connections</button>
 <label>Region <select id="region"><option value="0 0 3114 1746">Whole illustration</option><option value="1570 810 920 560">Academic core</option><option value="1290 590 650 220">Residential lawn</option><option value="620 950 650 350">Athletics approaches</option><option value="1490 1110 900 300">Southern campus</option><option value="1570 810 430 270">Havener plaza</option></select></label>
@@ -32,5 +33,6 @@ document.querySelector('#base').onclick=function(){art.style.display=art.style.d
 document.querySelector('#labels').onclick=function(){map.classList.toggle('labels');this.textContent=map.classList.contains('labels')?'Hide IDs':'Show IDs'};
 document.querySelector('#region').onchange=e=>map.setAttribute('viewBox',e.target.value);
 document.querySelector('#opacity').oninput=e=>art.setAttribute('opacity',e.target.value/100);
+fetch('validation.json').then(r=>{if(!r.ok)throw Error();return r.json()}).then(v=>{document.querySelector('#topology').textContent=`Graph checks: ${v.unresolvedCrossings.length} crossing flags; ${v.topologyAudit.endpointOnEdge.length} endpoint-on-edge flags; ${v.topologyAudit.nearEndpoints.length} nearby unjoined endpoint pairs; ${v.components.length} disconnected groups. Checks do not establish geographic accuracy or completeness.`}).catch(()=>document.querySelector('#topology').textContent='Graph diagnostics unavailable; regenerate validation before review.');
 document.querySelector('#candidates').onclick=function(){const hidden=this.dataset.hidden!=='true';this.dataset.hidden=hidden;network.querySelectorAll('[data-candidate="true"]').forEach(n=>n.style.display=hidden?'none':'');this.textContent=hidden?'Show candidate connections':'Hide candidate connections'};
 </script></html>

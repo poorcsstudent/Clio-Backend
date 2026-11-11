@@ -81,7 +81,7 @@ const groups = [
   ['south-parking-south-boundary',[[112,246],[148,260],[187,274],[227,289],[267,304],[307,318],[331,325]],false],
   ['south-parking-east-boundary',[[331,325],[350,309],[370,293],[388,277],[403,263]],false],
   ['south-parking-north-boundary',[[174,190],[214,204],[253,218],[293,233],[333,247],[372,260],[403,263]],false],
-  ['south-gallery-south-entry',[[403,263],[413,254],[430,241]],false],
+  ['south-gallery-south-entry',[[403,263],[413,254],[433,244]],false],
   ['south-gallery-front-entrance',[[367,213],[376,201],[386,189]],false],
   ['south-gallery-east-entry',[[462,207],[477,194],[485,180]],false],
   ['south-east-house-garden-west',[[850,82],[861,64],[879,57]],true],
