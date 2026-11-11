@@ -137,6 +137,8 @@ const groups = [
   ['inset-west-upper-arc',[[733,113],[774,124],[812,138],[844,142],[874,134],[903,119],[917,106]],true],
   ['inset-west-upper-return',[[917,106],[905,95],[878,82],[847,72],[810,64],[779,58]],true],
   ['inset-west-lawn-path',[[733,113],[705,125],[678,141],[649,158],[618,166],[591,165]],true],
+  ['inset-west-upper-loop-closure',[[779,58],[757,55],[739,57],[729,64],[724,75]],true],
+  ['inset-west-entrance-branch-join',[[236,147],[241,132],[246,120],[246,109]],true],
  ]},
  {region:'industrial-inset',offset:[2450,1360],frame:'inset-east',traces:[
   ['inset-east-building-front',[[291,241],[316,251],[344,262],[371,273],[386,276]],false],

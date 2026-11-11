@@ -8,6 +8,8 @@ Topology continuation: added pure, non-mutating image-space endpoint diagnostics
 
 Entrance-branch continuation: northern academic sculpture/plaza branches and apartment access candidates added. The sculpture side-entry crossing is explicitly represented as a junction with the garden-edge draft. Obscured apartment and building-door approaches remain candidates, not approved entrances. Added separate full-frame `edges-only.svg` and `points-only.svg` exports, preserving the exact same coordinate frame as the combined overlay. Source inspection continues; these additions do not establish exhaustive coverage.
 
+Paired audit continuation: generated and visually inspected six source/overlay comparison sheets covering twelve regions. Added two mine-inset shared-drive joins identified by that inspection. `COVERAGE-REVIEW.md` records deliberate exclusions and remaining interpretation decisions. Sheets are linked in the reviewer. No numerical accuracy/coverage claim is made, and the audit does not certify that no visible segment was missed.
+
 Generated from `generate.cjs`; current exact counts are in `validation.json`. Coverage includes academic core, residential lawn, partial southern/athletics approaches and a candidate bridge approach. Source artwork is 3114 × 1746 pixels. Coordinates are image coordinates, not GPS. The trace was manually sampled from a 2048-pixel-wide rendering and scaled uniformly to original dimensions. This preserves the source frame, but does not establish surveyed centerline precision.
 
 Outputs:
