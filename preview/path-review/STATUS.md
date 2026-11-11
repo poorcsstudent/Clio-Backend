@@ -1,6 +1,6 @@
 # Campus pedestrian tracing checkpoint
 
-Status: fourth-pass draft, incomplete, not approved, not routable. Requested 90% accuracy target has NOT been measured or achieved.
+Status: campus-wide first-pass draft 5, not approved, not routable. Requested 90% accuracy target has NOT been measured or achieved. A complete no-omissions audit has not been established.
 
 Generated from `generate.cjs`; current exact counts are in `validation.json`. Coverage includes academic core, residential lawn, partial southern/athletics approaches and a candidate bridge approach. Source artwork is 3114 × 1746 pixels. Coordinates are image coordinates, not GPS. The trace was manually sampled from a 2048-pixel-wide rendering and scaled uniformly to original dimensions. This preserves the source frame, but does not establish surveyed centerline precision.
 
@@ -33,3 +33,5 @@ Third pass: full-resolution inspection crops were used to refine the Havener law
 `render.py` generates full-size network and overlay PNGs plus academic-core crops. `inspect-regions.py` generates lossless local inspection crops (ignored in Git). The final PNGs are generated from graph coordinates, not painted independently. Source artwork remains unchanged. Neither the linework nor building entrances have been approved by the user yet.
 
 Fourth pass: ten unsupported roof-crossing/occluded approximations removed from the active draft and archived in `rejected-traces.json`. Overlapping superseded courtyard/circle traces removed. Added full-resolution east courtyard loops and southern library garden paths. Candidate geometry is hidden by default in the reviewer. Validation now carries an explicit unachieved 90% target, null measured accuracy and null campus-coverage percentage. Image-space lengths are for draft auditing only, not physical walking distances. Do not present the percentage of visible-status edges as an accuracy score.
+
+Fifth pass: added regional full-resolution traces for the far west, athletics perimeter, southern campus, northern campus, northeast tower, academic north, and both insets. Far-north and mine-inset gray access roads are candidates, not labeled sidewalks. `region-traces.cjs` preserves crop offsets and frame identities. Validation prevents shared nodes across inset frames. Explicit reviewed crossings are split as junctions; the bridge approach/residential walkway crossing remains unresolved. Superseded overview lines were removed after merging both data sources to prevent accidental reintroduction. The reviewer provides zoom views for the outlying regions. All distinct depicted sidewalk segments still require a final omission audit; no completeness claim is made.

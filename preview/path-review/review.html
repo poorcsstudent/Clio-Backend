@@ -4,18 +4,20 @@
 <style>
 body{font:16px system-ui;margin:24px;background:#f7faf9;color:#153447}h1{margin-bottom:8px}button,select{padding:9px;margin:3px}#sheet{border:1px solid #789;overflow:auto}svg{width:100%;min-width:580px;height:auto;display:block}polyline{fill:none;stroke:#007e85;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.uncertain{stroke:#cc6500;stroke-dasharray:9 6}circle{fill:white;stroke:#143e58;stroke-width:2}text{display:none;font:11px monospace;fill:#153447;paint-order:stroke;stroke:white;stroke-width:3}.labels text{display:block}polyline:hover{stroke:#dc0081;stroke-width:7}#detail{min-height:2em}a{color:#005f67}
 </style>
-<h1>Pedestrian network · review draft 4</h1>
+<h1>Pedestrian network · campus-wide draft 5</h1>
 <p id="summary">Loading draft…</p>
 <p id="quality">Accuracy target: 90% · not yet measured or achieved.</p>
 <p>Teal: visible-path draft. Orange dashes: closer geometry review needed. All accessibility unverified. This is not a navigation map.</p>
 <button id="base">Hide artwork</button><button id="labels">Show IDs</button><button id="candidates" data-hidden="true">Show candidate connections</button>
 <label>Region <select id="region"><option value="0 0 3114 1746">Whole illustration</option><option value="1570 810 920 560">Academic core</option><option value="1290 590 650 220">Residential lawn</option><option value="620 950 650 350">Athletics approaches</option><option value="1490 1110 900 300">Southern campus</option><option value="1570 810 430 270">Havener plaza</option></select></label>
 <label>Artwork opacity <input id="opacity" type="range" min="0" max="100" value="65"></label>
+<p>Shared roads and driveways are candidate geometry, not confirmed sidewalks. Map insets remain separate coordinate frames. No automatic cross-frame connections.</p>
 <p><a href="visible-network.svg">Visible paths only SVG</a> · <a href="network.svg">All draft geometry SVG</a> · <a href="overlay.svg">Overlay SVG</a> · <a href="network-review.png">Network PNG</a> · <a href="overlay-review.png">Overlay PNG</a> · <a href="graph-draft.json">Graph data</a> · <a href="validation.json">Structural review report</a></p>
 <p id="detail" aria-live="polite">Select a segment to inspect its ID. Blank areas are untraced. Distances are not calculated.</p>
 <div id="sheet"><svg id="map" viewBox="0 0 3114 1746" role="img" aria-label="Incomplete traced pedestrian network with optional campus artwork"><image id="art" href="../campus-tracing-source.png" width="3114" height="1746" opacity=".65"/><g id="network"></g></svg></div>
 <script>
 const ns='http://www.w3.org/2000/svg',map=document.querySelector('#map'),art=document.querySelector('#art'),network=document.querySelector('#network');
+for(const [label,value]of [['Far west','0 500 850 500'],['Northern campus','1100 150 800 600'],['Far north','200 0 900 400'],['Northeast tower','2550 570 564 310'],['Mine inset','850 1450 1030 296'],['Industrial inset','2450 1360 664 386']]){const option=document.createElement('option');option.textContent=label;option.value=value;document.querySelector('#region').append(option);}
 function el(tag,attrs,parent){const n=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);parent.append(n);return n;}
 fetch('graph-draft.json').then(r=>{if(!r.ok)throw Error('Cannot load graph');return r.json()}).then(g=>{
  document.querySelector('#summary').textContent=`${g.nodes.length} nodes / ${g.edges.length} edges · ${g.scope} · NOT APPROVED · Not connected to tour routing`;

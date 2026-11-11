@@ -75,6 +75,8 @@ const lines = [
 // Full-resolution refinements. These coordinates are measured directly in the
 // 3114x1746 source frame, unlike the initial reduced-image sampling above.
 const refined = [
+ ['quad-northwest-branch', [[1916,924],[1935,905],[1917,897],[1896,890]], false],
+ ['quad-fountain-west-link', [[2023,918],[1993,914],[1968,912],[1935,905]], false],
  ['east-courtyard-west-approach', [[2220,955],[2240,962],[2258,966]], false],
  ['east-courtyard-loop-south', [[2258,966],[2270,970],[2281,970],[2291,966],[2298,960]], false],
  ['east-courtyard-loop-north', [[2298,960],[2295,954],[2287,950],[2277,949],[2267,952]], false],
@@ -133,7 +135,9 @@ const movedJunctions = new Map(Object.entries({
 }));
 for(const line of lines)line[1]=line[1].map(p=>movedJunctions.has(p.join(','))?movedJunctions.get(p.join(',')).map(v=>v/scale):p);
 // Superseded overview traces are removed rather than doubled on the drawing.
-for(const label of ['south-front','main-street-front-walk','east-court','south-circle-west','south-circle-east']){
+for(const label of ['south-front','main-street-front-walk','east-court','south-circle-west','south-circle-east',
+ 'athletics-approach','gym-east-walk','stadium-northeast-walk','stadium-east-path',
+ 'south-tree-walk-west','south-tree-walk-east']){
  const i=lines.findIndex(line=>line[0]===label);if(i>=0)lines.splice(i,1);
 }
 for(const [label,points,uncertain] of refined){
@@ -142,11 +146,32 @@ for(const [label,points,uncertain] of refined){
  if(existing>=0)lines[existing]=entry;else lines.push(entry);
 }
 const refinedLabels=new Set(refined.map(r=>r[0]));
+const regionalTraces=require('./region-traces.cjs');
+const regionalMetadata=new Map(regionalTraces.map(t=>[t.label,t]));
+for(const t of regionalTraces){lines.push([t.label,t.points.map(p=>p.map(v=>v/scale)),t.uncertain]);refinedLabels.add(t.label);}
+// These segments were replaced by regional full-resolution traces. Remove
+// them after both source sets are assembled so a refinement cannot re-add one.
+const superseded=new Set(['south-tree-walk-west','south-tree-walk-east','cs-east','bridge-deck-candidate',
+ 'stadium-northwest-walk','stadium-neighborhood-front']);
+for(let i=lines.length-1;i>=0;i--)if(superseded.has(lines[i][0]))lines.splice(i,1);
+// Source-image review confirms this crossing as the same sidewalk junction.
+// Insert the exact segment intersection into both polylines; no global snapping.
+const junctionPairs=[['southwest-diagonal','southwest-house-front'],['far-north-front-access','far-north-eastern-drive']];
+for(const [aName,bName] of junctionPairs){
+ const a=lines.find(l=>l[0]===aName),b=lines.find(l=>l[0]===bName);
+ for(let i=1;i<a[1].length;i++)for(let j=1;j<b[1].length;j++){
+  const p=a[1][i-1],q=b[1][j-1],r=a[1][i].map((v,k)=>v-p[k]),s=b[1][j].map((v,k)=>v-q[k]);
+  const den=r[0]*s[1]-r[1]*s[0];if(Math.abs(den)<1e-9)continue;
+  const t=((q[0]-p[0])*s[1]-(q[1]-p[1])*s[0])/den;
+  const u=((q[0]-p[0])*r[1]-(q[1]-p[1])*r[0])/den;
+  if(t>1e-6&&t<1-1e-6&&u>1e-6&&u<1-1e-6){const point=[p[0]+t*r[0],p[1]+t*r[1]];a[1].splice(i,0,point);b[1].splice(j,0,point);}
+ }
+}
 // Reject unsupported roof-crossing approximations rather than treating them as
 // plausible routing links. Keep their source geometry in a separate audit file.
 const rejectedLabels=new Set(['library-front','library-east','library-cs',
  'east-court-north','east-cross','south-quad','south-court',
- 'east-south-court','east-green','residential-north-link']);
+ 'east-south-court','east-green','residential-north-link','quad-diagonal-ne']);
 const rejected=lines.filter(line=>rejectedLabels.has(line[0])).map(([label,points])=>({
  label,points:points.map(p=>p.map(v=>+(v*scale).toFixed(2))),
  reason:'Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval.'
@@ -158,6 +183,9 @@ function node(p) { const key=p.join(','); if(!lookup.has(key)){ const id='N'+Str
 // A junction appearing inside another trace must split that trace. Do not
 // automatically connect geometric crossings: they may be grade separated.
 const endpoints = new Set(lines.flatMap(([,p])=>[p[0].join(','),p.at(-1).join(',')]));
+const appearances=new Map();
+for(const [,points]of lines)for(const key of new Set(points.map(p=>p.join(','))))appearances.set(key,(appearances.get(key)||0)+1);
+for(const [key,count]of appearances)if(count>1)endpoints.add(key);
 for(const [label,points,uncertain] of lines){
  let start=0,part=0;
  for(let i=1;i<points.length;i++){
@@ -168,10 +196,10 @@ for(const [label,points,uncertain] of lines){
    status:uncertain?'needs-geometry-review':'visible-path-draft',sampling:refinedLabels.has(label)?'full-resolution-source':'reduced-overview',accessibility:'unverified',distanceMeters:null});
  }
 }
-const graph={version:4,status:'DRAFT_NOT_APPROVED_NOT_ROUTABLE',scope:'Academic core, residential lawn, partial south and athletics approaches; incomplete',width:3114,height:1746,source:'https://assets.codepen.io/220427/mapmap-bg_2.png',walkabilityBasis:'User confirms visible campus paths are walkable; individual traces have not been reviewed.',nodes,edges};
+const graph={version:5,status:'DRAFT_NOT_APPROVED_NOT_ROUTABLE',scope:'Campus-wide first-pass tracing, including both isolated insets; coverage requires review',width:3114,height:1746,source:'https://assets.codepen.io/220427/mapmap-bg_2.png',walkabilityBasis:'User confirms visible campus paths are walkable; individual traces have not been reviewed.',nodes,edges};
 // Preserve candidate geometry for review, but explicitly exclude it from any
 // future graph import until the user approves each connection.
-for(const edge of edges){edge.routingEligible=false;edge.reviewKey=edge.trace+':'+edge.part;edge.lengthPixels=+edge.points.slice(1).reduce((sum,p,i)=>sum+Math.hypot(p[0]-edge.points[i][0],p[1]-edge.points[i][1]),0).toFixed(2);}
+for(const edge of edges){edge.routingEligible=false;edge.reviewKey=edge.trace+':'+edge.part;edge.frame=regionalMetadata.get(edge.trace)?.frame||'main';edge.region=regionalMetadata.get(edge.trace)?.region||'initial-core';edge.surface=regionalMetadata.get(edge.trace)?.surface||'unclassified-draft';edge.lengthPixels=+edge.points.slice(1).reduce((sum,p,i)=>sum+Math.hypot(p[0]-edge.points[i][0],p[1]-edge.points[i][1]),0).toFixed(2);}
 graph.candidateEdgeIds=edges.filter(e=>e.status==='needs-geometry-review').map(e=>e.id);
 graph.visibleDraftEdgeIds=edges.filter(e=>e.status==='visible-path-draft').map(e=>e.id);
 fs.writeFileSync(path.join(__dirname,'graph-draft.json'),JSON.stringify(graph,null,2));

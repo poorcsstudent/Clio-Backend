@@ -1,5 +1,23 @@
 [
   {
+    "label": "quad-diagonal-ne",
+    "points": [
+      [
+        1939,
+        862
+      ],
+      [
+        1946,
+        902
+      ],
+      [
+        1957,
+        941
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
     "label": "library-front",
     "points": [
       [

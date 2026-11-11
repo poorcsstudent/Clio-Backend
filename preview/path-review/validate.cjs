@@ -6,7 +6,9 @@ const nodes = new Map(g.nodes.map(n=>[n.id,n]));
 assert.equal(nodes.size,g.nodes.length);
 const adjacency = new Map(g.nodes.map(n=>[n.id,new Set()]));
 const signatures = new Set();
+const nodeFrames=new Map();
 for(const e of g.edges){
+ for(const id of [e.from,e.to]){if(nodeFrames.has(id))assert.equal(nodeFrames.get(id),e.frame,'Coordinate frames must not share junctions');nodeFrames.set(id,e.frame);}
  assert(nodes.has(e.from)&&nodes.has(e.to),`Missing endpoint ${e.id}`);
  assert.notEqual(e.from,e.to,`Self loop ${e.id}`);
  assert(e.points.length>=2);
