@@ -1,6 +1,6 @@
 # Campus pedestrian tracing checkpoint
 
-Status: second-pass draft, incomplete, not approved, not routable.
+Status: third-pass draft, incomplete, not approved, not routable.
 
 Generated from `generate.cjs`; current exact counts are in `validation.json`. Coverage includes academic core, residential lawn, partial southern/athletics approaches and a candidate bridge approach. Source artwork is 3114 × 1746 pixels. Coordinates are image coordinates, not GPS. The trace was manually sampled from a 2048-pixel-wide rendering and scaled uniformly to original dimensions. This preserves the source frame, but does not establish surveyed centerline precision.
 
@@ -27,3 +27,7 @@ No application routing, backend deployment, or Expo build was changed. No physic
 Second-pass validation checks endpoint references, exact endpoint coordinates, bounds, duplicate/reversed geometry, self-loops, and unsplit explicit junctions. It reports components and potential interior crossings. Passing these checks is not evidence of geographical correctness. Uncertain geometry has an independent visibility toggle and every edge explicitly has `routingEligible: false`.
 
 The previous SVGs remain review artifacts, including uncertain traces across obscured artwork. Do not interpret them as established sidewalks. Use the visible-only output for the conservative network view. Larger portions of campus and the geographically separate insets still need tracing.
+
+Third pass: full-resolution inspection crops were used to refine the Havener lawn/plaza curves and courtyard, and add southern and eastern sidewalk segments. Superseded rough traces were removed. Explicit junction correspondences move connected endpoints together. Every edge records `sampling` and a descriptive `reviewKey`; numeric IDs can change between draft revisions. One candidate crossing still requires review; disconnected components are retained rather than guessed connections.
+
+`render.py` generates full-size network and overlay PNGs plus academic-core crops. `inspect-regions.py` generates lossless local inspection crops (ignored in Git). The final PNGs are generated from graph coordinates, not painted independently. Source artwork remains unchanged. Neither the linework nor building entrances have been approved by the user yet.

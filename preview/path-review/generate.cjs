@@ -72,6 +72,68 @@ const lines = [
  ['bridge-north-approach-candidate', [[751,255],[743,244],[739,235]], true],
  ['residential-southwest-entry', [[847,386],[863,403],[879,410]], true],
 ];
+// Full-resolution refinements. These coordinates are measured directly in the
+// 3114x1746 source frame, unlike the initial reduced-image sampling above.
+const refined = [
+ ['quad-west', [[1886,908],[1916,924],[1923,946],[1932,977]], false],
+ ['quad-middle-west', [[1916,924],[1957,941]], false],
+ ['quad-middle-east', [[1957,941],[1998,926],[2023,918]], false],
+ ['quad-diagonal-se', [[1957,941],[1949,957]], false],
+ ['quad-south', [[1932,977],[1949,957]], false],
+ ['quad-east', [[1949,957],[1974,942],[1998,926]], false],
+ ['quad-northwest', [[1881,867],[1908,864],[1939,862]], false],
+ ['quad-north', [[1939,862],[1970,874],[1994,890],[2023,918]], true],
+ ['quad-diagonal-nw', [[1886,908],[1901,917],[1916,924]], false],
+ ['quad-diagonal-ne', [[1939,862],[1946,902],[1957,941]], true],
+ ['library-front', [[2023,918],[2044,927],[2053,948],[2069,965]], true],
+ ['oval-north', [[1710,990],[1730,980],[1770,979],[1815,988],[1860,1001],[1885,1017]], false],
+ ['oval-southwest', [[1710,990],[1719,1020],[1730,1033],[1760,1055],[1806,1077]], false],
+ ['oval-cross', [[1719,1020],[1760,1026],[1803,1027],[1840,1024],[1885,1017]], false],
+ ['oval-diagonal', [[1806,1077],[1843,1049],[1885,1017]], false],
+ ['oval-east', [[1885,1017],[1910,1030],[1933,1048],[1948,1068],[1945,1082]], false],
+ ['plaza-west', [[1670,977],[1691,959],[1715,955],[1744,963],[1777,972]], false],
+ ['plaza-north', [[1777,972],[1810,980],[1839,989],[1859,996]], false],
+ ['oval-north-approach', [[1670,977],[1692,983],[1710,990]], false],
+ ['oval-east-approach', [[1859,996],[1873,1005],[1885,1017]], false],
+ ['southwest-gallery-diagonal', [[1616,1250],[1634,1238],[1651,1224],[1670,1208]], false],
+ ['southwest-gallery-west', [[1616,1250],[1655,1263],[1692,1275],[1730,1288],[1770,1302],[1808,1315],[1833,1324]], false],
+ ['southwest-gallery-east', [[1833,1324],[1857,1306],[1881,1287],[1903,1269],[1920,1251]], false],
+ ['southwest-gallery-north', [[1670,1208],[1697,1214],[1718,1221]], false],
+ ['gallery-northeast-garden', [[1880,1220],[1903,1229],[1920,1237],[1920,1251]], false],
+ ['southwest-gallery-branch', [[1651,1224],[1675,1227],[1693,1234]], false],
+ ['south-tree-walk-west', [[1872,1208],[1895,1216],[1924,1223],[1952,1233],[1970,1240]], false],
+ ['south-tree-walk-east', [[1970,1240],[1990,1222],[2012,1202]], false],
+ ['east-lawn-west', [[2414,898],[2424,934],[2427,970],[2422,1015]], false],
+ ['east-lawn-diagonal', [[2414,898],[2433,925],[2452,958]], false],
+ ['east-lawn-middle', [[2427,970],[2448,970],[2470,968]], false],
+ ['east-lawn-southeast', [[2447,1031],[2461,1012],[2478,994]], false],
+ ['east-building-south-walk', [[2550,1075],[2569,1080],[2587,1082]], false],
+ ['east-southern-sidewalk', [[2472,1174],[2494,1153],[2528,1120],[2551,1097],[2587,1082]], false],
+ ['east-building-access', [[2472,1174],[2460,1169],[2448,1158]], false],
+ ['east-sidewalk-north-end', [[2587,1082],[2612,1076],[2637,1068]], true],
+];
+// Move shared junctions with refinements rather than leaving the old endpoints
+// disconnected. These are explicit correspondences, not proximity snapping.
+const movedJunctions = new Map(Object.entries({
+ '1105,646':[1670,977], '1170,640':[1777,972], '1215,647':[1859,996],
+ '1127,653':[1710,990], '1130,671':[1719,1020], '1170,702':[1806,1077],
+ '1235,657':[1885,1017], '1280,704':[1945,1082],
+ '1065,815':[1616,1250], '1207,863':[1833,1324],
+ '1248,608':[1916,924], '1240,576':[1886,908], '1282,574':[1939,862],
+ '1273,617':[1957,941], '1286,638':[1949,957], '1231,628':[1932,977],
+ '1329,602':[2023,918], '1400,625':[2069,965],
+}));
+for(const line of lines)line[1]=line[1].map(p=>movedJunctions.has(p.join(','))?movedJunctions.get(p.join(',')).map(v=>v/scale):p);
+// Superseded overview traces are removed rather than doubled on the drawing.
+for(const label of ['south-front','main-street-front-walk']){
+ const i=lines.findIndex(line=>line[0]===label);if(i>=0)lines.splice(i,1);
+}
+for(const [label,points,uncertain] of refined){
+ const existing=lines.findIndex(line=>line[0]===label);
+ const entry=[label,points.map(p=>p.map(v=>v/scale)),uncertain];
+ if(existing>=0)lines[existing]=entry;else lines.push(entry);
+}
+const refinedLabels=new Set(refined.map(r=>r[0]));
 const nodes = [], edges = [], lookup = new Map();
 function node(p) { const key=p.join(','); if(!lookup.has(key)){ const id='N'+String(nodes.length+1).padStart(3,'0');lookup.set(key,id);nodes.push({id,x:+(p[0]*scale).toFixed(2),y:+(p[1]*scale).toFixed(2),gps:null}); } return lookup.get(key); }
 // A junction appearing inside another trace must split that trace. Do not
@@ -84,13 +146,13 @@ for(const [label,points,uncertain] of lines){
   const segment=points.slice(start,i+1);start=i;
   edges.push({id:'E'+String(edges.length+1).padStart(3,'0'),trace:label,part:++part,label,
    from:node(segment[0]),to:node(segment.at(-1)),points:segment.map(p=>p.map(v=>+(v*scale).toFixed(2))),
-   status:uncertain?'needs-geometry-review':'visible-path-draft',accessibility:'unverified',distanceMeters:null});
+   status:uncertain?'needs-geometry-review':'visible-path-draft',sampling:refinedLabels.has(label)?'full-resolution-source':'reduced-overview',accessibility:'unverified',distanceMeters:null});
  }
 }
 const graph={version:2,status:'DRAFT_NOT_APPROVED_NOT_ROUTABLE',scope:'Academic core, residential lawn, partial south and athletics approaches; incomplete',width:3114,height:1746,source:'https://assets.codepen.io/220427/mapmap-bg_2.png',walkabilityBasis:'User confirms visible campus paths are walkable; individual traces have not been reviewed.',nodes,edges};
 // Preserve candidate geometry for review, but explicitly exclude it from any
 // future graph import until the user approves each connection.
-for(const edge of edges)edge.routingEligible=false;
+for(const edge of edges){edge.routingEligible=false;edge.reviewKey=edge.trace+':'+edge.part;}
 graph.candidateEdgeIds=edges.filter(e=>e.status==='needs-geometry-review').map(e=>e.id);
 graph.visibleDraftEdgeIds=edges.filter(e=>e.status==='visible-path-draft').map(e=>e.id);
 fs.writeFileSync(path.join(__dirname,'graph-draft.json'),JSON.stringify(graph,null,2));
