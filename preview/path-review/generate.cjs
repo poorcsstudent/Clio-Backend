@@ -75,6 +75,11 @@ const lines = [
 // Full-resolution refinements. These coordinates are measured directly in the
 // 3114x1746 source frame, unlike the initial reduced-image sampling above.
 const refined = [
+ ['bridge-south-approach-candidate', [[1186,476],[1195,498],[1222,522],[1237,539]], true],
+ ['bridge-north-approach-candidate', [[1138,388],[1129,374],[1123,357]], true],
+ ['east-building-east-frontage', [[2637,1068],[2668,1058],[2703,1036],[2729,1016],[2758,996],[2780,984],[2794,978]], false],
+ ['east-building-north-corner', [[2794,978],[2797,974],[2795,970],[2786,966],[2774,965]], false],
+ ['east-building-east-entry', [[2758,996],[2751,991],[2743,986]], false],
  ['quad-northwest-branch', [[1916,924],[1935,905],[1917,897],[1896,890]], false],
  ['quad-fountain-west-link', [[2023,918],[1993,914],[1968,912],[1935,905]], false],
  ['east-courtyard-west-approach', [[2220,955],[2240,962],[2258,966]], false],
@@ -152,11 +157,12 @@ for(const t of regionalTraces){lines.push([t.label,t.points.map(p=>p.map(v=>v/sc
 // These segments were replaced by regional full-resolution traces. Remove
 // them after both source sets are assembled so a refinement cannot re-add one.
 const superseded=new Set(['south-tree-walk-west','south-tree-walk-east','cs-east','bridge-deck-candidate',
+ 'southwest-residence-walk','south-boundary-walk','south-east-quad-cross',
  'stadium-northwest-walk','stadium-neighborhood-front']);
 for(let i=lines.length-1;i>=0;i--)if(superseded.has(lines[i][0]))lines.splice(i,1);
 // Source-image review confirms this crossing as the same sidewalk junction.
 // Insert the exact segment intersection into both polylines; no global snapping.
-const junctionPairs=[['southwest-diagonal','southwest-house-front'],['far-north-front-access','far-north-eastern-drive']];
+const junctionPairs=[['southwest-diagonal','southwest-house-front'],['far-north-front-access','far-north-eastern-drive'],['southwest-gallery-west','south-gallery-south-entry']];
 for(const [aName,bName] of junctionPairs){
  const a=lines.find(l=>l[0]===aName),b=lines.find(l=>l[0]===bName);
  for(let i=1;i<a[1].length;i++)for(let j=1;j<b[1].length;j++){

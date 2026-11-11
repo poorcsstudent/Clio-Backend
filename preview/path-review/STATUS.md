@@ -2,6 +2,8 @@
 
 Status: campus-wide first-pass draft 5, not approved, not routable. Requested 90% accuracy target has NOT been measured or achieved. A complete no-omissions audit has not been established.
 
+Latest continuation: southern parking perimeter, garden branches, house approaches and eastern building frontage added. The bridge southern approach was retraced to end at the residential walkway start rather than extending across that line. Bridge northern approach now uses the same endpoint as the separately traced bridge strip. Obsolete overlapping southwest boundary approximations removed. Structural validation currently reports no unresolved interior crossings. Region-specific overlay PNGs now available for north, south, east and athletics. This resolves graph-crossing issues, not geographic accuracy or campus completeness.
+
 Generated from `generate.cjs`; current exact counts are in `validation.json`. Coverage includes academic core, residential lawn, partial southern/athletics approaches and a candidate bridge approach. Source artwork is 3114 × 1746 pixels. Coordinates are image coordinates, not GPS. The trace was manually sampled from a 2048-pixel-wide rendering and scaled uniformly to original dimensions. This preserves the source frame, but does not establish surveyed centerline precision.
 
 Outputs:

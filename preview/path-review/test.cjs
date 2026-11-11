@@ -1,0 +1,18 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const {execFileSync}=require('node:child_process');
+const root=__dirname;
+execFileSync(process.execPath,[path.join(root,'generate.cjs')]);
+const first=fs.readFileSync(path.join(root,'graph-draft.json'),'utf8');
+execFileSync(process.execPath,[path.join(root,'generate.cjs')]);
+assert.equal(fs.readFileSync(path.join(root,'graph-draft.json'),'utf8'),first,'Generation must be deterministic');
+execFileSync(process.execPath,[path.join(root,'validate.cjs')]);
+const graph=JSON.parse(first),rejected=JSON.parse(fs.readFileSync(path.join(root,'rejected-traces.json'),'utf8'));
+assert.equal(new Set(graph.edges.map(e=>e.reviewKey)).size,graph.edges.length);
+assert(rejected.every(r=>!graph.edges.some(e=>e.trace===r.label)));
+assert(graph.edges.every(e=>Number.isFinite(e.lengthPixels)&&e.lengthPixels>0));
+assert(graph.edges.every(e=>e.routingEligible===false&&e.distanceMeters===null));
+const html=fs.readFileSync(path.join(root,'review.html'),'utf8');
+new (require('node:vm').Script)(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
+console.log('PASS: deterministic generation, structural checks, unique review keys, rejected-edge exclusion, pixel lengths, routing lock, reviewer syntax.');

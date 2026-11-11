@@ -47,4 +47,11 @@ for overlay in (False, True):
     rendered.crop((1650,800,2450,1120)).resize((1200,480)).save(root / f'{name}-core.png')
 render(False,False).save(root / 'visible-network.png')
 render(True,False).crop((1650,800,2450,1120)).resize((1200,480)).save(root / 'visible-overlay-core.png')
+regions = {
+ 'south':(1400,1080,2450,1450), 'north':(1100,150,1900,750),
+ 'athletics':(200,850,1300,1450), 'east':(2400,750,3050,1400),
+}
+overview=render(True,True)
+for name,box in regions.items():
+    overview.crop(box).save(root/f'overlay-{name}.png')
 print('Rendered full-size and core review PNGs; no geospatial claims.')
