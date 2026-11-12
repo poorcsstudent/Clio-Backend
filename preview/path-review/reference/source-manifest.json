@@ -1,0 +1,33 @@
+{
+  "retrievedAt": "2026-11-12T05:53:53.314Z",
+  "bbox": [
+    37.945,
+    -91.787,
+    37.965,
+    -91.765
+  ],
+  "coordinateOrder": "bbox south,west,north,east; GeoJSON longitude,latitude",
+  "query": "[out:json][timeout:25];(way[\"highway\"](37.945,-91.787,37.965,-91.765);way[\"building\"](37.945,-91.787,37.965,-91.765);node[\"entrance\"](37.945,-91.787,37.965,-91.765);node[\"highway\"=\"crossing\"](37.945,-91.787,37.965,-91.765);node[\"barrier\"](37.945,-91.787,37.965,-91.765););out meta geom;",
+  "sources": [
+    {
+      "id": "mst-wayfinder",
+      "url": "https://facilities.mst.edu/media/campussupport/facilities/spaceplanning/240516-CampusWayfinder.kml",
+      "file": "mst-wayfinder.kml",
+      "bytes": 338785,
+      "sha256": "a82b616f13a3f871d83f4442a002923c5a285aae32c300fb585411443ab5ca12",
+      "attribution": "Missouri University of Science and Technology, Facility Planning and Operations",
+      "license": "No redistribution license established; reference-only, not approved for production redistribution.",
+      "status": "downloaded"
+    },
+    {
+      "id": "osm",
+      "url": "https://overpass-api.de/api/interpreter",
+      "file": "osm.json",
+      "bytes": 1485365,
+      "sha256": "e23b9f6efee665d00885e6fb61c3fcfe18d6e71f9596f919583a10bb8c9dac7a",
+      "attribution": "© OpenStreetMap contributors",
+      "license": "ODbL 1.0 — https://www.openstreetmap.org/copyright",
+      "status": "downloaded"
+    }
+  ]
+}

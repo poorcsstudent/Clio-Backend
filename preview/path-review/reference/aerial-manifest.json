@@ -1,0 +1,21 @@
+{
+  "service": "https://imagery.nationalmap.gov/arcgis/rest/services/USGSNAIPPlus/ImageServer",
+  "retrievedAt": "2026-11-12T05:57:35.123Z",
+  "extent": {
+    "xmin": -91.779,
+    "ymin": 37.951,
+    "xmax": -91.77,
+    "ymax": 37.958,
+    "spatialReference": {
+      "wkid": 4326,
+      "latestWkid": 4326
+    }
+  },
+  "width": 1200,
+  "height": 1200,
+  "attribution": "USGS, USDA, The National Map: Orthoimagery. March 12, 2025.",
+  "acquisitionDate": "Not established for this mosaic; retrieval date is not capture date.",
+  "sha256": "e2480dff83eec9ae1a2ea17f61f8f2bb1fce2ba4eb74dc25196b5f62f65dae6d",
+  "file": "aerial.jpg",
+  "status": "reference-only"
+}

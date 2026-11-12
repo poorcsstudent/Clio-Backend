@@ -1,0 +1,33 @@
+{
+  "osmBaseTimestamp": "2026-11-12T05:52:44Z",
+  "osmFeatures": 1826,
+  "osmWayClasses": {
+    "background-not-pedestrian-centerline": 1083,
+    "pedestrian-reference-unverified": 515,
+    "area-not-centerline": 3
+  },
+  "referenceNodes": 2114,
+  "referenceEdges": 2277,
+  "mstFeatures": 270,
+  "officialEntrances": 46,
+  "sourceLabeledADAEntrances": 33,
+  "officialDetourLines": [
+    "Detour Havener Center to Bertelsmeyer Hall",
+    "Detour Miner Village to Main Campus",
+    "Detour RC2 to Main Campus",
+    "Detour UC to Main Campus",
+    "Detour through round about to havener",
+    "Detour to havener through underpass"
+  ],
+  "entrancesWithGeometryWithin30m": 45,
+  "malformedOSMWays": [],
+  "automaticallyConnectedEntrances": 0,
+  "approvedDisplayMatches": 0,
+  "cautions": [
+    "KML filename is dated 2024-05-16; no current-condition guarantee.",
+    "Official detours are not imported into the walking graph.",
+    "OSM bbox includes surrounding streets and is not a campus ownership boundary.",
+    "All graph edges are locked out of production routing.",
+    "No distances are inferred from illustration pixels."
+  ]
+}

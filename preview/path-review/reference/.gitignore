@@ -1,0 +1,10 @@
+# Source snapshots and derivatives stay local until redistribution is reviewed.
+mst-wayfinder.kml
+osm.json
+mst-features.geojson
+osm-features.geojson
+reference-graph.json
+comparison.png
+entrance-candidates.json
+aerial.jpg
+__pycache__/
