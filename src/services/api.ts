@@ -125,7 +125,7 @@ export interface CampusWalkingRoute {
   campusId: string;
   tourId: string;
   travelMode: 'WALK';
-  provider: 'clio-campus-pilot' | 'clio-coordinate-fallback';
+  provider: 'clio-campus-pilot' | 'clio-coordinate-fallback' | 'clio-pedestrian-network';
   providerConfigured: boolean;
   fieldVerified: boolean;
   distanceMeters: number;
@@ -137,6 +137,10 @@ export interface CampusWalkingRoute {
   attribution?: string;
   lastReviewed?: string;
   sourceUrls?: string[];
+  networkVersion?: string;
+  stopOrder?: string[];
+  approachAssumptions?: string[];
+  approaches?: Array<{stopId:string;coordinate:WalkingCoordinate;gapMeters:number}>;
 }
 
 async function readStoredValue(key: string) {
@@ -395,7 +399,12 @@ export async function getTourStops(tourId: string) {
 }
 
 export async function getWalkingRoute(tourId: string) {
-  return publicTourData<CampusWalkingRoute>(`/navigation/walking-route/${encodeURIComponent(tourId)}?campusId=missouri-s-and-t`);
+  // Separate this generation from cached legacy pilot/straight-line routes.
+  const route = await publicTourData<CampusWalkingRoute>(`/navigation/walking-route/${encodeURIComponent(tourId)}?campusId=missouri-s-and-t&routing=pedestrian-network-v1`);
+  if (route.provider !== 'clio-pedestrian-network') {
+    throw new Error('The backend has not enabled pedestrian-network routing yet. No legacy route has been substituted.');
+  }
+  return route;
 }
 
 export async function startTour(tourId: string) {

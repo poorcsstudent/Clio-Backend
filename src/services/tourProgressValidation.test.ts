@@ -41,6 +41,19 @@ test('tour progress accepts a current same-origin checkpoint', () => {
   assert.equal(validTourProgress(saved, 'api', 2000), true);
 });
 
+test('network routes validate saved approach metadata', () => {
+ const point = {latitude:37,longitude:-91};
+ const route = {tourId:'cs',travelMode:'WALK',provider:'clio-pedestrian-network',
+   fieldVerified:false,path:[point],distanceMeters:0,durationSeconds:0,legs:[],
+   networkVersion:'test-v1',stopOrder:['a','b'],approachAssumptions:['Unverified entrance'],
+   approaches:[{stopId:'a',coordinate:point,gapMeters:20}]};
+ assert.equal(validSavedRoute(route,'cs'),true);
+ for(const patch of [{networkVersion:{}},{stopOrder:[null]},{approachAssumptions:{}},
+   {approaches:[null]},{approaches:[{stopId:'a',coordinate:point,gapMeters:-1}]}]) {
+   assert.equal(validSavedRoute({...route,...patch},'cs'),false);
+ }
+});
+
 test('saved route display metadata rejects objects and malformed source lists', () => {
   const route = { tourId: 'cs', travelMode: 'WALK', provider: 'clio-campus-pilot',
     fieldVerified: false, path: [{ latitude: 37, longitude: -91 }],

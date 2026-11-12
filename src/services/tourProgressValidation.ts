@@ -38,7 +38,9 @@ export function validSavedRoute(value: any, tourId: string): boolean {
   return Boolean(value && value.tourId === tourId && value.travelMode === 'WALK'
     && optionalText(value.warning) && optionalText(value.attribution)
     && optionalText(value.lastReviewed) && optionalStrings(value.sourceUrls)
-    && ['clio-campus-pilot', 'clio-coordinate-fallback'].includes(value.provider)
+    && ['clio-campus-pilot', 'clio-coordinate-fallback', 'clio-pedestrian-network'].includes(value.provider)
+    && optionalText(value.networkVersion) && optionalStrings(value.stopOrder) && optionalStrings(value.approachAssumptions)
+    && (value.approaches === undefined || (Array.isArray(value.approaches) && value.approaches.every((a:any)=>identifier(a?.stopId)&&coordinate(a.coordinate)&&metric(a.gapMeters))))
     && typeof value.fieldVerified === 'boolean' && path(value.path)
     && metric(value.distanceMeters) && metric(value.durationSeconds)
     && Array.isArray(value.legs) && value.legs.every((leg: any) => leg

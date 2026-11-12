@@ -143,7 +143,16 @@ export default function CampusScreen() {
         setActiveStopIndex(saved.stopIndex);
         setSelectedTourId(saved.session.tour.id);
         setRoutesByTourId(current => ({ ...current, [saved.session.tour.id]: saved.session.stops }));
-        if (saved.route) setWalkingRoutesByTourId(current => ({ ...current, [saved.session.tour.id]: saved.route! }));
+        if (saved.route?.provider === 'clio-pedestrian-network') {
+          setWalkingRoutesByTourId(current => ({ ...current, [saved.session.tour.id]: saved.route! }));
+        } else {
+          // Never restore an old straight-line or hand-curated route as network guidance.
+          void getWalkingRoute(saved.session.tour.id).then(route => {
+            if (active) setWalkingRoutesByTourId(current => ({ ...current, [saved.session.tour.id]: route }));
+          }).catch(() => {
+            if (active) setError('Saved stops were restored, but an updated pedestrian route is unavailable. No old route has been substituted.');
+          });
+        }
         setTourNotice(`Saved tour restored paused at stop ${saved.stopIndex + 1}. Check your surroundings before resuming. Saved information may be outdated.`);
       }
       setProgressLoaded(true);
@@ -252,7 +261,7 @@ export default function CampusScreen() {
             [tour.id]: walkingRoute,
           }));
         })
-        .catch(() => undefined);
+        .catch(reason => setError(reason instanceof Error ? reason.message : 'Pedestrian route unavailable'));
     }
     if (routesByTourId[tour.id]) return;
 
@@ -274,15 +283,11 @@ export default function CampusScreen() {
     setTourNotice('');
 
     try {
+      const walkingRoute = walkingRoutesByTourId[tour.id] ?? await getWalkingRoute(tour.id);
       if (activeTour) {
         await endTour(activeTour.sessionId);
       }
-      const [session, walkingRoute] = await Promise.all([
-        startTour(tour.id),
-        walkingRoutesByTourId[tour.id]
-          ? Promise.resolve(walkingRoutesByTourId[tour.id])
-          : getWalkingRoute(tour.id),
-      ]);
+      const session = await startTour(tour.id);
       setActiveTour(session);
       setActiveStopIndex(0);
       setActiveWalkingStepIndex(0);
@@ -586,7 +591,7 @@ export default function CampusScreen() {
                       : null;
                 const offPilotRoute =
                   isActiveTour &&
-                  walkingRoute?.provider === 'clio-campus-pilot' &&
+                  (walkingRoute?.provider === 'clio-campus-pilot' || walkingRoute?.provider === 'clio-pedestrian-network') &&
                   isOffPilotRoute(distanceToActivePath, gpsAccuracy);
 
                 return (
@@ -698,7 +703,9 @@ export default function CampusScreen() {
                             <View style={styles.activeGuideHeader}>
                               <View style={styles.activeGuideHeaderCopy}>
                                 <Text style={styles.liveLabel}>
-                                  {walkingRoute?.provider === 'clio-campus-pilot'
+                                  {walkingRoute?.provider === 'clio-pedestrian-network'
+                                    ? 'PEDESTRIAN-NETWORK TOUR'
+                                    : walkingRoute?.provider === 'clio-campus-pilot'
                                     ? 'LIVE WALKING PILOT'
                                     : 'LIVE TOUR'}
                                 </Text>
@@ -787,10 +794,10 @@ export default function CampusScreen() {
                                   highlighted path. Use posted pedestrian guidance or open
                                   Apple Maps before continuing.
                                 </Text>
-                              ) : walkingRoute?.provider === 'clio-campus-pilot' &&
+                              ) : (walkingRoute?.provider === 'clio-campus-pilot' || walkingRoute?.provider === 'clio-pedestrian-network') &&
                                 distanceToActivePath !== null ? (
                                 <Text style={styles.onRouteText}>
-                                  On pilot path · off-route alert at{' '}
+                                  Near mapped path · off-route alert at{' '}
                                   {TOUR_OFF_ROUTE_THRESHOLD_METERS} m
                                 </Text>
                               ) : null}

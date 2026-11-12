@@ -183,10 +183,7 @@ export function CampusRouteMap({
 
   const selectedStop =
     stops.find(stop => stop.id === selectedStopId) ?? stops[safeActiveIndex] ?? stops[0];
-  const totalDistanceMeters = Math.round(
-    walkingRoute?.distanceMeters ??
-      stops.reduce((total, stop) => total + (stop.distanceFromPreviousMeters ?? 0), 0),
-  );
+  const totalDistanceMeters = Math.round(walkingRoute?.distanceMeters ?? 0);
   const activeWalkingLeg =
     safeActiveIndex > 0
       ? walkingRoute?.legs[
@@ -198,14 +195,7 @@ export function CampusRouteMap({
         clamp(activeStepIndex, 0, Math.max(0, activeWalkingLeg.steps.length - 1))
       ]
     : undefined;
-  const routeLegs =
-    walkingRoute?.legs.length
-      ? walkingRoute.legs
-      : stops.slice(1).map((destination, destinationIndex) => ({
-          fromStopId: stops[destinationIndex].id,
-          toStopId: destination.id,
-          path: [stops[destinationIndex], destination],
-        }));
+  const routeLegs = walkingRoute?.legs ?? [];
 
   const userPoint =
     userCoordinate && mapWidth > 0
@@ -251,11 +241,11 @@ export function CampusRouteMap({
             {totalDistanceMeters > 0 ? `  /  about ${totalDistanceMeters.toLocaleString()} m` : ''}
           </Text>
           <Text style={styles.providerText}>
-            {walkingRoute?.provider === 'clio-campus-pilot'
+            {walkingRoute?.provider === 'clio-pedestrian-network' ? 'PEDESTRIAN NETWORK · APPROACHES ASSUMED' : walkingRoute?.provider === 'clio-campus-pilot'
               ? `CLIO WALKING PILOT · ${
                   walkingRoute.fieldVerified ? 'FIELD VERIFIED' : 'FIELD CHECK NEEDED'
                 }`
-              : 'CLIO COORDINATE PREVIEW'}
+              : 'WALKING ROUTE UNAVAILABLE · STOP LOCATIONS ONLY'}
           </Text>
         </View>
         <View style={styles.livePill}>
@@ -484,8 +474,9 @@ export function CampusRouteMap({
 
       <Text style={styles.disclaimer}>
         {walkingRoute?.warning ??
-          'Clio connects verified campus coordinates to preview the tour route. Follow posted pedestrian paths and accessibility guidance while walking.'}
+          'No pedestrian route is available. Only stop locations are shown; no straight-line walking directions are implied.'}
       </Text>
+      {walkingRoute?.approachAssumptions?.map(assumption => <Text key={assumption} style={styles.attribution}>{assumption}</Text>)}
       {walkingRoute?.attribution ? (
         <Text style={styles.attribution}>{walkingRoute.attribution}</Text>
       ) : null}

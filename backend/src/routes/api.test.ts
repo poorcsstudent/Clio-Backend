@@ -129,7 +129,7 @@ test("tour sessions start at Havener and can be ended", async () => {
   assert.equal(ended.body.sessionId, started.body.sessionId);
 });
 
-test("walking route pilot preserves the Computer Science tour order", async () => {
+test("pedestrian route preserves the Computer Science tour order", async () => {
   const app = getApp();
   const response = await request(app).get(
     "/navigation/walking-route/computer-science?campusId=missouri-s-and-t",
@@ -138,13 +138,31 @@ test("walking route pilot preserves the Computer Science tour order", async () =
   assert.equal(response.status, 200);
   assert.equal(response.body.tourId, "computer-science");
   assert.equal(response.body.travelMode, "WALK");
-  assert.equal(response.body.provider, "clio-campus-pilot");
+  assert.equal(response.body.provider, "clio-pedestrian-network");
   assert.equal(response.body.providerConfigured, true);
   assert.equal(response.body.fieldVerified, false);
   assert.ok(response.body.path.length > 50);
   assert.equal(response.body.legs[0].fromStopId, "havener-center");
   assert.equal(response.body.legs[0].toStopId, "computer-science-building");
   assert.equal(response.body.legs[1].toStopId, "kummer-student-design-center");
+});
+
+test('interest route endpoint validates stops and returns network ordering',async()=>{
+ const app=getApp();
+ const result=await request(app).post('/navigation/walking-route').send({stopIds:['havener-center','computer-science-building','kummer-student-design-center']});
+ assert.equal(result.status,200);assert.equal(result.body.provider,'clio-pedestrian-network');assert.equal(result.body.stopOrder[0],'havener-center');assert.equal(result.body.approaches.length,3);
+ const invalid=await request(app).post('/navigation/walking-route').send({stopIds:['havener-center','made-up']});assert.equal(invalid.status,400);
+});
+
+test('disconnected catalog and interest routes return 422 without geometry', async () => {
+ const app=getApp();
+ const catalog=await request(app).get('/navigation/walking-route/chemistry');
+ const custom=await request(app).post('/navigation/walking-route').send({stopIds:['havener-center','straumanis-james-hall']});
+ for(const result of [catalog,custom]) {
+   assert.equal(result.status,422);
+   assert.equal(result.body.code,'PEDESTRIAN_ROUTE_UNAVAILABLE');
+   assert.equal(result.body.path,undefined);
+ }
 });
 
 test("iOS installer exposes an Apple over-the-air manifest", async () => {

@@ -4,6 +4,7 @@ import {
   type TourStop,
 } from "../data/campuses";
 import { MISSOURI_S_AND_T_CAMPUS_ID } from "../data/degreeTours";
+import { pedestrianRouter, pedestrianNetworkMetadata, type RouteStop } from './pedestrianRouting';
 import {
   pilotWalkingRoutes,
   type PilotWalkingCoordinate,
@@ -36,7 +37,7 @@ export interface CampusWalkingRoute {
   campusId: string;
   tourId: string;
   travelMode: "WALK";
-  provider: "clio-campus-pilot" | "clio-coordinate-fallback";
+  provider: "clio-campus-pilot" | "clio-coordinate-fallback" | "clio-pedestrian-network";
   providerConfigured: boolean;
   fieldVerified: boolean;
   distanceMeters: number;
@@ -48,6 +49,10 @@ export interface CampusWalkingRoute {
   attribution?: string;
   lastReviewed?: string;
   sourceUrls?: string[];
+  networkVersion?: string;
+  stopOrder?: string[];
+  approachAssumptions?: string[];
+  approaches?: Array<{stopId:string;coordinate:WalkingCoordinate;gapMeters:number}>;
 }
 
 function coordinate(stop: TourStop): WalkingCoordinate {
@@ -240,10 +245,22 @@ export async function getCampusWalkingRoute(tourId: string) {
   const tour = tours.find(candidate => candidate.id === tourId);
   if (!tour) return null;
   const stops = getTourStopsForTour(tourId);
-  const pilotDefinition = pilotWalkingRoutes.get(tourId);
-  if (pilotDefinition) {
-    const pilotRoute = createPilotWalkingRoute(pilotDefinition, stops);
-    if (pilotRoute) return pilotRoute;
-  }
-  return createFallbackWalkingRoute(tourId, stops);
+  return createNetworkWalkingRoute(tourId, stops);
+}
+
+export function createNetworkWalkingRoute(tourId:string,stops:RouteStop[],optimize=false):CampusWalkingRoute {
+  const plan=pedestrianRouter.plan(stops,optimize);
+  const legs:WalkingRouteLeg[]=plan.legs.map(leg=>{
+    const name=stops.find(s=>s.id===leg.toStopId)!.name;
+    const distanceMeters=Math.round(leg.distanceMeters),durationSeconds=walkingDurationSeconds(distanceMeters);
+    const hasSteps=leg.edges.some(e=>e.steps);
+    return {fromStopId:leg.fromStopId,toStopId:leg.toStopId,distanceMeters,durationSeconds,path:leg.path,
+      steps:[{instruction:`Follow the mapped pedestrian path toward ${name}.${hasSteps?' This leg includes mapped stairs.':''} The route ends at a nearby path point; confirm the final entrance approach.`,maneuver:'continue',distanceMeters,durationSeconds,path:leg.path}]};
+  });
+  return {campusId:MISSOURI_S_AND_T_CAMPUS_ID,tourId,travelMode:'WALK',provider:'clio-pedestrian-network',providerConfigured:true,fieldVerified:false,
+    distanceMeters:legs.reduce((sum,l)=>sum+l.distanceMeters,0),durationSeconds:legs.reduce((sum,l)=>sum+l.durationSeconds,0),
+    path:legs.flatMap((leg,i)=>i===0?leg.path:leg.path.slice(1)),legs,generatedAt:new Date().toISOString(),
+    networkVersion:pedestrianNetworkMetadata.version,stopOrder:plan.order,approaches:plan.anchors.map(a=>({stopId:a.stopId,coordinate:a.coordinate,gapMeters:a.gapMeters})),approachAssumptions:plan.anchors.map(a=>a.assumption),
+    warning:'OSM pedestrian-network route; not field-verified or accessibility-verified. Distances exclude unverified final building approaches. Follow posted crossings and current conditions; paths may include stairs. No straight-line fallback is used.',
+    attribution:pedestrianNetworkMetadata.attribution,sourceUrls:[pedestrianNetworkMetadata.sourceUrl],lastReviewed:pedestrianNetworkMetadata.sourceTimestamp};
 }

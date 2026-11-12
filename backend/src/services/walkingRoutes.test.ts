@@ -19,12 +19,12 @@ test("fallback walking routes preserve degree-tour stop order", () => {
   assert.ok(route.distanceMeters > 0);
 });
 
-test("Computer Science pilot follows curated pedestrian geometry", async () => {
+test("Computer Science uses the pedestrian network and disclosed approach points", async () => {
   const stops = getTourStopsForTour("computer-science");
   const route = await getCampusWalkingRoute("computer-science");
 
   assert.ok(route);
-  assert.equal(route.provider, "clio-campus-pilot");
+  assert.equal(route.provider, "clio-pedestrian-network");
   assert.equal(route.providerConfigured, true);
   assert.equal(route.fieldVerified, false);
   assert.equal(route.legs.length, stops.length - 1);
@@ -34,22 +34,18 @@ test("Computer Science pilot follows curated pedestrian geometry", async () => {
   assert.ok(route.path.length > 50);
   assert.ok(route.distanceMeters > 900);
   assert.ok(route.distanceMeters < 1_100);
-  assert.ok(route.legs.every(leg => leg.steps.length >= 4));
-  assert.deepEqual(route.legs[0].path[0], {
-    latitude: stops[0].latitude,
-    longitude: stops[0].longitude,
-  });
-  assert.deepEqual(route.legs[1].path.at(-1), {
-    latitude: stops[2].latitude,
-    longitude: stops[2].longitude,
-  });
+  assert.ok(route.legs.every(leg => leg.steps.length >= 1));
+  assert.equal(route.approachAssumptions?.length,stops.length);
+  assert.deepEqual(route.legs[0].path[0],route.approaches![0].coordinate);
+  assert.deepEqual(route.legs[1].path.at(-1),route.approaches![2].coordinate);
+  assert.notDeepEqual(route.path[0],{latitude:stops[0].latitude,longitude:stops[0].longitude});
 });
 
-test("non-pilot tours retain the coordinate fallback", async () => {
+test("non-pilot tours also use the pedestrian network", async () => {
   const route = await getCampusWalkingRoute("general-campus-life");
 
   assert.ok(route);
-  assert.equal(route.provider, "clio-coordinate-fallback");
-  assert.equal(route.providerConfigured, false);
+  assert.equal(route.provider, "clio-pedestrian-network");
+  assert.equal(route.providerConfigured, true);
   assert.equal(route.fieldVerified, false);
 });
