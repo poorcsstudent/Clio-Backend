@@ -5,6 +5,42 @@ glasses test or campus route verification was performed for this integration.
 
 ## Route generation
 
+### Product direction: audio-first walking tours
+
+User decision (2026-11-12): the geographic pedestrian network, not the
+illustration-trace network, must drive directions while walking. The S&T
+illustration is an optional on-device visual aid. The intended experience is
+phone-in-pocket, with visitors looking around campus and receiving guidance
+through the glasses. This is a target behavior, not a claim of completed
+background operation or field-validated navigation.
+
+- Use geographic path coordinates and GPS accuracy for route progress,
+  maneuver timing, off-route detection and arrivals. Never derive walking
+  distances, headings or turn instructions from artwork pixels.
+- Keep shared stop IDs between the navigation route and visual map. Artwork
+  corrections must not alter geographic route connectivity or imply a verified
+  entrance. Geographic gaps must remain explicit even if the artwork connects.
+- Give short spoken prompts before decision points, then leave quiet time for
+  exploring. Announce tunnel entrances as underground passages, not highway
+  crossings. Use reliable arrival confirmation before narrating a stop.
+- Target hands-free commands for repeat directions, next stop, pause/resume,
+  skipping a stop, ending the tour and campus questions, with a shared speech
+  queue so narration, questions and navigation do not talk over each other.
+- Treat GPS loss in tunnels as uncertainty: do not invent a new position,
+  announce false off-route events or automatically advance stops. Recover
+  progress once reliable fixes return; do not infer facing direction from
+  stationary phone GPS.
+- Keep the illustrated map available on demand, not a required interaction at
+  every stop. Explain when guidance cannot continue reliably.
+
+Existing foundations: geographic routes, GPS arrival checks, route-distance
+helpers and spoken tour-start/arrival narration. Remaining work includes
+actionable maneuver segmentation (current geographic legs generally contain
+one broad instruction), timely spoken maneuver cues, unified tour voice
+commands/audio ownership, and device-validated screen-lock/background location
+and audio behavior. Do not promise continuous phone-in-pocket operation until
+those conditions have been tested on iOS and the glasses.
+
 - Catalog GET routes now use the geographic OSM snapshot (2,111 nodes and 2,274
   edges), retaining each catalog tour's existing stop order.
 - `POST /navigation/walking-route` accepts two or more distinct known stop IDs
