@@ -1,6 +1,25 @@
 // Explicit, review-only joins. Do not export these as surveyed GPS navigation.
 const source=require('../preview/path-review/graph-draft.json');
+// User-identified underpasses, corroborated by the OSM reference snapshot.
+// Only the mouths join the surface graph; the road above is never a junction.
+const tunnelEvidence='User identified this underground pedestrian passage on the campus illustration. OSM corroborates the tunnel; artwork placement is schematic. Current access, stairs and accessibility remain unverified.';
+const havenerPortal={id:'preview-havener-west-portal',x:1760.75,y:754.17,gps:null};
+const residential=source.edges.find(e=>e.id==='E036');
+const split=residential.points.findIndex(([x,y])=>x===havenerPortal.x&&y===havenerPortal.y);
+if(split<1)throw Error('Havener tunnel approach trace changed');
+const baseEdges=source.edges.flatMap(e=>e.id==='E036'?[
+  {...e,id:e.id+'-west',to:havenerPortal.id,points:e.points.slice(0,split+1)},
+  {...e,id:e.id+'-east',from:havenerPortal.id,points:e.points.slice(split)},
+]:e.id==='E135'?[{...e,label:'Thomas Jefferson pedestrian tunnel',structure:'tunnel',level:-1,
+  reference:{url:'https://www.openstreetmap.org/way/518671101'},
+  assumption:{rationale:tunnelEvidence},evidence:'user-identified-and-osm',accessibility:'unverified'}]:[e]).map(e=>e.id.startsWith('E036-')?{...e,lengthPixels:e.points.slice(1).reduce((sum,p,i)=>sum+Math.hypot(p[0]-e.points[i][0],p[1]-e.points[i][1]),0)}:e);
 const joins=[
+  {id:'preview-havener-underpass',from:havenerPortal.id,to:'N155',points:[[1760.75,754.17],[1776,762],[1796,772]],
+    label:'Havener / Highway 63 pedestrian underpass',structure:'tunnel',level:-1,
+    reference:{url:'https://www.openstreetmap.org/way/1434828176',officialUrl:'https://masterplan.mst.edu/pedestrianunderpass/'},
+    rationale:tunnelEvidence},
+  {id:'preview-havener-underpass-plaza',from:'N173',to:'N010',points:[[1863,797],[1877,802],[1893,813],[1902,827],[1901,846],[1881,867]],
+    rationale:'Assume the open plaza east of Havener connects the tunnel-side frontage to the existing east approach. This follows the artwork around the building, not through it; verify paving, grade and tree-obscured sections.'},
   {id:'preview-library-west-plaza',from:'N013',to:'N157',points:[[2001,881],[1994,860],[1998,840],[2010,826],[2029,816]],
     rationale:'Assume the visible plaza along the west side of the library joins the quad to the northern academic path; tree cover and elevation require review.'},
   {id:'preview-cs-west-corner',from:'N163',to:'N164',points:[[2144,805],[2132,821],[2132,835],[2144,844],[2158,852]],
@@ -23,9 +42,10 @@ const joins=[
   {id:'preview-schrenk-east-diagonal',from:'N063',to:'N216',points:[[2093,1117],[2070,1137],[2045,1159],[2020,1178],[1991,1199]],
     rationale:'Assume the southeast-court diagonal continues along the visible path toward the Schrenk-side frontage; confirm tree-obscured continuity and entrance access.'},
 ];
-const nodes=new Map(source.nodes.map(n=>[n.id,n]));
+const previewNodes=[...source.nodes,havenerPortal];
+const nodes=new Map(previewNodes.map(n=>[n.id,n]));
 for(const j of joins){const a=nodes.get(j.from),b=nodes.get(j.to);if(!a||!b||j.points[0][0]!==a.x||j.points[0][1]!==a.y||j.points.at(-1)[0]!==b.x||j.points.at(-1)[1]!==b.y)throw Error('Artwork preview join no longer matches reviewed endpoints: '+j.id);}
-const graph={...source,edges:[...source.edges,...joins.map(j=>({...j,frame:'main',reviewKey:j.id,status:'needs-geometry-review',routingEligible:false,evidence:'inferred-connection',assumption:{rationale:j.rationale,verify:'On-campus entrance, paving, grade and access check required.'}}))]};
+const graph={...source,nodes:previewNodes,edges:[...baseEdges,...joins.map(j=>({...j,frame:'main',reviewKey:j.id,status:'needs-geometry-review',routingEligible:false,accessibility:'unverified',evidence:j.structure==='tunnel'?'user-identified-and-osm':'inferred-connection',assumption:{rationale:j.rationale,verify:'On-campus entrance, paving, grade and access check required.'}}))]};
 // Label centers on roofs are not entrances. These explicit nearby approach
 // associations supersede nearest-roof-label matching for the reviewed CS core.
 const approaches={'havener-center':'N010','computer-science-building':'N175'};

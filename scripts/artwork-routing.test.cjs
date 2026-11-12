@@ -6,6 +6,28 @@ const graph={width:1000,height:1000,nodes:[{id:'a',x:0,y:0},{id:'b',x:100,y:0},{
  {id:'cd',from:'c',to:'d',frame:'main',points:[[200,0],[300,0]],status:'visible-path-draft',reviewKey:'cd'}]};
 const layout={buildings:{one:{imageX:10,imageY:4},two:{imageX:90,imageY:4},three:{imageX:290,imageY:0}}};
 const stop=id=>({id,name:id});
+
+test('Havener residential routes use the underground passage in both directions',()=>{
+ const ids=['havener-center','residential-commons-1'];
+ const layout={buildings:{'havener-center':{imageX:1799.3595,imageY:825.8595},'residential-commons-1':{imageX:1760.8695,imageY:700.6275}}};
+ for(const order of [ids,[...ids].reverse()]){
+  const route=createArtworkRoute(order.map(stop),layout);
+  assert.equal(route.status,'complete');
+  const tunnel=route.legs[0].parts.find(p=>p.structure==='tunnel');
+  assert.equal(tunnel.reviewKey,'preview-havener-underpass');assert.equal(tunnel.level,-1);
+  assert(route.anchors.every(a=>a.edgeId!=='preview-havener-underpass'),'Buildings must not snap inside tunnels');
+ }
+});
+
+test('Thomas Jefferson tunnel is traversable without hiding the separate approach gap',()=>{
+ const route=createArtworkRoute(['havener-center','thomas-jefferson-residence-hall'].map(stop),{buildings:{'havener-center':{imageX:1799.3595,imageY:825.8595},'thomas-jefferson-residence-hall':{imageX:2945.7495,imageY:673.8505}}});
+ const tunnel=route.legs[0].parts.find(p=>p.structure==='tunnel');
+ assert.equal(tunnel.label,'Thomas Jefferson pedestrian tunnel');assert.equal(tunnel.level,-1);
+ assert.equal(route.status,'incomplete');assert.equal(route.legs[0].gapPoints.length,2);
+ const {graph}=require('./artwork-preview-network.cjs');
+ const edges=graph.edges.filter(e=>e.structure==='tunnel');assert.equal(edges.length,2);
+ assert(edges.every(e=>e.accessibility==='unverified'&&e.routingEligible===false));
+});
 test('preserves traced bends in the artwork frame and splits anchors on one edge',()=>{
  const route=createArtworkRoute(['one','two'].map(stop),layout,graph);
  assert.equal(route.status,'complete');assert.equal(route.coordinateSpace,'artwork-pixels');

@@ -29,6 +29,43 @@ glasses test or campus route verification was performed for this integration.
 
 ## Preview
 
+### Underground pedestrian passages (2026-11-12)
+
+The two user-marked tunnels are now explicitly represented in the local preview:
+
+- Havener / Highway 63 underpass: a new schematic underground edge joins an
+  existing vertex on the residential garden trace to the east-side plaza.
+  A disclosed plaza approach connects it to Havener's existing approach. Havener
+  to Residential Commons 1 and 2 now connects through this underpass.
+- Thomas Jefferson tunnel: existing E135 was mislabeled as a bridge. It retains
+  its geometry and endpoints, but now carries `structure: tunnel` and `level: -1`.
+  The separate campus-side approach gap remains explicit; adding this tunnel
+  does not make the entire illustrated route to Thomas Jefferson complete.
+
+Cyan dotted lines, entrance dots, tooltips and a legend identify underground
+passages even when background traces are hidden. Buildings cannot snap to the
+middle of a tunnel. Only portal endpoints join the surface network; no node is
+added at an apparent artwork crossing with the road above.
+
+The geographic snapshot already included OSM ways 1434828176 (Havener) and
+518671101 (Thomas Jefferson). Its exporter now preserves their tunnel/level
+metadata, and route instructions explicitly say to use the underground passage
+rather than the roadway above. No geographic node, distance or connectivity was
+changed. This adds viable alternatives; it does not impose a blanket ban on all
+surface crossings or certify either tunnel's current access/accessibility.
+
+Evidence: user-marked artwork; [OSM Havener way](https://www.openstreetmap.org/way/1434828176);
+[OSM Thomas Jefferson way](https://www.openstreetmap.org/way/518671101); and the
+[S&T underpass project](https://masterplan.mst.edu/pedestrianunderpass/), which
+describes the replacement under Highway 63 and reports it opened. Artwork
+placement remains schematic, not a survey or current-closure feed.
+
+Validation: 48 app, 35 backend and 10 artwork tests pass, including bidirectional
+Havener tunnel routing, retaining the Thomas Jefferson approach gap, and both
+backend tunnel instructions. Browser review confirmed the housing route and
+underground legend. Local changes only: no deployment, Expo submission, physical
+glasses test or campus verification performed.
+
 ### Stop-limit removal (2026-11-12)
 
 The 4/6/10-destination selector and server-side eleven-stop rejection are removed.

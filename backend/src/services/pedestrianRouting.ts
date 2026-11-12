@@ -2,7 +2,7 @@ import network from '../data/pedestrian-network.json';
 
 export interface RouteStop { id:string; name:string; latitude:number; longitude:number }
 type Point={latitude:number;longitude:number};
-type Edge={id:string;from:string;to:string;lengthMeters:number;sourceId:string;steps:boolean;direction:string};
+type Edge={id:string;from:string;to:string;lengthMeters:number;sourceId:string;steps:boolean;direction:string;tunnel?:boolean;level?:number};
 type Network={nodes:Array<Point&{id:string}>;edges:Edge[]};
 export class PedestrianRouteError extends Error {
   readonly code='PEDESTRIAN_ROUTE_UNAVAILABLE';

@@ -14,7 +14,8 @@ function createArtworkRoute(stops,layout,source=graph,groupConnected=false){
     const override=source===graph&&approaches[stop.id]?source.nodes.find(n=>n.id===approaches[stop.id]):null;
     const target=override?[override.x,override.y]:[b.imageX,b.imageY];
     let best;
-    for(const edge of edges){let offset=0;for(let i=1;i<edge.points.length;i++){
+    // A roof label cannot create an entrance midway through an underground edge.
+    for(const edge of edges.filter(e=>e.structure!=='tunnel')){let offset=0;for(let i=1;i<edge.points.length;i++){
       const a=edge.points[i-1],z=edge.points[i],p=project(target,a,z);
       if(!best||p.distance<best.gapPixels)best={edgeId:edge.id,segment:i-1,point:p.point,gapPixels:p.distance,offset:offset+Math.hypot(p.point[0]-a[0],p.point[1]-a[1])};
       offset+=Math.hypot(z[0]-a[0],z[1]-a[1]);
@@ -24,7 +25,7 @@ function createArtworkRoute(stops,layout,source=graph,groupConnected=false){
   });
   const adjacent=new Map();
   function link(from,to,points,edge){
-    const item={to,points,length:length(points),reviewKey:edge.reviewKey,candidate:edge.status!=='visible-path-draft',assumption:edge.assumption?.rationale};
+    const item={to,points,length:length(points),reviewKey:edge.reviewKey,candidate:edge.status!=='visible-path-draft',assumption:edge.assumption?.rationale,structure:edge.structure,level:edge.level,label:edge.label};
     if(!adjacent.has(from))adjacent.set(from,[]);adjacent.get(from).push(item);
     if(!adjacent.has(to))adjacent.set(to,[]);adjacent.get(to).push({...item,to:from,points:[...points].reverse()});
   }

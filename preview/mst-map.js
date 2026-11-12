@@ -58,6 +58,7 @@ L.circleMarker = (coordinate, options) => {
     const dot = document.createElement('i'); dot.className = 'dot'; dot.style.background = category.color;
     item.append(dot, document.createTextNode(category.label)); legend.append(item);
   }
+  const tunnelLegend=document.createElement('span');tunnelLegend.textContent='◉ Underground pedestrian passage';tunnelLegend.style.color='#66e3f0';legend.append(tunnelLegend);
   if (point && planned) {
     const index = order(chosen()).findIndex(stop => stop.id === place.id);
     if (index >= 0) {
@@ -82,12 +83,18 @@ function drawArtworkRoute(route,showNetwork){
   artworkLayers=L.layerGroup().addTo(map);
   const point=p=>[mstGraph.height-p[1],p[0]];
   if(showNetwork)for(const edge of mstGraph.edges.filter(e=>e.frame==='main'))originalPolyline(edge.points.map(point),{color:'#56756d',weight:2,opacity:.55,dashArray:edge.status==='visible-path-draft'?undefined:'4 6',interactive:false}).addTo(artworkLayers);
+  // Keep tunnel entrances discoverable even when the background traces are hidden.
+  for(const edge of mstGraph.edges.filter(e=>e.structure==='tunnel')){
+    const description=edge.label+' — underground pedestrian passage. Access and accessibility unverified.';
+    originalPolyline(edge.points.map(point),{color:'#66e3f0',weight:5,opacity:.95,dashArray:'3 6'}).bindTooltip(description).addTo(artworkLayers);
+    for(const entrance of [edge.points[0],edge.points.at(-1)])originalCircle(point(entrance),{color:'#113c43',fillColor:'#66e3f0',fillOpacity:1,radius:5,weight:2}).bindTooltip(description+' Entrance.').addTo(artworkLayers);
+  }
   if(!route)return;
   for(const leg of route.legs){
     const place=mstPlaces.find(p=>p.id===leg.toStopId),color=categoryFor(place).color;
     for(const part of leg.parts){
       originalPolyline(part.points.map(point),{color:'#fff',weight:7,opacity:.75,interactive:false}).addTo(artworkLayers);
-      originalPolyline(part.points.map(point),{color,weight:4,opacity:1,dashArray:part.candidate?'7 5':undefined}).bindTooltip(part.assumption||part.reviewKey).addTo(artworkLayers);
+      originalPolyline(part.points.map(point),{color:part.structure==='tunnel'?'#66e3f0':color,weight:4,opacity:1,dashArray:part.structure==='tunnel'?'3 6':part.candidate?'7 5':undefined}).bindTooltip((part.structure==='tunnel'?part.label+' — underground pedestrian passage. ':'')+(part.assumption||part.reviewKey)).addTo(artworkLayers);
     }
     if(leg.error)for(const p of leg.gapPoints||route.anchors.filter(a=>[leg.fromStopId,leg.toStopId].includes(a.stopId)&&a.point).map(a=>a.point))originalCircle(point(p),{color:'#ff876f',fillOpacity:.1,radius:9,weight:3}).bindTooltip(leg.error).addTo(artworkLayers);
   }

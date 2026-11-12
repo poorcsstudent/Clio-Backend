@@ -253,9 +253,9 @@ export function createNetworkWalkingRoute(tourId:string,stops:RouteStop[],optimi
   const legs:WalkingRouteLeg[]=plan.legs.map(leg=>{
     const name=stops.find(s=>s.id===leg.toStopId)!.name;
     const distanceMeters=Math.round(leg.distanceMeters),durationSeconds=walkingDurationSeconds(distanceMeters);
-    const hasSteps=leg.edges.some(e=>e.steps);
+    const hasSteps=leg.edges.some(e=>e.steps),hasTunnel=leg.edges.some(e=>e.tunnel);
     return {fromStopId:leg.fromStopId,toStopId:leg.toStopId,distanceMeters,durationSeconds,path:leg.path,
-      steps:[{instruction:`Follow the mapped pedestrian path toward ${name}.${hasSteps?' This leg includes mapped stairs.':''} The route ends at a nearby path point; confirm the final entrance approach.`,maneuver:'continue',distanceMeters,durationSeconds,path:leg.path}]};
+      steps:[{instruction:`Follow the mapped pedestrian path toward ${name}.${hasTunnel?' This leg uses an underground pedestrian passage; follow its entrances beneath the road, not the roadway above. Check posted access restrictions.':''}${hasSteps?' This leg includes mapped stairs.':''} The route ends at a nearby path point; confirm the final entrance approach.`,maneuver:'continue',distanceMeters,durationSeconds,path:leg.path}]};
   });
   return {campusId:MISSOURI_S_AND_T_CAMPUS_ID,tourId,travelMode:'WALK',provider:'clio-pedestrian-network',providerConfigured:true,fieldVerified:false,
     distanceMeters:legs.reduce((sum,l)=>sum+l.distanceMeters,0),durationSeconds:legs.reduce((sum,l)=>sum+l.durationSeconds,0),

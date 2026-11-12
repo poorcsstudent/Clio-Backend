@@ -2,10 +2,26 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { getTourStopsForTour } from "../data/campuses";
+import { campusPlaces } from '../data/campusPlaces';
+import network from '../data/pedestrian-network.json';
 import {
   createFallbackWalkingRoute,
+  createNetworkWalkingRoute,
   getCampusWalkingRoute,
 } from "./walkingRoutes";
+
+test('both campus tunnels retain underground metadata and route instructions',()=>{
+ const tunnels=network.edges.filter(e=>'tunnel' in e && e.tunnel);
+ assert.deepEqual(tunnels.map(e=>e.sourceId).sort(),['way/1434828176','way/518671101']);
+ assert(tunnels.every(e=>'level' in e&&e.level===-1));
+ for(const destination of ['residential-commons-1','thomas-jefferson-residence-hall']){
+  const stops=['havener-center',destination].map(id=>campusPlaces.find(p=>p.id===id)!);
+  const route=createNetworkWalkingRoute('tunnel-test',stops);
+  assert.match(route.legs[0].steps[0].instruction,/underground pedestrian passage/);
+  assert.match(route.legs[0].steps[0].instruction,/not the roadway above/);
+  assert.equal(route.fieldVerified,false);
+ }
+});
 
 test("fallback walking routes preserve degree-tour stop order", () => {
   const stops = getTourStopsForTour("computer-science");

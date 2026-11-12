@@ -31,8 +31,8 @@ function render(){
     issues.prepend(element('li',plannedRoute.orderBasis));
     if(plannedRoute.geographicError)issues.append(element('li','GPS reference network: '+plannedRoute.geographicError));
     details.hidden=false;details.open=missing.length>0;
-    $('notice').textContent=plannedRoute.disclaimer+' Solid colored lines follow visible traced paths; dashed colored lines follow candidate traces. Red rings identify disconnected approaches. No selected stop was silently removed.';
-  }else $('notice').textContent='Choose interests to highlight buildings. Paths and routes use the illustration’s own coordinates. Gray lines are traced network context, not a generated route. Candidate sections are dashed. Accessibility is unverified.';
+    $('notice').textContent=plannedRoute.disclaimer+' Solid colored lines follow visible traced paths; dashed colored lines follow candidate traces. Cyan dotted links and filled entrance dots identify underground pedestrian passages, not road-level crossings. Red rings identify disconnected approaches. No selected stop was silently removed.';
+  }else $('notice').textContent='Choose interests to highlight buildings. Paths and routes use the illustration’s own coordinates. Gray lines are traced network context, not a generated route. Candidate sections are dashed. Cyan dotted links and filled entrance dots identify underground pedestrian passages. Current access and accessibility are unverified.';
 }
 fetch('/data').then(r=>{if(!r.ok)throw Error('Campus data unavailable');return r.json();}).then(d=>{data=d;if(!window.L)throw Error('Map library unavailable. Reload to retry.');map=L.map('map').setView([37.9545,-91.773],16);markers=L.layerGroup().addTo(map);chips();render();}).catch(e=>{$('selection').textContent='Preview unavailable';routeStatus.textContent=e.message;routeStatus.setAttribute('role','alert');});
 $('search').oninput=()=>data&&chips();
