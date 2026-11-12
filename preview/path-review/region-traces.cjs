@@ -1,6 +1,21 @@
 // Full-resolution source coordinates. Each group is measured within a lossless
 // inspection crop; offsets restore the original artwork frame exactly.
 const groups = [
+ {region:'inner-campus',offset:[0,0],frame:'main',traces:[
+  ['quad-west-triangle-base',[[1873,958],[1898,955],[1923,951]],false],
+  ['quad-west-tree-approach',[[1873,958],[1892,943],[1916,924]],true],
+  ['quad-center-tree-link',[[1923,951],[1939,947],[1951,941]],true],
+  ['quad-northeast-triangle',[[1935,905],[1962,913],[1992,925]],false],
+  ['quad-north-garden-diagonal',[[1935,905],[1951,893],[1968,880]],false],
+  ['quad-north-tree-continuation',[[1968,880],[1982,870]],true],
+  ['quad-fountain-north-approach',[[2023,918],[2011,898],[2001,881]],false],
+  ['east-courtyard-front-door',[[2298,960],[2311,957]],false],
+  ['east-courtyard-north-entrance',[[2267,952],[2255,945],[2254,937]],false],
+  ['east-garden-southwest-link',[[2226,1002],[2208,1019],[2192,1037]],true],
+  ['east-garden-west-border',[[2192,1037],[2182,1043],[2174,1040]],false],
+  ['east-garden-house-approach',[[2268,1020],[2261,1026]],false],
+  ['east-garden-house-east-entry',[[2302,1050],[2309,1046]],false],
+ ]},
  {region:'west-core',offset:[1250,700],frame:'main',traces:[
   ['west-core-parking-edge',[[100,94],[106,115],[122,134],[147,150],[178,168],[210,181],[244,190],[278,194],[313,192],[345,186],[354,181]],false],
   ['west-core-clinic-short-walk',[[220,122],[231,115],[242,107]],false],

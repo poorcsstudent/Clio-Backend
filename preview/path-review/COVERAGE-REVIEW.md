@@ -1,6 +1,6 @@
 # Source comparison review — 2026-11-11
 
-Seven paired sheets compare the source artwork and trace across fourteen regions. This is a visual review record, not a quantitative coverage or accuracy certificate. The seventh sheet covers a transition area omitted from the first twelve-region audit; regional sheet counts do not establish exhaustive coverage.
+Eight paired sheets compare the source artwork and trace across sixteen regions, including overlapping interior detail views. This is a visual review record, not a quantitative coverage or accuracy certificate. The seventh sheet covers a transition area omitted from the first twelve-region audit; regional sheet counts do not establish exhaustive coverage.
 
 | Sheet | Regions inspected | Main review concern |
 | --- | --- | --- |
@@ -11,6 +11,7 @@ Seven paired sheets compare the source artwork and trace across fourteen regions
 | 05 | Far west; far north | Separate depicted footpaths from gray vehicle/shared-access drives. |
 | 06 | Mine inset; industrial inset | Mine loop/entry joins added as candidates; frames remain separate from the main campus graph. |
 | 07 | West core/roundabout; athletics transition | Clinic frontage, roundabout arcs and Spring Avenue sidewalk added; superseded rough lines removed. Road gaps and obscured entrance approaches are not assumed connected. |
+| 08 | Inner quad; east garden | Enlarged source comparison corrected quad diagonals and eastern courtyard branch placement. Tree-obscured links remain candidates; broad-plaza centerlines and depicted doorway endpoints await user review. |
 
 ## Deliberate exclusions
 

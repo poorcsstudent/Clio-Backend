@@ -21,6 +21,8 @@ regions=[
  ('L Industrial inset',(2450,1360,3114,1746)),
  ('M West core / roundabout',(1250,700,1750,1100)),
  ('N Athletics transition',(850,700,1400,1100)),
+ ('O Inner quad detail',(1850,850,2050,1000)),
+ ('P East garden detail',(2180,920,2440,1110)),
 ]
 font=ImageFont.truetype('C:/Windows/Fonts/arial.ttf',22)
 for start in range(0,len(regions),2):
@@ -29,7 +31,11 @@ for start in range(0,len(regions),2):
         y=row*480
         for column,image in enumerate([source,overlay]):
             draw.text((column*760+12,y+8),label+(' — source' if column==0 else ' — draft overlay'),fill='#153447',font=font)
-            crop=image.crop(box);crop.thumbnail((744,430))
+            crop=image.crop(box)
+            # Enlarge small detail crops equally in both panels for review.
+            if crop.width <= 300:
+                crop=crop.resize((crop.width*3,crop.height*3))
+            crop.thumbnail((744,430))
             sheet.paste(crop,(column*760+(760-crop.width)//2,y+44+(430-crop.height)//2))
     sheet.save(root/f'audit-{start//2+1:02}.png')
 print(f'Created {len(regions)//2} paired source/overlay audit sheets.')

@@ -20,6 +20,18 @@ assert.equal(new Set(graph.edges.map(e=>e.reviewKey)).size,graph.edges.length);
 assert(rejected.every(r=>!graph.edges.some(e=>e.trace===r.label)));
 assert(graph.edges.every(e=>Number.isFinite(e.lengthPixels)&&e.lengthPixels>0));
 assert(graph.edges.every(e=>e.routingEligible===false&&e.distanceMeters===null));
+// Interior-path regression: explicit junctions must stay shared after edits.
+for(const [x,y,traces] of [
+ [1923,951,['quad-west','quad-west-triangle-base','quad-center-tree-link']],
+ [1951,941,['quad-middle-west','quad-middle-east','quad-diagonal-se','quad-center-tree-link']],
+ [1980,949,['quad-south','quad-east','quad-diagonal-se']],
+ [2226,1002,['east-courtyard-south-link','east-courtyard-branch','east-garden-southwest-link']],
+]){
+ const node=graph.nodes.find(n=>n.x===x&&n.y===y);
+ assert(node,`Missing reviewed junction ${x},${y}`);
+ for(const trace of traces)assert(graph.edges.some(e=>e.trace===trace&&(e.from===node.id||e.to===node.id)),`${trace} must meet ${node.id}`);
+}
+assert(!graph.edges.some(e=>e.trace==='havener-east'),'Superseded overview duplicate must not return');
 const html=fs.readFileSync(path.join(root,'review.html'),'utf8');
 new (require('node:vm').Script)(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
 console.log('PASS: deterministic generation, structural checks, unique review keys, rejected-edge exclusion, pixel lengths, routing lock, reviewer syntax.');
