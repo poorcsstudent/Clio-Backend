@@ -2,6 +2,10 @@
 // inspection crop; offsets restore the original artwork frame exactly.
 const groups = [
  {region:'inner-campus',offset:[0,0],frame:'main',traces:[
+  ['havener-east-plaza-join',[[1881,867],[1892,880],[1890,894],[1886,908]],true],
+  ['east-courtyard-loop-closure',[[2267,952],[2258,956],[2255,961],[2258,966]],true],
+  ['east-garden-tree-join',[[2268,995],[2278,1006],[2268,1020]],true],
+  ['east-garden-library-join',[[2192,1037],[2198,1047],[2193,1056],[2185,1065]],true],
   ['quad-west-triangle-base',[[1873,958],[1898,955],[1923,951]],false],
   ['quad-west-tree-approach',[[1873,958],[1892,943],[1916,924]],true],
   ['quad-center-tree-link',[[1923,951],[1939,947],[1951,941]],true],

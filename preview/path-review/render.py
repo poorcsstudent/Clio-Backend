@@ -21,7 +21,7 @@ def render(overlay, candidates):
         if candidate and not candidates:
             continue
         points = [tuple(p) for p in edge['points']]
-        color = '#c86200' if candidate else '#007e85'
+        color = '#8451a1' if edge.get('assumption') else '#c86200' if candidate else '#007e85'
         if not candidate:
             draw.line(points, fill=color, width=4, joint='curve')
         else:

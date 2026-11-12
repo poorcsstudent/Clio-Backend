@@ -1,7 +1,7 @@
 {
   "structuralChecks": "passed",
   "nodes": 292,
-  "edges": 260,
+  "edges": 264,
   "components": [
     {
       "size": 51,
@@ -45,14 +45,14 @@
         "N018",
         "N013",
         "N012",
-        "N088",
+        "N090",
         "N011",
         "N010",
+        "N006",
+        "N007",
+        "N089",
         "N053",
         "N054",
-        "N007",
-        "N087",
-        "N006",
         "N015",
         "N014",
         "N008",
@@ -137,25 +137,22 @@
       ]
     },
     {
-      "size": 10,
+      "size": 14,
       "nodes": [
         "N055",
         "N056",
-        "N059",
-        "N091",
-        "N092",
-        "N060",
-        "N057",
-        "N089",
         "N058",
-        "N090"
-      ]
-    },
-    {
-      "size": 2,
-      "nodes": [
+        "N092",
+        "N059",
+        "N088",
+        "N093",
+        "N062",
         "N061",
-        "N062"
+        "N060",
+        "N087",
+        "N094",
+        "N057",
+        "N091"
       ]
     },
     {
@@ -181,13 +178,6 @@
       "nodes": [
         "N081",
         "N082"
-      ]
-    },
-    {
-      "size": 2,
-      "nodes": [
-        "N093",
-        "N094"
       ]
     },
     {
@@ -567,7 +557,8 @@
     "targetAchieved": false,
     "reason": "No independent reference centerlines, approved entrance associations, or per-segment user review. Trace counts and pixel lengths are not accuracy measurements.",
     "visibleDraftEdges": 180,
-    "uncertainCandidateEdges": 80,
+    "uncertainCandidateEdges": 84,
+    "assumedEdges": 10,
     "visibleLengthPixels": 11798.01,
     "campusCoveragePercent": null,
     "requiredBeforeRouting": [

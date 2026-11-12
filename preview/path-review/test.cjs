@@ -32,6 +32,16 @@ for(const [x,y,traces] of [
  for(const trace of traces)assert(graph.edges.some(e=>e.trace===trace&&(e.from===node.id||e.to===node.id)),`${trace} must meet ${node.id}`);
 }
 assert(!graph.edges.some(e=>e.trace==='havener-east'),'Superseded overview duplicate must not return');
+const assumptions=require('./assumptions.cjs');
+const exportedAssumptions=JSON.parse(fs.readFileSync(path.join(root,'assumptions.json'),'utf8'));
+assert.equal(exportedAssumptions.length,Object.keys(assumptions).length);
+for(const item of exportedAssumptions){assert.equal(item.routingEligible,false);assert(item.reviewKeys.length);assert.equal(item.rationale,assumptions[item.trace].rationale);}
+assert.deepEqual(graph.assumedEdgeIds,graph.edges.filter(e=>e.assumption).map(e=>e.id));
+for(const [trace,detail]of Object.entries(assumptions)){
+ const matches=graph.edges.filter(e=>e.trace===trace);
+ assert(matches.length,`Unused assumption ${trace}`);
+ for(const edge of matches){assert.deepEqual(edge.assumption,detail);assert.equal(edge.status,'needs-geometry-review');assert.equal(edge.evidence,'inferred-connection');assert.equal(edge.routingEligible,false);}
+}
 const html=fs.readFileSync(path.join(root,'review.html'),'utf8');
 new (require('node:vm').Script)(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
-console.log('PASS: deterministic generation, structural checks, unique review keys, rejected-edge exclusion, pixel lengths, routing lock, reviewer syntax.');
+console.log('PASS: deterministic generation, structural checks, junction regressions, assumption register, unique review keys, rejected-edge exclusion, pixel lengths, routing lock, reviewer syntax.');

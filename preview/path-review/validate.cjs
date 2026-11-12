@@ -19,6 +19,7 @@ for(const e of g.edges){
  assert(!signatures.has(key),`Duplicate ${e.id}`);signatures.add(key);
  for(const p of e.points.slice(1,-1))assert(!g.nodes.some(n=>n.x===p[0]&&n.y===p[1]),`Unsplit node in ${e.id}`);
  assert.equal(e.distanceMeters,null);assert.equal(e.accessibility,'unverified');assert.equal(e.routingEligible,false);
+ if(e.assumption){assert.equal(e.status,'needs-geometry-review');assert.equal(e.evidence,'inferred-connection');assert(e.assumption.rationale&&e.assumption.verify);}
  adjacency.get(e.from).add(e.to);adjacency.get(e.to).add(e.from);
 }
 const visited=new Set(),components=[];
@@ -52,6 +53,7 @@ report.quality={
  reason:'No independent reference centerlines, approved entrance associations, or per-segment user review. Trace counts and pixel lengths are not accuracy measurements.',
  visibleDraftEdges:visible.length,
  uncertainCandidateEdges:g.edges.length-visible.length,
+ assumedEdges:g.edges.filter(e=>e.assumption).length,
  visibleLengthPixels:+visible.reduce((sum,e)=>sum+e.lengthPixels,0).toFixed(2),
  campusCoveragePercent:null,
  requiredBeforeRouting:['Complete coverage inventory','Review each retained trace against artwork','Approve building entrance connections','Resolve disconnected destinations','Calibrate GPS distances independently','User approval to integrate'],

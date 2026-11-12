@@ -23,6 +23,8 @@ Eight paired sheets compare the source artwork and trace across sixteen regions,
 
 ## Remaining review decisions
 
+The user now permits clearly stated route assumptions. Purple dashed connections are recorded in `assumptions.json` with a rationale and a specific check; they remain unverified. Orange candidates are other geometry/shared-access questions. The four newest assumptions connect the Havener east-side plaza, close the eastern courtyard loop, and bridge two tree-obscured garden gaps. No unmarked road crossings or cross-inset connections were added.
+
 1. Which orange shared-access drives should be allowed as tour segments?
 2. Where do obscured paths actually meet building entrances? Building-center artwork markers are not entrances.
 3. Which unmarked road crossings are permitted?

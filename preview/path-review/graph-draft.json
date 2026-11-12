@@ -525,44 +525,44 @@
     },
     {
       "id": "N087",
-      "x": 1873,
-      "y": 958,
+      "x": 2268,
+      "y": 1020,
       "gps": null
     },
     {
       "id": "N088",
-      "x": 1968,
-      "y": 880,
-      "gps": null
-    },
-    {
-      "id": "N089",
-      "x": 2311,
-      "y": 957,
-      "gps": null
-    },
-    {
-      "id": "N090",
-      "x": 2254,
-      "y": 937,
-      "gps": null
-    },
-    {
-      "id": "N091",
       "x": 2192,
       "y": 1037,
       "gps": null
     },
     {
+      "id": "N089",
+      "x": 1873,
+      "y": 958,
+      "gps": null
+    },
+    {
+      "id": "N090",
+      "x": 1968,
+      "y": 880,
+      "gps": null
+    },
+    {
+      "id": "N091",
+      "x": 2311,
+      "y": 957,
+      "gps": null
+    },
+    {
       "id": "N092",
-      "x": 2174,
-      "y": 1040,
+      "x": 2254,
+      "y": 937,
       "gps": null
     },
     {
       "id": "N093",
-      "x": 2268,
-      "y": 1020,
+      "x": 2174,
+      "y": 1040,
       "gps": null
     },
     {
@@ -1803,7 +1803,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 184.79
+      "lengthPixels": 184.79,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E002",
@@ -1831,7 +1833,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 31.32
+      "lengthPixels": 31.32,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E003",
@@ -1867,7 +1871,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 105.22
+      "lengthPixels": 105.22,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E004",
@@ -1907,7 +1913,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 167.11
+      "lengthPixels": 167.11,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E005",
@@ -1947,7 +1955,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 96.7
+      "lengthPixels": 96.7,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E006",
@@ -1979,7 +1989,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 99.2
+      "lengthPixels": 99.2,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E007",
@@ -2007,7 +2019,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 34
+      "lengthPixels": 34,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E008",
@@ -2035,7 +2049,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 27.89
+      "lengthPixels": 27.89,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E009",
@@ -2063,7 +2079,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 27.51
+      "lengthPixels": 27.51,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E010",
@@ -2095,7 +2113,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 58.23
+      "lengthPixels": 58.23,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E011",
@@ -2127,7 +2147,13 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 43.79
+      "lengthPixels": 43.79,
+      "assumption": {
+        "kind": "plaza-centerline",
+        "rationale": "Assume the broad northern plaza is traversable along this representative centerline.",
+        "verify": "Confirm obstructions, steps and entrance boundaries; the line is not a surveyed path."
+      },
+      "evidence": "inferred-connection"
     },
     {
       "id": "E012",
@@ -2159,7 +2185,13 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 22.72
+      "lengthPixels": 22.72,
+      "assumption": {
+        "kind": "plaza-centerline",
+        "rationale": "Assume the broad northern plaza is traversable along this representative centerline.",
+        "verify": "Confirm obstructions, steps and entrance boundaries; the line is not a surveyed path."
+      },
+      "evidence": "inferred-connection"
     },
     {
       "id": "E013",
@@ -2187,7 +2219,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 38.91
+      "lengthPixels": 38.91,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E014",
@@ -2215,7 +2249,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 44.01
+      "lengthPixels": 44.01,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E015",
@@ -2247,7 +2283,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 27.03
+      "lengthPixels": 27.03,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E016",
@@ -2279,7 +2317,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 34.05
+      "lengthPixels": 34.05,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E017",
@@ -2307,7 +2347,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 30.08
+      "lengthPixels": 30.08,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E018",
@@ -2335,7 +2377,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 55.57
+      "lengthPixels": 55.57,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E019",
@@ -2363,7 +2407,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 43.42
+      "lengthPixels": 43.42,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E020",
@@ -2391,7 +2437,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 11.18
+      "lengthPixels": 11.18,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E021",
@@ -2427,7 +2475,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 116.31
+      "lengthPixels": 116.31,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E022",
@@ -2463,7 +2513,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 95.42
+      "lengthPixels": 95.42,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E023",
@@ -2499,7 +2551,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 124.37
+      "lengthPixels": 124.37,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E024",
@@ -2527,7 +2581,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 9.83
+      "lengthPixels": 9.83,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E025",
@@ -2559,7 +2615,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 129.29
+      "lengthPixels": 129.29,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E026",
@@ -2595,7 +2653,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 136.89
+      "lengthPixels": 136.89,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E027",
@@ -2623,7 +2683,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 35.27
+      "lengthPixels": 35.27,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E028",
@@ -2651,7 +2713,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 28.28
+      "lengthPixels": 28.28,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E029",
@@ -2683,7 +2747,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 56.96
+      "lengthPixels": 56.96,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E030",
@@ -2711,7 +2777,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 46.83
+      "lengthPixels": 46.83,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E031",
@@ -2743,7 +2811,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 110.76
+      "lengthPixels": 110.76,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E032",
@@ -2783,7 +2853,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 262.68
+      "lengthPixels": 262.68,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E033",
@@ -2823,7 +2895,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 241.04
+      "lengthPixels": 241.04,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E034",
@@ -2851,7 +2925,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 34
+      "lengthPixels": 34,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E035",
@@ -2899,7 +2975,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 173.51
+      "lengthPixels": 173.51,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E036",
@@ -2943,7 +3021,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 169.28
+      "lengthPixels": 169.28,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E037",
@@ -2987,7 +3067,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 221.65
+      "lengthPixels": 221.65,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E038",
@@ -3023,7 +3105,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 135.68
+      "lengthPixels": 135.68,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E039",
@@ -3071,7 +3155,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 179.81
+      "lengthPixels": 179.81,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E040",
@@ -3103,7 +3189,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 84.21
+      "lengthPixels": 84.21,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E041",
@@ -3139,7 +3227,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 82.57
+      "lengthPixels": 82.57,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E042",
@@ -3171,7 +3261,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 34.67
+      "lengthPixels": 34.67,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E043",
@@ -3203,7 +3295,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 58.4
+      "lengthPixels": 58.4,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E044",
@@ -3239,7 +3333,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 61.76
+      "lengthPixels": 61.76,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E045",
@@ -3279,7 +3375,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 141.94
+      "lengthPixels": 141.94,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E046",
@@ -3311,7 +3409,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 40.29
+      "lengthPixels": 40.29,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E047",
@@ -3351,7 +3451,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 31.36
+      "lengthPixels": 31.36,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E048",
@@ -3383,7 +3485,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 18.04
+      "lengthPixels": 18.04,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E049",
@@ -3411,7 +3515,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 26.87
+      "lengthPixels": 26.87,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E050",
@@ -3443,7 +3549,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 41.83
+      "lengthPixels": 41.83,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E051",
@@ -3479,7 +3587,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 89.08
+      "lengthPixels": 89.08,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E052",
@@ -3511,7 +3621,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 39.63
+      "lengthPixels": 39.63,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E053",
@@ -3551,7 +3663,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 43.64
+      "lengthPixels": 43.64,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E054",
@@ -3591,7 +3705,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 36.14
+      "lengthPixels": 36.14,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E055",
@@ -3627,7 +3743,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 50.59
+      "lengthPixels": 50.59,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E056",
@@ -3659,7 +3777,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 42.64
+      "lengthPixels": 42.64,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E057",
@@ -3691,7 +3811,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 37.01
+      "lengthPixels": 37.01,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E058",
@@ -3731,7 +3853,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 55.96
+      "lengthPixels": 55.96,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E059",
@@ -3763,7 +3887,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 25.04
+      "lengthPixels": 25.04,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E060",
@@ -3795,7 +3921,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 30.16
+      "lengthPixels": 30.16,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E061",
@@ -3823,7 +3951,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 11.95
+      "lengthPixels": 11.95,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E062",
@@ -3855,7 +3985,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 33.61
+      "lengthPixels": 33.61,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E063",
@@ -3887,7 +4019,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 43.66
+      "lengthPixels": 43.66,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E064",
@@ -3915,7 +4049,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 24.84
+      "lengthPixels": 24.84,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E065",
@@ -3963,7 +4099,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 229.28
+      "lengthPixels": 229.28,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E066",
@@ -4003,7 +4141,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 113.79
+      "lengthPixels": 113.79,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E067",
@@ -4035,7 +4175,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 49.79
+      "lengthPixels": 49.79,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E068",
@@ -4071,7 +4213,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 57.49
+      "lengthPixels": 57.49,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E069",
@@ -4103,7 +4247,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 43.5
+      "lengthPixels": 43.5,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E070",
@@ -4135,7 +4281,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 73.49
+      "lengthPixels": 73.49,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E071",
@@ -4163,7 +4311,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 45.28
+      "lengthPixels": 45.28,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E072",
@@ -4195,7 +4345,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 71.09
+      "lengthPixels": 71.09,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E073",
@@ -4227,7 +4379,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 43.09
+      "lengthPixels": 43.09,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E074",
@@ -4259,7 +4413,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 48.36
+      "lengthPixels": 48.36,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E075",
@@ -4291,7 +4447,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 37.76
+      "lengthPixels": 37.76,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E076",
@@ -4331,7 +4489,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 149.32
+      "lengthPixels": 149.32,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E077",
@@ -4363,7 +4523,9 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 29.28
+      "lengthPixels": 29.28,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
       "id": "E078",
@@ -4395,14 +4557,180 @@
       "frame": "main",
       "region": "initial-core",
       "surface": "unclassified-draft",
-      "lengthPixels": 51.96
+      "lengthPixels": 51.96,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
       "id": "E079",
+      "trace": "havener-east-plaza-join",
+      "part": 1,
+      "label": "havener-east-plaza-join",
+      "from": "N010",
+      "to": "N006",
+      "points": [
+        [
+          1881,
+          867
+        ],
+        [
+          1892,
+          880
+        ],
+        [
+          1890,
+          894
+        ],
+        [
+          1886,
+          908
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "havener-east-plaza-join:1",
+      "frame": "main",
+      "region": "inner-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 45.73,
+      "assumption": {
+        "kind": "plaza-centerline",
+        "rationale": "Assume a continuous public approach around the east side of Havener connects the upper plaza to the quad steps.",
+        "verify": "Confirm the building-edge approach is open and identify steps or ramps."
+      },
+      "evidence": "inferred-connection"
+    },
+    {
+      "id": "E080",
+      "trace": "east-courtyard-loop-closure",
+      "part": 1,
+      "label": "east-courtyard-loop-closure",
+      "from": "N058",
+      "to": "N056",
+      "points": [
+        [
+          2267,
+          952
+        ],
+        [
+          2258,
+          956
+        ],
+        [
+          2255,
+          961
+        ],
+        [
+          2258,
+          966
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "east-courtyard-loop-closure:1",
+      "frame": "main",
+      "region": "inner-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 21.51,
+      "assumption": {
+        "kind": "plaza-centerline",
+        "rationale": "Assume the open courtyard surface connects the north and west ends around the planted island.",
+        "verify": "Confirm this stays on paved plaza rather than inside the planting bed."
+      },
+      "evidence": "inferred-connection"
+    },
+    {
+      "id": "E081",
+      "trace": "east-garden-tree-join",
+      "part": 1,
+      "label": "east-garden-tree-join",
+      "from": "N060",
+      "to": "N087",
+      "points": [
+        [
+          2268,
+          995
+        ],
+        [
+          2278,
+          1006
+        ],
+        [
+          2268,
+          1020
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "east-garden-tree-join:1",
+      "frame": "main",
+      "region": "inner-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 32.07,
+      "assumption": {
+        "kind": "tree-occlusion",
+        "rationale": "Assume the short path beside the brick building connects to the courtyard branch behind the trees.",
+        "verify": "Confirm the hidden segment exists and does not enter a service-only area."
+      },
+      "evidence": "inferred-connection"
+    },
+    {
+      "id": "E082",
+      "trace": "east-garden-library-join",
+      "part": 1,
+      "label": "east-garden-library-join",
+      "from": "N088",
+      "to": "N062",
+      "points": [
+        [
+          2192,
+          1037
+        ],
+        [
+          2198,
+          1047
+        ],
+        [
+          2193,
+          1056
+        ],
+        [
+          2185,
+          1065
+        ]
+      ],
+      "status": "needs-geometry-review",
+      "sampling": "full-resolution-source",
+      "accessibility": "unverified",
+      "distanceMeters": null,
+      "routingEligible": false,
+      "reviewKey": "east-garden-library-join:1",
+      "frame": "main",
+      "region": "inner-campus",
+      "surface": "path-or-shared-access-needs-review",
+      "lengthPixels": 34,
+      "assumption": {
+        "kind": "tree-occlusion",
+        "rationale": "Assume the garden walk continues around the canopy to the existing southern library-garden segment.",
+        "verify": "Confirm continuous paving, elevation changes and the building-corner clearance."
+      },
+      "evidence": "inferred-connection"
+    },
+    {
+      "id": "E083",
       "trace": "quad-west-triangle-base",
       "part": 1,
       "label": "quad-west-triangle-base",
-      "from": "N087",
+      "from": "N089",
       "to": "N008",
       "points": [
         [
@@ -4427,14 +4755,16 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 50.5
+      "lengthPixels": 50.5,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E080",
+      "id": "E084",
       "trace": "quad-west-tree-approach",
       "part": 1,
       "label": "quad-west-tree-approach",
-      "from": "N087",
+      "from": "N089",
       "to": "N007",
       "points": [
         [
@@ -4459,10 +4789,16 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 54.82
+      "lengthPixels": 54.82,
+      "assumption": {
+        "kind": "tree-occlusion",
+        "rationale": "Assume the beige approach continues beneath the tree canopy to the western quad junction.",
+        "verify": "Confirm a continuous paved connection; do not shortcut through planted beds."
+      },
+      "evidence": "inferred-connection"
     },
     {
-      "id": "E081",
+      "id": "E085",
       "trace": "quad-center-tree-link",
       "part": 1,
       "label": "quad-center-tree-link",
@@ -4491,10 +4827,16 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 29.91
+      "lengthPixels": 29.91,
+      "assumption": {
+        "kind": "tree-occlusion",
+        "rationale": "Assume the two visible ends of the diagonal connect beneath the central tree.",
+        "verify": "Confirm the centerline and that landscaping does not block passage."
+      },
+      "evidence": "inferred-connection"
     },
     {
-      "id": "E082",
+      "id": "E086",
       "trace": "quad-northeast-triangle",
       "part": 1,
       "label": "quad-northeast-triangle",
@@ -4523,15 +4865,17 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 60.47
+      "lengthPixels": 60.47,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E083",
+      "id": "E087",
       "trace": "quad-north-garden-diagonal",
       "part": 1,
       "label": "quad-north-garden-diagonal",
       "from": "N053",
-      "to": "N088",
+      "to": "N090",
       "points": [
         [
           1935,
@@ -4555,14 +4899,16 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 41.4
+      "lengthPixels": 41.4,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E084",
+      "id": "E088",
       "trace": "quad-north-tree-continuation",
       "part": 1,
       "label": "quad-north-tree-continuation",
-      "from": "N088",
+      "from": "N090",
       "to": "N012",
       "points": [
         [
@@ -4583,10 +4929,16 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 17.2
+      "lengthPixels": 17.2,
+      "assumption": {
+        "kind": "tree-occlusion",
+        "rationale": "Assume the garden diagonal reaches the northern plaza behind the tree.",
+        "verify": "Confirm the connection and any steps."
+      },
+      "evidence": "inferred-connection"
     },
     {
-      "id": "E085",
+      "id": "E089",
       "trace": "quad-fountain-north-approach",
       "part": 1,
       "label": "quad-fountain-north-approach",
@@ -4615,15 +4967,17 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 43.05
+      "lengthPixels": 43.05,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E086",
+      "id": "E090",
       "trace": "east-courtyard-front-door",
       "part": 1,
       "label": "east-courtyard-front-door",
       "from": "N057",
-      "to": "N089",
+      "to": "N091",
       "points": [
         [
           2298,
@@ -4643,15 +4997,17 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 13.34
+      "lengthPixels": 13.34,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E087",
+      "id": "E091",
       "trace": "east-courtyard-north-entrance",
       "part": 1,
       "label": "east-courtyard-north-entrance",
       "from": "N058",
-      "to": "N090",
+      "to": "N092",
       "points": [
         [
           2267,
@@ -4675,15 +5031,17 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 21.95
+      "lengthPixels": 21.95,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E088",
+      "id": "E092",
       "trace": "east-garden-southwest-link",
       "part": 1,
       "label": "east-garden-southwest-link",
       "from": "N059",
-      "to": "N091",
+      "to": "N088",
       "points": [
         [
           2226,
@@ -4707,15 +5065,21 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 48.84
+      "lengthPixels": 48.84,
+      "assumption": {
+        "kind": "tree-occlusion",
+        "rationale": "Assume the visible courtyard walk continues southwest beneath the tree canopy.",
+        "verify": "Confirm paving and no closed garden boundary."
+      },
+      "evidence": "inferred-connection"
     },
     {
-      "id": "E089",
+      "id": "E093",
       "trace": "east-garden-west-border",
       "part": 1,
       "label": "east-garden-west-border",
-      "from": "N091",
-      "to": "N092",
+      "from": "N088",
+      "to": "N093",
       "points": [
         [
           2192,
@@ -4739,14 +5103,16 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 20.21
+      "lengthPixels": 20.21,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E090",
+      "id": "E094",
       "trace": "east-garden-house-approach",
       "part": 1,
       "label": "east-garden-house-approach",
-      "from": "N093",
+      "from": "N087",
       "to": "N094",
       "points": [
         [
@@ -4767,10 +5133,12 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 9.22
+      "lengthPixels": 9.22,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E091",
+      "id": "E095",
       "trace": "east-garden-house-east-entry",
       "part": 1,
       "label": "east-garden-house-east-entry",
@@ -4795,10 +5163,12 @@
       "frame": "main",
       "region": "inner-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 8.06
+      "lengthPixels": 8.06,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E092",
+      "id": "E096",
       "trace": "west-core-parking-edge",
       "part": 1,
       "label": "west-core-parking-edge",
@@ -4859,10 +5229,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 294.06
+      "lengthPixels": 294.06,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E093",
+      "id": "E097",
       "trace": "west-core-clinic-short-walk",
       "part": 1,
       "label": "west-core-clinic-short-walk",
@@ -4891,10 +5263,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 26.64
+      "lengthPixels": 26.64,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E094",
+      "id": "E098",
       "trace": "west-core-clinic-entrance-approach",
       "part": 1,
       "label": "west-core-clinic-entrance-approach",
@@ -4919,10 +5293,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 9.49
+      "lengthPixels": 9.49,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E095",
+      "id": "E099",
       "trace": "west-core-small-building-front",
       "part": 1,
       "label": "west-core-small-building-front",
@@ -4947,10 +5323,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 27.51
+      "lengthPixels": 27.51,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E096",
+      "id": "E100",
       "trace": "west-core-small-building-front",
       "part": 2,
       "label": "west-core-small-building-front",
@@ -4983,10 +5361,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 70.66
+      "lengthPixels": 70.66,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E097",
+      "id": "E101",
       "trace": "west-core-small-building-entry",
       "part": 1,
       "label": "west-core-small-building-entry",
@@ -5011,10 +5391,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 11.18
+      "lengthPixels": 11.18,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E098",
+      "id": "E102",
       "trace": "west-core-roundabout-south-arc",
       "part": 1,
       "label": "west-core-roundabout-south-arc",
@@ -5055,10 +5437,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 104.57
+      "lengthPixels": 104.57,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E099",
+      "id": "E103",
       "trace": "west-core-roundabout-southeast",
       "part": 1,
       "label": "west-core-roundabout-southeast",
@@ -5087,10 +5471,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 29.08
+      "lengthPixels": 29.08,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E100",
+      "id": "E104",
       "trace": "west-core-havener-sidewalk",
       "part": 1,
       "label": "west-core-havener-sidewalk",
@@ -5123,10 +5509,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 64.3
+      "lengthPixels": 64.3,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E101",
+      "id": "E105",
       "trace": "west-core-havener-sidewalk-branch",
       "part": 1,
       "label": "west-core-havener-sidewalk-branch",
@@ -5159,10 +5547,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 72.82
+      "lengthPixels": 72.82,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E102",
+      "id": "E106",
       "trace": "west-core-plaza-stair",
       "part": 1,
       "label": "west-core-plaza-stair",
@@ -5187,10 +5577,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 14.92
+      "lengthPixels": 14.92,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E103",
+      "id": "E107",
       "trace": "west-core-plaza-stair",
       "part": 2,
       "label": "west-core-plaza-stair",
@@ -5219,10 +5611,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 16.5
+      "lengthPixels": 16.5,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E104",
+      "id": "E108",
       "trace": "west-core-roundabout-west-verge",
       "part": 1,
       "label": "west-core-roundabout-west-verge",
@@ -5263,10 +5657,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 101.73
+      "lengthPixels": 101.73,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E105",
+      "id": "E109",
       "trace": "west-core-eleventh-sidewalk",
       "part": 1,
       "label": "west-core-eleventh-sidewalk",
@@ -5303,10 +5699,12 @@
       "frame": "main",
       "region": "west-core",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 52.07
+      "lengthPixels": 52.07,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E106",
+      "id": "E110",
       "trace": "middle-west-north-lawn-edge",
       "part": 1,
       "label": "middle-west-north-lawn-edge",
@@ -5347,10 +5745,12 @@
       "frame": "main",
       "region": "middle-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 172.74
+      "lengthPixels": 172.74,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E107",
+      "id": "E111",
       "trace": "middle-west-spring-sidewalk",
       "part": 1,
       "label": "middle-west-spring-sidewalk",
@@ -5387,10 +5787,12 @@
       "frame": "main",
       "region": "middle-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 133.42
+      "lengthPixels": 133.42,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E108",
+      "id": "E112",
       "trace": "middle-west-spring-lower",
       "part": 1,
       "label": "middle-west-spring-lower",
@@ -5423,10 +5825,12 @@
       "frame": "main",
       "region": "middle-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 76.71
+      "lengthPixels": 76.71,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E109",
+      "id": "E113",
       "trace": "middle-west-athletics-north-spur",
       "part": 1,
       "label": "middle-west-athletics-north-spur",
@@ -5451,10 +5855,12 @@
       "frame": "main",
       "region": "middle-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 8.06
+      "lengthPixels": 8.06,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E110",
+      "id": "E114",
       "trace": "far-north-curved-shared-access",
       "part": 1,
       "label": "far-north-curved-shared-access",
@@ -5539,10 +5945,12 @@
       "frame": "main",
       "region": "far-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 332.85
+      "lengthPixels": 332.85,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E111",
+      "id": "E115",
       "trace": "far-north-front-access",
       "part": 1,
       "label": "far-north-front-access",
@@ -5603,10 +6011,12 @@
       "frame": "main",
       "region": "far-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 360.68
+      "lengthPixels": 360.68,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E112",
+      "id": "E116",
       "trace": "far-north-front-access",
       "part": 2,
       "label": "far-north-front-access",
@@ -5631,10 +6041,12 @@
       "frame": "main",
       "region": "far-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 10.43
+      "lengthPixels": 10.43,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E113",
+      "id": "E117",
       "trace": "far-north-eastern-drive",
       "part": 1,
       "label": "far-north-eastern-drive",
@@ -5675,10 +6087,12 @@
       "frame": "main",
       "region": "far-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 189.53
+      "lengthPixels": 189.53,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E114",
+      "id": "E118",
       "trace": "far-north-eastern-drive",
       "part": 2,
       "label": "far-north-eastern-drive",
@@ -5707,10 +6121,12 @@
       "frame": "main",
       "region": "far-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 52.65
+      "lengthPixels": 52.65,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E115",
+      "id": "E119",
       "trace": "west-building-front",
       "part": 1,
       "label": "west-building-front",
@@ -5747,10 +6163,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 110.41
+      "lengthPixels": 110.41,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E116",
+      "id": "E120",
       "trace": "west-building-east-walk",
       "part": 1,
       "label": "west-building-east-walk",
@@ -5783,10 +6201,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 42.45
+      "lengthPixels": 42.45,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E117",
+      "id": "E121",
       "trace": "west-building-east-walk",
       "part": 2,
       "label": "west-building-east-walk",
@@ -5811,10 +6231,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 9.22
+      "lengthPixels": 9.22,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E118",
+      "id": "E122",
       "trace": "west-building-approach",
       "part": 1,
       "label": "west-building-approach",
@@ -5851,10 +6273,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 45.01
+      "lengthPixels": 45.01,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E119",
+      "id": "E123",
       "trace": "west-building-parking-side",
       "part": 1,
       "label": "west-building-parking-side",
@@ -5887,10 +6311,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 50.11
+      "lengthPixels": 50.11,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E120",
+      "id": "E124",
       "trace": "west-building-west-entry",
       "part": 1,
       "label": "west-building-west-entry",
@@ -5919,10 +6345,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 23.16
+      "lengthPixels": 23.16,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E121",
+      "id": "E125",
       "trace": "west-industrial-front",
       "part": 1,
       "label": "west-industrial-front",
@@ -5959,10 +6387,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 93.14
+      "lengthPixels": 93.14,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E122",
+      "id": "E126",
       "trace": "west-industrial-east",
       "part": 1,
       "label": "west-industrial-east",
@@ -5995,10 +6425,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 68.7
+      "lengthPixels": 68.7,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E123",
+      "id": "E127",
       "trace": "west-industrial-north",
       "part": 1,
       "label": "west-industrial-north",
@@ -6031,10 +6463,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 103.13
+      "lengthPixels": 103.13,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E124",
+      "id": "E128",
       "trace": "west-small-building-link",
       "part": 1,
       "label": "west-small-building-link",
@@ -6063,10 +6497,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 65.22
+      "lengthPixels": 65.22,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E125",
+      "id": "E129",
       "trace": "west-small-building-link",
       "part": 2,
       "label": "west-small-building-link",
@@ -6091,10 +6527,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 12.08
+      "lengthPixels": 12.08,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E126",
+      "id": "E130",
       "trace": "west-small-building-front",
       "part": 1,
       "label": "west-small-building-front",
@@ -6123,10 +6561,12 @@
       "frame": "main",
       "region": "far-west",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 32.6
+      "lengthPixels": 32.6,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E127",
+      "id": "E131",
       "trace": "tower-garden-south",
       "part": 1,
       "label": "tower-garden-south",
@@ -6175,10 +6615,12 @@
       "frame": "main",
       "region": "northeast-tower",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 168.83
+      "lengthPixels": 168.83,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E128",
+      "id": "E132",
       "trace": "tower-garden-west",
       "part": 1,
       "label": "tower-garden-west",
@@ -6215,10 +6657,12 @@
       "frame": "main",
       "region": "northeast-tower",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 45.4
+      "lengthPixels": 45.4,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E129",
+      "id": "E133",
       "trace": "tower-entry",
       "part": 1,
       "label": "tower-entry",
@@ -6251,10 +6695,12 @@
       "frame": "main",
       "region": "northeast-tower",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 46.34
+      "lengthPixels": 46.34,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E130",
+      "id": "E134",
       "trace": "tower-west-parking-walk",
       "part": 1,
       "label": "tower-west-parking-walk",
@@ -6287,10 +6733,12 @@
       "frame": "main",
       "region": "northeast-tower",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 85.95
+      "lengthPixels": 85.95,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E131",
+      "id": "E135",
       "trace": "tower-pedestrian-bridge",
       "part": 1,
       "label": "tower-pedestrian-bridge",
@@ -6323,10 +6771,12 @@
       "frame": "main",
       "region": "northeast-tower",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 64.83
+      "lengthPixels": 64.83,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E132",
+      "id": "E136",
       "trace": "tower-bridge-south-approach",
       "part": 1,
       "label": "tower-bridge-south-approach",
@@ -6359,10 +6809,12 @@
       "frame": "main",
       "region": "northeast-tower",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 67.98
+      "lengthPixels": 67.98,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E133",
+      "id": "E137",
       "trace": "tower-bridge-garden-link",
       "part": 1,
       "label": "tower-bridge-garden-link",
@@ -6387,10 +6839,12 @@
       "frame": "main",
       "region": "northeast-tower",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 11.4
+      "lengthPixels": 11.4,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E134",
+      "id": "E138",
       "trace": "north-academic-garden-edge",
       "part": 1,
       "label": "north-academic-garden-edge",
@@ -6435,10 +6889,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 132.12
+      "lengthPixels": 132.12,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E135",
+      "id": "E139",
       "trace": "north-academic-garden-edge",
       "part": 2,
       "label": "north-academic-garden-edge",
@@ -6463,10 +6919,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 25.75
+      "lengthPixels": 25.75,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E136",
+      "id": "E140",
       "trace": "north-academic-plaza-west",
       "part": 1,
       "label": "north-academic-plaza-west",
@@ -6499,10 +6957,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 45.56
+      "lengthPixels": 45.56,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E137",
+      "id": "E141",
       "trace": "north-academic-plaza-east",
       "part": 1,
       "label": "north-academic-plaza-east",
@@ -6527,10 +6987,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 17.46
+      "lengthPixels": 17.46,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E138",
+      "id": "E142",
       "trace": "north-academic-plaza-east",
       "part": 2,
       "label": "north-academic-plaza-east",
@@ -6559,10 +7021,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 35.84
+      "lengthPixels": 35.84,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E139",
+      "id": "E143",
       "trace": "north-academic-plaza-east",
       "part": 3,
       "label": "north-academic-plaza-east",
@@ -6591,10 +7055,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 38.28
+      "lengthPixels": 38.28,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E140",
+      "id": "E144",
       "trace": "north-academic-plaza-east",
       "part": 4,
       "label": "north-academic-plaza-east",
@@ -6619,10 +7085,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 17.49
+      "lengthPixels": 17.49,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E141",
+      "id": "E145",
       "trace": "north-academic-stair-link",
       "part": 1,
       "label": "north-academic-stair-link",
@@ -6659,10 +7127,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 56.3
+      "lengthPixels": 56.3,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E142",
+      "id": "E146",
       "trace": "north-academic-northeast-path",
       "part": 1,
       "label": "north-academic-northeast-path",
@@ -6695,10 +7165,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 62.81
+      "lengthPixels": 62.81,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E143",
+      "id": "E147",
       "trace": "cs-west-approach",
       "part": 1,
       "label": "cs-west-approach",
@@ -6727,10 +7199,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 33.35
+      "lengthPixels": 33.35,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E144",
+      "id": "E148",
       "trace": "cs-south-strip-west",
       "part": 1,
       "label": "cs-south-strip-west",
@@ -6763,10 +7237,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 71.85
+      "lengthPixels": 71.85,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E145",
+      "id": "E149",
       "trace": "cs-south-strip-east",
       "part": 1,
       "label": "cs-south-strip-east",
@@ -6799,10 +7275,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 66.65
+      "lengthPixels": 66.65,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E146",
+      "id": "E150",
       "trace": "cs-east-approach",
       "part": 1,
       "label": "cs-east-approach",
@@ -6831,10 +7309,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 43.28
+      "lengthPixels": 43.28,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E147",
+      "id": "E151",
       "trace": "north-sculpture-plaza",
       "part": 1,
       "label": "north-sculpture-plaza",
@@ -6863,10 +7343,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 34.84
+      "lengthPixels": 34.84,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E148",
+      "id": "E152",
       "trace": "north-sculpture-plaza",
       "part": 2,
       "label": "north-sculpture-plaza",
@@ -6895,10 +7377,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 38.54
+      "lengthPixels": 38.54,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E149",
+      "id": "E153",
       "trace": "north-sculpture-garden-edge",
       "part": 1,
       "label": "north-sculpture-garden-edge",
@@ -6931,10 +7415,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 48.4
+      "lengthPixels": 48.4,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E150",
+      "id": "E154",
       "trace": "north-sculpture-side-entry",
       "part": 1,
       "label": "north-sculpture-side-entry",
@@ -6959,10 +7445,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 12.77
+      "lengthPixels": 12.77,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E151",
+      "id": "E155",
       "trace": "north-academic-front-door-approach",
       "part": 1,
       "label": "north-academic-front-door-approach",
@@ -6991,10 +7479,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 26.05
+      "lengthPixels": 26.05,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E152",
+      "id": "E156",
       "trace": "north-academic-east-door-approach",
       "part": 1,
       "label": "north-academic-east-door-approach",
@@ -7019,10 +7509,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 15.3
+      "lengthPixels": 15.3,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E153",
+      "id": "E157",
       "trace": "cs-west-short-entry",
       "part": 1,
       "label": "cs-west-short-entry",
@@ -7047,10 +7539,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 9.9
+      "lengthPixels": 9.9,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E154",
+      "id": "E158",
       "trace": "cs-northeast-short-path",
       "part": 1,
       "label": "cs-northeast-short-path",
@@ -7079,10 +7573,12 @@
       "frame": "main",
       "region": "academic-north",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 27.31
+      "lengthPixels": 27.31,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E155",
+      "id": "E159",
       "trace": "bishop-long-sidewalk",
       "part": 1,
       "label": "bishop-long-sidewalk",
@@ -7155,10 +7651,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 966.97
+      "lengthPixels": 966.97,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E156",
+      "id": "E160",
       "trace": "baseball-west-approach",
       "part": 1,
       "label": "baseball-west-approach",
@@ -7187,10 +7685,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 46
+      "lengthPixels": 46,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E157",
+      "id": "E161",
       "trace": "baseball-front-walk",
       "part": 1,
       "label": "baseball-front-walk",
@@ -7219,10 +7719,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 75.11
+      "lengthPixels": 75.11,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E158",
+      "id": "E162",
       "trace": "baseball-front-walk",
       "part": 2,
       "label": "baseball-front-walk",
@@ -7247,10 +7749,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 51.01
+      "lengthPixels": 51.01,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E159",
+      "id": "E163",
       "trace": "baseball-west-walk",
       "part": 1,
       "label": "baseball-west-walk",
@@ -7279,10 +7783,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 56.32
+      "lengthPixels": 56.32,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E160",
+      "id": "E164",
       "trace": "baseball-east-walk",
       "part": 1,
       "label": "baseball-east-walk",
@@ -7311,10 +7817,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 46.21
+      "lengthPixels": 46.21,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E161",
+      "id": "E165",
       "trace": "baseball-entry-walk",
       "part": 1,
       "label": "baseball-entry-walk",
@@ -7339,10 +7847,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 20
+      "lengthPixels": 20,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E162",
+      "id": "E166",
       "trace": "gym-southwest-walk",
       "part": 1,
       "label": "gym-southwest-walk",
@@ -7367,10 +7877,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 23.6
+      "lengthPixels": 23.6,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E163",
+      "id": "E167",
       "trace": "gym-southwest-walk",
       "part": 2,
       "label": "gym-southwest-walk",
@@ -7395,10 +7907,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 24.08
+      "lengthPixels": 24.08,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E164",
+      "id": "E168",
       "trace": "gym-south-entry",
       "part": 1,
       "label": "gym-south-entry",
@@ -7427,10 +7941,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 38.72
+      "lengthPixels": 38.72,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E165",
+      "id": "E169",
       "trace": "gym-south-frontage",
       "part": 1,
       "label": "gym-south-frontage",
@@ -7475,10 +7991,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 217.24
+      "lengthPixels": 217.24,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E166",
+      "id": "E170",
       "trace": "gym-east-frontage",
       "part": 1,
       "label": "gym-east-frontage",
@@ -7515,10 +8033,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 138.72
+      "lengthPixels": 138.72,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E167",
+      "id": "E171",
       "trace": "gym-northeast-link",
       "part": 1,
       "label": "gym-northeast-link",
@@ -7551,10 +8071,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 88.46
+      "lengthPixels": 88.46,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E168",
+      "id": "E172",
       "trace": "athletics-center-front",
       "part": 1,
       "label": "athletics-center-front",
@@ -7591,10 +8113,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 137.75
+      "lengthPixels": 137.75,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E169",
+      "id": "E173",
       "trace": "athletics-center-east-end",
       "part": 1,
       "label": "athletics-center-east-end",
@@ -7619,10 +8143,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 16.55
+      "lengthPixels": 16.55,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E170",
+      "id": "E174",
       "trace": "stadium-north-connection",
       "part": 1,
       "label": "stadium-north-connection",
@@ -7647,10 +8173,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 37.7
+      "lengthPixels": 37.7,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E171",
+      "id": "E175",
       "trace": "stadium-north-connection",
       "part": 2,
       "label": "stadium-north-connection",
@@ -7675,10 +8203,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 36.06
+      "lengthPixels": 36.06,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E172",
+      "id": "E176",
       "trace": "stadium-north-connection",
       "part": 3,
       "label": "stadium-north-connection",
@@ -7707,10 +8237,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 67.42
+      "lengthPixels": 67.42,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E173",
+      "id": "E177",
       "trace": "stadium-entry-spur",
       "part": 1,
       "label": "stadium-entry-spur",
@@ -7739,10 +8271,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 43.46
+      "lengthPixels": 43.46,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E174",
+      "id": "E178",
       "trace": "stadium-northeast-stair",
       "part": 1,
       "label": "stadium-northeast-stair",
@@ -7771,10 +8305,12 @@
       "frame": "main",
       "region": "athletics",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 26.18
+      "lengthPixels": 26.18,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E175",
+      "id": "E179",
       "trace": "southwest-lawn-border",
       "part": 1,
       "label": "southwest-lawn-border",
@@ -7811,10 +8347,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 198.29
+      "lengthPixels": 198.29,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E176",
+      "id": "E180",
       "trace": "southwest-lawn-east",
       "part": 1,
       "label": "southwest-lawn-east",
@@ -7847,10 +8385,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 98.61
+      "lengthPixels": 98.61,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E177",
+      "id": "E181",
       "trace": "southwest-house-approach",
       "part": 1,
       "label": "southwest-house-approach",
@@ -7879,10 +8419,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 40.61
+      "lengthPixels": 40.61,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E178",
+      "id": "E182",
       "trace": "southwest-house-front",
       "part": 1,
       "label": "southwest-house-front",
@@ -7907,10 +8449,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 7.97
+      "lengthPixels": 7.97,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E179",
+      "id": "E183",
       "trace": "southwest-house-front",
       "part": 2,
       "label": "southwest-house-front",
@@ -7935,10 +8479,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 20.83
+      "lengthPixels": 20.83,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E180",
+      "id": "E184",
       "trace": "southwest-house-front",
       "part": 3,
       "label": "southwest-house-front",
@@ -7963,10 +8509,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 25.08
+      "lengthPixels": 25.08,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E181",
+      "id": "E185",
       "trace": "southwest-house-entry",
       "part": 1,
       "label": "southwest-house-entry",
@@ -7991,10 +8539,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 15
+      "lengthPixels": 15,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E182",
+      "id": "E186",
       "trace": "south-building-front",
       "part": 1,
       "label": "south-building-front",
@@ -8023,10 +8573,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 58.53
+      "lengthPixels": 58.53,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E183",
+      "id": "E187",
       "trace": "south-building-west-side",
       "part": 1,
       "label": "south-building-west-side",
@@ -8059,10 +8611,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 77.07
+      "lengthPixels": 77.07,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E184",
+      "id": "E188",
       "trace": "south-sculpture-branch",
       "part": 1,
       "label": "south-sculpture-branch",
@@ -8095,10 +8649,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 40.12
+      "lengthPixels": 40.12,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E185",
+      "id": "E189",
       "trace": "south-library-front-west",
       "part": 1,
       "label": "south-library-front-west",
@@ -8127,10 +8683,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 50.15
+      "lengthPixels": 50.15,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E186",
+      "id": "E190",
       "trace": "south-library-front-west",
       "part": 2,
       "label": "south-library-front-west",
@@ -8155,10 +8713,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 25
+      "lengthPixels": 25,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E187",
+      "id": "E191",
       "trace": "south-library-front-east",
       "part": 1,
       "label": "south-library-front-east",
@@ -8183,10 +8743,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 30
+      "lengthPixels": 30,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E188",
+      "id": "E192",
       "trace": "south-library-front-east",
       "part": 2,
       "label": "south-library-front-east",
@@ -8211,10 +8773,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 23.43
+      "lengthPixels": 23.43,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E189",
+      "id": "E193",
       "trace": "south-library-mid-entry",
       "part": 1,
       "label": "south-library-mid-entry",
@@ -8239,10 +8803,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 19.42
+      "lengthPixels": 19.42,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E190",
+      "id": "E194",
       "trace": "south-library-east-branch",
       "part": 1,
       "label": "south-library-east-branch",
@@ -8271,10 +8837,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 58.53
+      "lengthPixels": 58.53,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E191",
+      "id": "E195",
       "trace": "south-east-quad-diagonal",
       "part": 1,
       "label": "south-east-quad-diagonal",
@@ -8307,10 +8875,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 88.64
+      "lengthPixels": 88.64,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E192",
+      "id": "E196",
       "trace": "south-east-quad-edge",
       "part": 1,
       "label": "south-east-quad-edge",
@@ -8343,10 +8913,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 101.87
+      "lengthPixels": 101.87,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E193",
+      "id": "E197",
       "trace": "south-east-quad-edge",
       "part": 2,
       "label": "south-east-quad-edge",
@@ -8375,10 +8947,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 70.42
+      "lengthPixels": 70.42,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E194",
+      "id": "E198",
       "trace": "south-east-house-walk",
       "part": 1,
       "label": "south-east-house-walk",
@@ -8403,10 +8977,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 22.63
+      "lengthPixels": 22.63,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E195",
+      "id": "E199",
       "trace": "south-east-house-walk",
       "part": 2,
       "label": "south-east-house-walk",
@@ -8439,10 +9015,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 79.03
+      "lengthPixels": 79.03,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E196",
+      "id": "E200",
       "trace": "south-east-house-entry",
       "part": 1,
       "label": "south-east-house-entry",
@@ -8471,10 +9049,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 42.53
+      "lengthPixels": 42.53,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E197",
+      "id": "E201",
       "trace": "south-east-center-spur",
       "part": 1,
       "label": "south-east-center-spur",
@@ -8503,10 +9083,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 41.04
+      "lengthPixels": 41.04,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E198",
+      "id": "E202",
       "trace": "south-parking-west-boundary",
       "part": 1,
       "label": "south-parking-west-boundary",
@@ -8543,10 +9125,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 84.9
+      "lengthPixels": 84.9,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E199",
+      "id": "E203",
       "trace": "south-parking-south-boundary",
       "part": 1,
       "label": "south-parking-south-boundary",
@@ -8591,10 +9175,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 232.88
+      "lengthPixels": 232.88,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E200",
+      "id": "E204",
       "trace": "south-parking-east-boundary",
       "part": 1,
       "label": "south-parking-east-boundary",
@@ -8631,10 +9217,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 95.05
+      "lengthPixels": 95.05,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E201",
+      "id": "E205",
       "trace": "south-parking-north-boundary",
       "part": 1,
       "label": "south-parking-north-boundary",
@@ -8679,10 +9267,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 241.17
+      "lengthPixels": 241.17,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E202",
+      "id": "E206",
       "trace": "south-gallery-south-entry",
       "part": 1,
       "label": "south-gallery-south-entry",
@@ -8711,10 +9301,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 35.81
+      "lengthPixels": 35.81,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E203",
+      "id": "E207",
       "trace": "south-gallery-front-entrance",
       "part": 1,
       "label": "south-gallery-front-entrance",
@@ -8743,10 +9335,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 30.62
+      "lengthPixels": 30.62,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E204",
+      "id": "E208",
       "trace": "south-gallery-east-entry",
       "part": 1,
       "label": "south-gallery-east-entry",
@@ -8775,10 +9369,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 35.97
+      "lengthPixels": 35.97,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E205",
+      "id": "E209",
       "trace": "south-east-house-garden-west",
       "part": 1,
       "label": "south-east-house-garden-west",
@@ -8807,10 +9403,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 40.41
+      "lengthPixels": 40.41,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E206",
+      "id": "E210",
       "trace": "south-east-house-garden-north",
       "part": 1,
       "label": "south-east-house-garden-north",
@@ -8843,10 +9441,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 58.32
+      "lengthPixels": 58.32,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E207",
+      "id": "E211",
       "trace": "south-east-house-garden-diagonal",
       "part": 1,
       "label": "south-east-house-garden-diagonal",
@@ -8883,10 +9483,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 83.21
+      "lengthPixels": 83.21,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E208",
+      "id": "E212",
       "trace": "south-east-house-cross-path",
       "part": 1,
       "label": "south-east-house-cross-path",
@@ -8919,10 +9521,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 78.12
+      "lengthPixels": 78.12,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E209",
+      "id": "E213",
       "trace": "south-east-house-east-garden",
       "part": 1,
       "label": "south-east-house-east-garden",
@@ -8947,10 +9551,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 29.41
+      "lengthPixels": 29.41,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E210",
+      "id": "E214",
       "trace": "south-east-upper-house-link",
       "part": 1,
       "label": "south-east-upper-house-link",
@@ -8979,10 +9585,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 37.64
+      "lengthPixels": 37.64,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E211",
+      "id": "E215",
       "trace": "south-east-garden-border",
       "part": 1,
       "label": "south-east-garden-border",
@@ -9011,10 +9619,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 36.92
+      "lengthPixels": 36.92,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E212",
+      "id": "E216",
       "trace": "south-east-garden-border",
       "part": 2,
       "label": "south-east-garden-border",
@@ -9043,10 +9653,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 35.71
+      "lengthPixels": 35.71,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E213",
+      "id": "E217",
       "trace": "south-east-porch-branch",
       "part": 1,
       "label": "south-east-porch-branch",
@@ -9071,10 +9683,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 14.56
+      "lengthPixels": 14.56,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E214",
+      "id": "E218",
       "trace": "south-lower-houses-west-walk",
       "part": 1,
       "label": "south-lower-houses-west-walk",
@@ -9107,10 +9721,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 59.49
+      "lengthPixels": 59.49,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E215",
+      "id": "E219",
       "trace": "south-lower-houses-front",
       "part": 1,
       "label": "south-lower-houses-front",
@@ -9135,10 +9751,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 29.15
+      "lengthPixels": 29.15,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E216",
+      "id": "E220",
       "trace": "south-lower-houses-front",
       "part": 2,
       "label": "south-lower-houses-front",
@@ -9171,10 +9789,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 91.18
+      "lengthPixels": 91.18,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E217",
+      "id": "E221",
       "trace": "south-lower-houses-front",
       "part": 3,
       "label": "south-lower-houses-front",
@@ -9203,10 +9823,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 55.95
+      "lengthPixels": 55.95,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E218",
+      "id": "E222",
       "trace": "south-lower-houses-east-walk",
       "part": 1,
       "label": "south-lower-houses-east-walk",
@@ -9235,10 +9857,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 39.65
+      "lengthPixels": 39.65,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E219",
+      "id": "E223",
       "trace": "south-lower-house-entry-west",
       "part": 1,
       "label": "south-lower-house-entry-west",
@@ -9263,10 +9887,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 13.45
+      "lengthPixels": 13.45,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E220",
+      "id": "E224",
       "trace": "south-lower-house-entry-east",
       "part": 1,
       "label": "south-lower-house-entry-east",
@@ -9291,10 +9917,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 15.26
+      "lengthPixels": 15.26,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E221",
+      "id": "E225",
       "trace": "south-brick-building-south",
       "part": 1,
       "label": "south-brick-building-south",
@@ -9327,10 +9955,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 66.41
+      "lengthPixels": 66.41,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E222",
+      "id": "E226",
       "trace": "south-brick-building-east",
       "part": 1,
       "label": "south-brick-building-east",
@@ -9359,10 +9989,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 37.54
+      "lengthPixels": 37.54,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E223",
+      "id": "E227",
       "trace": "south-brick-building-west",
       "part": 1,
       "label": "south-brick-building-west",
@@ -9391,10 +10023,12 @@
       "frame": "main",
       "region": "south-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 26.73
+      "lengthPixels": 26.73,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E224",
+      "id": "E228",
       "trace": "bridge-visible-east-strip",
       "part": 1,
       "label": "bridge-visible-east-strip",
@@ -9435,10 +10069,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 100.44
+      "lengthPixels": 100.44,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E225",
+      "id": "E229",
       "trace": "residence-west-parking-walk",
       "part": 1,
       "label": "residence-west-parking-walk",
@@ -9471,10 +10107,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 73.67
+      "lengthPixels": 73.67,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E226",
+      "id": "E230",
       "trace": "residence-parking-entry",
       "part": 1,
       "label": "residence-parking-entry",
@@ -9499,10 +10137,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 12.04
+      "lengthPixels": 12.04,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E227",
+      "id": "E231",
       "trace": "north-apartment-front",
       "part": 1,
       "label": "north-apartment-front",
@@ -9527,10 +10167,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 21.84
+      "lengthPixels": 21.84,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E228",
+      "id": "E232",
       "trace": "north-apartment-front",
       "part": 2,
       "label": "north-apartment-front",
@@ -9559,10 +10201,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 47.53
+      "lengthPixels": 47.53,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E229",
+      "id": "E233",
       "trace": "north-apartment-front",
       "part": 3,
       "label": "north-apartment-front",
@@ -9595,10 +10239,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 92.04
+      "lengthPixels": 92.04,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E230",
+      "id": "E234",
       "trace": "north-apartment-front",
       "part": 4,
       "label": "north-apartment-front",
@@ -9623,10 +10269,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 32.76
+      "lengthPixels": 32.76,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E231",
+      "id": "E235",
       "trace": "north-apartment-front",
       "part": 5,
       "label": "north-apartment-front",
@@ -9651,10 +10299,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 22.09
+      "lengthPixels": 22.09,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E232",
+      "id": "E236",
       "trace": "north-apartment-plaza",
       "part": 1,
       "label": "north-apartment-plaza",
@@ -9691,10 +10341,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 69.08
+      "lengthPixels": 69.08,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E233",
+      "id": "E237",
       "trace": "north-apartment-east-drive",
       "part": 1,
       "label": "north-apartment-east-drive",
@@ -9735,10 +10387,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 100.51
+      "lengthPixels": 100.51,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E234",
+      "id": "E238",
       "trace": "north-apartment-west-drive",
       "part": 1,
       "label": "north-apartment-west-drive",
@@ -9771,10 +10425,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 56.36
+      "lengthPixels": 56.36,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E235",
+      "id": "E239",
       "trace": "north-shared-access",
       "part": 1,
       "label": "north-shared-access",
@@ -9811,10 +10467,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 103.57
+      "lengthPixels": 103.57,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E236",
+      "id": "E240",
       "trace": "residence-north-parking-edge",
       "part": 1,
       "label": "residence-north-parking-edge",
@@ -9863,10 +10521,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 235.47
+      "lengthPixels": 235.47,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E237",
+      "id": "E241",
       "trace": "residence-north-parking-entry",
       "part": 1,
       "label": "residence-north-parking-entry",
@@ -9895,10 +10555,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 32.59
+      "lengthPixels": 32.59,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E238",
+      "id": "E242",
       "trace": "residence-east-green-branch",
       "part": 1,
       "label": "residence-east-green-branch",
@@ -9931,10 +10593,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 67.98
+      "lengthPixels": 67.98,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E239",
+      "id": "E243",
       "trace": "north-long-building-front",
       "part": 1,
       "label": "north-long-building-front",
@@ -9975,10 +10639,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 184.18
+      "lengthPixels": 184.18,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E240",
+      "id": "E244",
       "trace": "north-long-building-east-end",
       "part": 1,
       "label": "north-long-building-east-end",
@@ -10011,10 +10677,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 60.61
+      "lengthPixels": 60.61,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E241",
+      "id": "E245",
       "trace": "north-apartment-west-entry",
       "part": 1,
       "label": "north-apartment-west-entry",
@@ -10039,10 +10707,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 15.03
+      "lengthPixels": 15.03,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E242",
+      "id": "E246",
       "trace": "north-apartment-center-entry",
       "part": 1,
       "label": "north-apartment-center-entry",
@@ -10067,10 +10737,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 11.4
+      "lengthPixels": 11.4,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E243",
+      "id": "E247",
       "trace": "north-apartment-east-entry",
       "part": 1,
       "label": "north-apartment-east-entry",
@@ -10095,10 +10767,12 @@
       "frame": "main",
       "region": "north-campus",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 12.53
+      "lengthPixels": 12.53,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E244",
+      "id": "E248",
       "trace": "inset-west-entry-drive",
       "part": 1,
       "label": "inset-west-entry-drive",
@@ -10127,10 +10801,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 54.13
+      "lengthPixels": 54.13,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E245",
+      "id": "E249",
       "trace": "inset-west-entry-drive",
       "part": 2,
       "label": "inset-west-entry-drive",
@@ -10159,10 +10835,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 52.72
+      "lengthPixels": 52.72,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E246",
+      "id": "E250",
       "trace": "inset-west-west-drive",
       "part": 1,
       "label": "inset-west-west-drive",
@@ -10207,10 +10885,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 245.04
+      "lengthPixels": 245.04,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E247",
+      "id": "E251",
       "trace": "inset-west-central-drive",
       "part": 1,
       "label": "inset-west-central-drive",
@@ -10255,10 +10935,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 269.9
+      "lengthPixels": 269.9,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E248",
+      "id": "E252",
       "trace": "inset-west-central-drive",
       "part": 2,
       "label": "inset-west-central-drive",
@@ -10291,10 +10973,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 51.75
+      "lengthPixels": 51.75,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E249",
+      "id": "E253",
       "trace": "inset-west-center-branch",
       "part": 1,
       "label": "inset-west-center-branch",
@@ -10331,10 +11015,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 95.6
+      "lengthPixels": 95.6,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E250",
+      "id": "E254",
       "trace": "inset-west-east-drive",
       "part": 1,
       "label": "inset-west-east-drive",
@@ -10411,10 +11097,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 425.99
+      "lengthPixels": 425.99,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E251",
+      "id": "E255",
       "trace": "inset-west-upper-left",
       "part": 1,
       "label": "inset-west-upper-left",
@@ -10455,10 +11143,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 154.08
+      "lengthPixels": 154.08,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E252",
+      "id": "E256",
       "trace": "inset-west-upper-join",
       "part": 1,
       "label": "inset-west-upper-join",
@@ -10491,10 +11181,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 54.18
+      "lengthPixels": 54.18,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E253",
+      "id": "E257",
       "trace": "inset-west-upper-arc",
       "part": 1,
       "label": "inset-west-upper-arc",
@@ -10539,10 +11231,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 198
+      "lengthPixels": 198,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E254",
+      "id": "E258",
       "trace": "inset-west-upper-return",
       "part": 1,
       "label": "inset-west-upper-return",
@@ -10583,10 +11277,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 148.25
+      "lengthPixels": 148.25,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E255",
+      "id": "E259",
       "trace": "inset-west-lawn-path",
       "part": 1,
       "label": "inset-west-lawn-path",
@@ -10627,10 +11323,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 154.5
+      "lengthPixels": 154.5,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E256",
+      "id": "E260",
       "trace": "inset-west-upper-loop-closure",
       "part": 1,
       "label": "inset-west-upper-loop-closure",
@@ -10667,10 +11365,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 64.6
+      "lengthPixels": 64.6,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E257",
+      "id": "E261",
       "trace": "inset-west-entrance-branch-join",
       "part": 1,
       "label": "inset-west-entrance-branch-join",
@@ -10703,10 +11403,12 @@
       "frame": "inset-west",
       "region": "experimental-mine-inset",
       "surface": "path-or-shared-access-needs-review",
-      "lengthPixels": 39.81
+      "lengthPixels": 39.81,
+      "assumption": null,
+      "evidence": "artwork-candidate"
     },
     {
-      "id": "E258",
+      "id": "E262",
       "trace": "inset-east-building-front",
       "part": 1,
       "label": "inset-east-building-front",
@@ -10743,10 +11445,12 @@
       "frame": "inset-east",
       "region": "industrial-inset",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 101.46
+      "lengthPixels": 101.46,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E259",
+      "id": "E263",
       "trace": "inset-east-building-side",
       "part": 1,
       "label": "inset-east-building-side",
@@ -10783,10 +11487,12 @@
       "frame": "inset-east",
       "region": "industrial-inset",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 121.04
+      "lengthPixels": 121.04,
+      "assumption": null,
+      "evidence": "artwork-visible"
     },
     {
-      "id": "E260",
+      "id": "E264",
       "trace": "inset-east-roadside",
       "part": 1,
       "label": "inset-east-roadside",
@@ -10823,7 +11529,9 @@
       "frame": "inset-east",
       "region": "industrial-inset",
       "surface": "visible-pedestrian-strip",
-      "lengthPixels": 130.15
+      "lengthPixels": 130.15,
+      "assumption": null,
+      "evidence": "artwork-visible"
     }
   ],
   "candidateEdgeIds": [
@@ -10843,43 +11551,43 @@
     "E042",
     "E043",
     "E078",
+    "E079",
     "E080",
     "E081",
+    "E082",
     "E084",
+    "E085",
     "E088",
-    "E094",
-    "E097",
-    "E110",
-    "E111",
-    "E112",
-    "E113",
+    "E092",
+    "E098",
+    "E101",
     "E114",
-    "E119",
-    "E126",
-    "E129",
-    "E131",
-    "E132",
-    "E134",
+    "E115",
+    "E116",
+    "E117",
+    "E118",
+    "E123",
+    "E130",
+    "E133",
     "E135",
-    "E144",
-    "E145",
-    "E146",
+    "E136",
+    "E138",
+    "E139",
+    "E148",
     "E149",
-    "E152",
+    "E150",
     "E153",
-    "E154",
-    "E165",
-    "E190",
-    "E197",
-    "E205",
-    "E206",
+    "E156",
+    "E157",
+    "E158",
+    "E169",
+    "E194",
+    "E201",
+    "E209",
     "E210",
-    "E219",
-    "E220",
-    "E227",
-    "E228",
-    "E229",
-    "E230",
+    "E214",
+    "E223",
+    "E224",
     "E231",
     "E232",
     "E233",
@@ -10906,7 +11614,23 @@
     "E254",
     "E255",
     "E256",
-    "E257"
+    "E257",
+    "E258",
+    "E259",
+    "E260",
+    "E261"
+  ],
+  "assumedEdgeIds": [
+    "E011",
+    "E012",
+    "E079",
+    "E080",
+    "E081",
+    "E082",
+    "E084",
+    "E085",
+    "E088",
+    "E092"
   ],
   "visibleDraftEdgeIds": [
     "E001",
@@ -10971,23 +11695,19 @@
     "E075",
     "E076",
     "E077",
-    "E079",
-    "E082",
     "E083",
-    "E085",
     "E086",
     "E087",
     "E089",
     "E090",
     "E091",
-    "E092",
     "E093",
+    "E094",
     "E095",
     "E096",
-    "E098",
+    "E097",
     "E099",
     "E100",
-    "E101",
     "E102",
     "E103",
     "E104",
@@ -10996,46 +11716,46 @@
     "E107",
     "E108",
     "E109",
-    "E115",
-    "E116",
-    "E117",
-    "E118",
+    "E110",
+    "E111",
+    "E112",
+    "E113",
+    "E119",
     "E120",
     "E121",
     "E122",
-    "E123",
     "E124",
     "E125",
+    "E126",
     "E127",
     "E128",
-    "E130",
-    "E133",
-    "E136",
+    "E129",
+    "E131",
+    "E132",
+    "E134",
     "E137",
-    "E138",
-    "E139",
     "E140",
     "E141",
     "E142",
     "E143",
+    "E144",
+    "E145",
+    "E146",
     "E147",
-    "E148",
-    "E150",
     "E151",
+    "E152",
+    "E154",
     "E155",
-    "E156",
-    "E157",
-    "E158",
     "E159",
     "E160",
     "E161",
     "E162",
     "E163",
     "E164",
+    "E165",
     "E166",
     "E167",
     "E168",
-    "E169",
     "E170",
     "E171",
     "E172",
@@ -11056,38 +11776,42 @@
     "E187",
     "E188",
     "E189",
+    "E190",
     "E191",
     "E192",
     "E193",
-    "E194",
     "E195",
     "E196",
+    "E197",
     "E198",
     "E199",
     "E200",
-    "E201",
     "E202",
     "E203",
     "E204",
+    "E205",
+    "E206",
     "E207",
     "E208",
-    "E209",
     "E211",
     "E212",
     "E213",
-    "E214",
     "E215",
     "E216",
     "E217",
     "E218",
+    "E219",
+    "E220",
     "E221",
     "E222",
-    "E223",
-    "E224",
     "E225",
     "E226",
-    "E258",
-    "E259",
-    "E260"
+    "E227",
+    "E228",
+    "E229",
+    "E230",
+    "E262",
+    "E263",
+    "E264"
   ]
 }
