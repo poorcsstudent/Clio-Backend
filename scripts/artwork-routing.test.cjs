@@ -23,6 +23,16 @@ test('unmatched buildings are explicit and never assigned fake artwork coordinat
  assert.match(route.anchors[1].error,/No matched/);assert.equal(route.anchors[1].point,undefined);
 });
 
+test('large artwork selections retain all stops including missing approaches',()=>{
+ const stops=Array.from({length:40},(_,i)=>({id:`stop-${i}`,name:`Stop ${i}`}));
+ const layout={buildings:Object.fromEntries(stops.slice(0,39).map((s,i)=>[s.id,{imageX:i*2,imageY:0}]))};
+ const route=createArtworkRoute(stops,layout,graph,true);
+ assert.equal(route.stopOrder.length,40);assert.equal(new Set(route.stopOrder).size,40);
+ assert.equal(route.legs.length,39);assert.equal(route.stopOrder[0],'stop-0');
+ assert(route.warnings.some(w=>w.includes('Stop 39')));
+ assert.match(route.orderBasis,/not guaranteed shortest/);
+});
+
 test('disconnected interest does not interrupt otherwise connected stops',()=>{
  const route=createArtworkRoute(['one','three','two'].map(stop),layout,graph,true);
  assert.deepEqual(route.stopOrder,['one','two','three']);assert.equal(route.legs.filter(l=>l.error).length,1);

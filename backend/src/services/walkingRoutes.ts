@@ -261,6 +261,6 @@ export function createNetworkWalkingRoute(tourId:string,stops:RouteStop[],optimi
     distanceMeters:legs.reduce((sum,l)=>sum+l.distanceMeters,0),durationSeconds:legs.reduce((sum,l)=>sum+l.durationSeconds,0),
     path:legs.flatMap((leg,i)=>i===0?leg.path:leg.path.slice(1)),legs,generatedAt:new Date().toISOString(),
     networkVersion:pedestrianNetworkMetadata.version,stopOrder:plan.order,approaches:plan.anchors.map(a=>({stopId:a.stopId,coordinate:a.coordinate,gapMeters:a.gapMeters})),approachAssumptions:plan.anchors.map(a=>a.assumption),
-    warning:'OSM pedestrian-network route; not field-verified or accessibility-verified. Distances exclude unverified final building approaches. Follow posted crossings and current conditions; paths may include stairs. No straight-line fallback is used.',
+    warning:'OSM pedestrian-network route; not field-verified or accessibility-verified. Distances exclude unverified final building approaches. Follow posted crossings and current conditions; paths may include stairs. No straight-line fallback is used.'+(optimize&&stops.length>11?' Large selections use nearest-neighbor ordering, not a guaranteed shortest tour.':''),
     attribution:pedestrianNetworkMetadata.attribution,sourceUrls:[pedestrianNetworkMetadata.sourceUrl],lastReviewed:pedestrianNetworkMetadata.sourceTimestamp};
 }

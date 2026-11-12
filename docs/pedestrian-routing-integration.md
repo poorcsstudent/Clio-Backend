@@ -7,9 +7,13 @@ glasses test or campus route verification was performed for this integration.
 
 - Catalog GET routes now use the geographic OSM snapshot (2,111 nodes and 2,274
   edges), retaining each catalog tour's existing stop order.
-- `POST /navigation/walking-route` accepts 2–11 distinct known stop IDs with
-  Havener first. It finds the minimum-distance open-tour ordering for those
-  chosen network approaches (fixed start; no return leg).
+- `POST /navigation/walking-route` accepts two or more distinct known stop IDs
+  with Havener first, without an artificial stop-count cap. Up to eleven total
+  stops use exact minimum-distance open-tour ordering for the chosen network
+  approaches. Larger selections use deterministic nearest-neighbor ordering,
+  retaining every stop; this heuristic is not guaranteed shortest. The start is
+  fixed and no return leg is added. A directed-network dead end can still return
+  422; that is not proof that every possible ordering is disconnected.
 - Dijkstra follows connected, access-filtered edges. Foot-specific one-way
   restrictions are honored. No disconnected components are joined by proximity.
 - Each building uses its nearest network node within 80 metres. This is an
@@ -24,6 +28,24 @@ glasses test or campus route verification was performed for this integration.
   restored offline and are labeled potentially outdated.
 
 ## Preview
+
+### Stop-limit removal (2026-11-12)
+
+The 4/6/10-destination selector and server-side eleven-stop rejection are removed.
+Every matching building is included unless the user explicitly removes it.
+Large artwork selections use nearest-connected ordering, retain unmatched or
+disconnected stops, and disclose gaps. Eleven stops is only an exact-optimization
+threshold, not a selection limit. Both routers reuse one Dijkstra search per
+source approach to avoid repeating full graph searches for every stop pair.
+Request-size, known-ID, uniqueness, and rate-limit protections remain in place.
+These changes are local only; no deployment or Expo build has been submitted.
+
+Validation: 48 app tests, 34 backend tests, and 8 artwork tests pass. Regression
+coverage includes 40-stop ordering and a 12-stop API request. A local request for
+all 69 catalog places returned all 69 unique stops and 68 legs in approximately
+875 ms, with missing connections explicitly reported. Browser testing with six
+interests retained 47 destinations plus Havener on the same illustration; 22
+connection gaps remained visible. These are software checks, not field tests.
 
 ### Single-map correction (2026-11-12)
 

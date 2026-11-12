@@ -19,9 +19,16 @@ test('disconnected and out-of-coverage stops fail without fallback',()=>{
 test('foot-specific one-way constraints respected',()=>{
  const r=createPedestrianRouter({nodes:nodes.slice(0,2),edges:[edge('a','b',100,'forward')]});assert(r.shortest('a','b'));assert.equal(r.shortest('b','a'),null);
 });
-test('duplicate or excessive stops rejected',()=>{
+test('duplicate stops rejected',()=>{
  assert.throws(()=>router.plan([stop('a'),stop('a')]),PedestrianRouteError);
- assert.throws(()=>router.plan(Array.from({length:12},(_,i)=>({...stop('a'),id:`stop-${i}`}))),PedestrianRouteError);
+});
+
+test('large selections retain every stop without the former cap',()=>{
+ const nodes=Array.from({length:40},(_,i)=>({id:`n${i}`,latitude:0,longitude:i*.0001}));
+ const r=createPedestrianRouter({nodes,edges:nodes.slice(1).map((n,i)=>edge(nodes[i].id,n.id,10))});
+ const stops=nodes.map(n=>({...n,name:n.id}));
+ const p=r.plan([stops[0],...stops.slice(1).reverse()],true);
+ assert.deepEqual(p.order,stops.map(s=>s.id));assert.equal(p.legs.length,39);assert.equal(p.distanceMeters,390);
 });
 
 test('unknown path endpoints fail without dereferencing missing coordinates',()=>{

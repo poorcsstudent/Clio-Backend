@@ -9,7 +9,7 @@ const toggleLabel=element('label',' Show traced path network');const toggle=docu
 
 function reasons(place){const result=[];for(const id of selected){const program=data.programs.find(p=>p.id===id),link=program?.places.find(p=>p.placeId===place.id);if(link)result.push(program.name+': '+link.relevance);const category=extra.find(x=>x.id===id);if(category?.pattern.test(place.category))result.push(category.name+': '+place.category);}return result;}
 function matches(){return data.places.map(p=>({...p,reasons:reasons(p)})).filter(p=>p.id!=='havener-center'&&p.reasons.length).sort((a,b)=>b.reasons.length-a.reasons.length||a.name.localeCompare(b.name));}
-function chosen(){return matches().filter(p=>!excluded.has(p.id)).slice(0,Number($('limit').value));}
+function chosen(){return matches().filter(p=>!excluded.has(p.id));}
 function order(stops){const places=[data.places.find(p=>p.id==='havener-center'),...stops];return plannedRoute?plannedRoute.stopOrder.map(id=>places.find(p=>p.id===id)):places;}
 function chips(){const q=$('search').value.toLowerCase();$('chips').replaceChildren();for(const item of [...extra,...data.programs].filter(p=>p.name.toLowerCase().includes(q))){const b=element('button',item.name);b.setAttribute('aria-pressed',String(selected.has(item.id)));b.onclick=()=>{selected.has(item.id)?selected.delete(item.id):selected.add(item.id);excluded.clear();planned=false;chips();render();};$('chips').append(b);}}
 function render(){
@@ -35,7 +35,7 @@ function render(){
   }else $('notice').textContent='Choose interests to highlight buildings. Paths and routes use the illustration’s own coordinates. Gray lines are traced network context, not a generated route. Candidate sections are dashed. Accessibility is unverified.';
 }
 fetch('/data').then(r=>{if(!r.ok)throw Error('Campus data unavailable');return r.json();}).then(d=>{data=d;if(!window.L)throw Error('Map library unavailable. Reload to retry.');map=L.map('map').setView([37.9545,-91.773],16);markers=L.layerGroup().addTo(map);chips();render();}).catch(e=>{$('selection').textContent='Preview unavailable';routeStatus.textContent=e.message;routeStatus.setAttribute('role','alert');});
-$('search').oninput=()=>data&&chips();$('limit').onchange=()=>{if(data){planned=false;render();}};
+$('search').oninput=()=>data&&chips();
 $('plan').onclick=async()=>{
   const token=++routeRequest;$('plan').disabled=true;$('plan').textContent='Calculating…';routeStatus.textContent='Calculating paths for your selected interests…';
   try{

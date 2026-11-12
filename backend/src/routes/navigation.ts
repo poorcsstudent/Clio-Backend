@@ -43,8 +43,8 @@ router.get("/walking-route/:tourId", walkingRouteLimiter, async (req, res, next)
 
 router.post('/walking-route',walkingRouteLimiter,(req,res,next)=>{
   const ids=req.body?.stopIds;
-  if(!Array.isArray(ids)||ids.length<2||ids.length>11||ids.some(id=>typeof id!=='string')||new Set(ids).size!==ids.length||ids[0]!=='havener-center'){
-    res.status(400).json({error:'Provide 2–11 distinct stopIds starting with havener-center.'});return;
+  if(!Array.isArray(ids)||ids.length<2||ids.some(id=>typeof id!=='string')||new Set(ids).size!==ids.length||ids[0]!=='havener-center'){
+    res.status(400).json({error:'Provide distinct campus stopIds starting with havener-center and at least one destination.'});return;
   }
   const stops=ids.map(id=>campusPlaces.find(p=>p.id===id));
   if(stops.some(p=>!p)){res.status(400).json({error:'Unknown campus stop.'});return;}

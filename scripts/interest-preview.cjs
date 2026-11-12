@@ -58,13 +58,14 @@ http.createServer(async (req, res) => {
     try{
       let body='';for await(const chunk of req){body+=chunk;if(body.length>4096){res.writeHead(413);res.end('Request too large');return;}}
       const {stopIds}=JSON.parse(body);
-      if(!Array.isArray(stopIds)||stopIds.length<2||stopIds.length>11||stopIds[0]!=='havener-center'||new Set(stopIds).size!==stopIds.length)throw Error('Choose 2–11 distinct stops beginning at Havener.');
+      if(!Array.isArray(stopIds)||stopIds.length<2||stopIds.some(id=>typeof id!=='string')||stopIds[0]!=='havener-center'||new Set(stopIds).size!==stopIds.length)throw Error('Choose distinct campus stops beginning at Havener and at least one destination.');
       const stops=stopIds.map(id=>campusPlaces.find(p=>p.id===id));if(stops.some(p=>!p))throw Error('Unknown stop.');
       // Routing failure must not erase the requested stops or prevent artwork review.
       let geographicRoute=null,geographicError=null;
       try{geographicRoute=createNetworkWalkingRoute('interest-tour',stops,true);}catch(error){geographicError=error.message;}
       const ordered=geographicRoute?geographicRoute.stopOrder.map(id=>stops.find(s=>s.id===id)):stops;
       const artworkRoute=createArtworkRoute(ordered,await mapLayout(),undefined,!!geographicError);
+      if(geographicRoute&&stops.length>11)artworkRoute.orderBasis='GPS-reference nearest-neighbor ordering for a large selection; not guaranteed shortest. Artwork connections reviewed separately.';
       res.setHeader('Content-Type','application/json');res.end(JSON.stringify({...artworkRoute,geographicError,
         geographicDistanceMeters:geographicRoute?.distanceMeters??null}));
     }catch(error){res.writeHead(422,{'Content-Type':'application/json'});res.end(JSON.stringify({error:error.message}));}return;

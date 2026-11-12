@@ -154,6 +154,17 @@ test('interest route endpoint validates stops and returns network ordering',asyn
  const invalid=await request(app).post('/navigation/walking-route').send({stopIds:['havener-center','made-up']});assert.equal(invalid.status,400);
 });
 
+test('interest route accepts more than eleven stops without dropping any', async () => {
+ const stopIds=['havener-center','1200-n-pine-st','1303-n-elm-st','720-w-tim-bradley-way','800-w-tim-bradley-way','altman-hall','bertelsmeyer-hall','butler-carlton-civil-engineering-hall','castleman-hall','centennial-hall','chancellor-s-residence','child-development-center'];
+ const result=await request(getApp()).post('/navigation/walking-route').send({stopIds});
+ assert.equal(result.status,200);
+ assert.deepEqual(new Set(result.body.stopOrder),new Set(stopIds));
+ assert.equal(result.body.stopOrder.length,stopIds.length);
+ assert.equal(result.body.stopOrder[0],'havener-center');
+ assert.equal(result.body.legs.length,stopIds.length-1);
+ assert.match(result.body.warning,/not a guaranteed shortest tour/);
+});
+
 test('disconnected catalog and interest routes return 422 without geometry', async () => {
  const app=getApp();
  const catalog=await request(app).get('/navigation/walking-route/chemistry');

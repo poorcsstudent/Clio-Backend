@@ -40,12 +40,17 @@ function createArtworkRoute(stops,layout,source=graph,groupConnected=false){
     }
     link(from,edge.to,points,edge);
   }
+  const searchCache=new Map();
   function shortest(from,to){
+    if(!searchCache.has(from)){
     const distances=new Map([[from,0]]),previous=new Map(),visited=new Set();
     while(true){let u,best=Infinity;for(const [id,d]of distances)if(!visited.has(id)&&d<best){u=id;best=d;}
-      if(u===undefined)return null;if(u===to)break;visited.add(u);
+      if(u===undefined)break;visited.add(u);
       for(const e of adjacent.get(u)||[]){const cost=best+e.length;if(cost<(distances.get(e.to)??Infinity)){distances.set(e.to,cost);previous.set(e.to,{from:u,edge:e});}}
     }
+    searchCache.set(from,{distances,previous});
+    }
+    const {distances,previous}=searchCache.get(from);if(!distances.has(to))return null;
     const parts=[];for(let u=to;u!==from;){const p=previous.get(u);parts.push(p.edge);u=p.from;}
     return {parts:parts.reverse(),lengthPixels:distances.get(to)};
   }
@@ -72,6 +77,13 @@ function createArtworkRoute(stops,layout,source=graph,groupConnected=false){
       for(let next=0;next<n;next++)if(!(mask&(1<<next))){const key=`${mask|(1<<next)}:${next}`,value=state.cost+cost(last+1,next+1);if(value<(dp.get(key)?.cost??Infinity))dp.set(key,{cost:value,order:[...state.order,next+1]});}
     }
     order=Array.from({length:n},(_,i)=>dp.get(`${(1<<n)-1}:${i}`)).sort((a,b)=>a.cost-b.cost)[0].order;
+  }else if(groupConnected&&stops.length>11){
+    // Algorithm threshold, not a stop cap. No selected stop is dropped.
+    order=[0];const remaining=new Set(stops.map((_,i)=>i).slice(1));
+    while(remaining.size){const from=order.at(-1);let next,best=Infinity;
+      for(const candidate of remaining){const cost=pair(from,candidate)?.lengthPixels??1e9;if(cost<best){best=cost;next=candidate;}}
+      order.push(next);remaining.delete(next);
+    }
   }
   const orderedAnchors=order.map(i=>anchors[i]);
   const legs=order.slice(1).map((to,i)=>{
@@ -81,7 +93,7 @@ function createArtworkRoute(stops,layout,source=graph,groupConnected=false){
   });
   return {coordinateSpace:'artwork-pixels',width:source.width,height:source.height,
     stopOrder:order.map(i=>stops[i].id),legs,anchors:orderedAnchors,status:legs.every(l=>!l.error)?'complete':'incomplete',
-    orderBasis:groupConnected?'Connected artwork sections grouped first; not a shortest geographic route.':'GPS-reference stop order; artwork connections reviewed separately.',
+    orderBasis:groupConnected?(stops.length>11?'All selected stops retained. Nearest-connected ordering for a large selection; not guaranteed shortest.':'Connected artwork sections grouped first; not a shortest geographic route.'):'GPS-reference stop order; artwork connections reviewed separately.',
     warnings:[...legs.filter(l=>l.error).map(l=>l.error),...new Set(legs.flatMap(l=>l.parts.filter(p=>p.assumption).map(p=>p.assumption)))],
     disclaimer:'Illustration-path review, not live walking directions. Dashed paths are candidate traces. Building approaches and accessibility are unverified. Missing connections are not replaced by straight lines.'};
 }
