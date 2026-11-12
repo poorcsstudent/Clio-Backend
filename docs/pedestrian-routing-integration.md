@@ -25,6 +25,50 @@ glasses test or campus route verification was performed for this integration.
 
 ## Preview
 
+### Single-map correction (2026-11-12)
+
+The separate geographic route panel described below has been superseded. The
+interest preview now draws the traced image-space edges directly over the S&T
+illustration. It does not warp OSM geometry onto the artwork. The geographic
+router remains a reference for stop ordering when all requested stops connect.
+If it cannot connect them, the preview preserves their suggested order and
+shows every stop; it does not claim an optimized tour in that case.
+
+Multi-interest requests now return an explicit artwork review even when network
+connections are missing. A live status beside the button reports completion or
+gaps. Colored path portions end at red gap rings; no line is invented between
+disconnected components. Errors, loading, and a 30-second timeout are visible
+beside the button. Dashed portions are candidate traces, not verified paving.
+
+`scripts/artwork-preview-network.cjs` adds ten explicitly inferred, review-only
+joins (library west plaza, CS west corner, Havener roundabout sidewalk,
+Bishop crossing approaches, Kummer east sidewalk, CS east court, library west
+and south courts, south fountain join, and Schrenk east diagonal) and selects path-side
+approaches for Havener and CS instead of using the nearest roof-label fragment.
+These additions do not alter the locked source trace graph, production GPS
+network, or its field-verification status. The user confirmed sidewalks on both
+street sides and several Bishop Avenue crosswalks. The local OSM snapshot has
+crossing way 1309060994 on the CS–Kummer geographic route. Its illustration
+placement is approximate and explicitly disclosed, not a surveyed registration.
+The full Havener–CS–Kummer illustration preview now connects using that candidate
+crossing and sidewalk approaches. The CS + Chemistry + Electrical Engineering
+combination also connects all six stops in the draft using candidate courtyard
+joins. Browser testing confirmed one illustration map, correctly aligned stop
+markers, five connected legs, and disclosure of assumptions. Other combinations
+can still expose missing connections, which remain explicit.
+This is not a verified walking-navigation route. Do not deploy it as such.
+
+When the GPS reference cannot order all stops, the preview groups connected
+artwork sections first (fixed Havener start), minimizing disconnected transitions
+before image-space length. This retains all requested stops and does not claim
+the shortest real-world walk. It is covered by a disconnected-interest regression.
+
+Validation: `node --test scripts/artwork-routing.test.cjs` covers preserved bends,
+multi-stop gaps, unmatched labels, source immutability, and the CS core join.
+The screenshot/review crop helper is `scripts/render-artwork-route-review.py`.
+
+### Previous geographic-only preview (superseded)
+
 Run `npm --prefix backend run build`, then `node scripts/interest-preview.cjs`.
 Open http://localhost:4174/interests and choose interests, then Preview my route.
 The official illustration retains numbered/category-colored stops. The generated

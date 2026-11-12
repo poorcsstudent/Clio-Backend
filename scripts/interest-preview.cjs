@@ -6,6 +6,8 @@ const { campusPlaces } = require('../backend/dist/data/campusPlaces');
 const { degreeTourPrograms } = require('../backend/dist/data/degreeTours');
 const { createNetworkWalkingRoute } = require('../backend/dist/services/walkingRoutes');
 const pedestrianNetwork = require('../backend/dist/data/pedestrian-network.json');
+const {createArtworkRoute}=require('./artwork-routing.cjs');
+const {graph:artworkGraph}=require('./artwork-preview-network.cjs');
 const html = fs.readFileSync(path.join(__dirname, '../preview/interests.html'), 'utf8');
 let layout;
 async function mapLayout() {
@@ -45,10 +47,12 @@ async function mapLayout() {
     }
   }
   if (!positions['havener-center']) throw Error('Havener artwork alignment unavailable');
-  layout = { positions, buildings, image: 'https://assets.codepen.io/220427/mapmap-bg_2.png', width: 3112, height: 1746 };
+  layout = { positions, buildings, image: 'https://assets.codepen.io/220427/mapmap-bg_2.png', width: artworkGraph.width, height: artworkGraph.height };
   return layout;
 }
 http.createServer(async (req, res) => {
+  res.setHeader('Cache-Control','no-store');
+  if(req.url==='/artwork-network'){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(artworkGraph));return;}
   if(req.url==='/walking-network') {res.setHeader('Content-Type','application/json');res.end(JSON.stringify(pedestrianNetwork));return;}
   if(req.url==='/walking-route'&&req.method==='POST'){
     try{
@@ -56,7 +60,13 @@ http.createServer(async (req, res) => {
       const {stopIds}=JSON.parse(body);
       if(!Array.isArray(stopIds)||stopIds.length<2||stopIds.length>11||stopIds[0]!=='havener-center'||new Set(stopIds).size!==stopIds.length)throw Error('Choose 2–11 distinct stops beginning at Havener.');
       const stops=stopIds.map(id=>campusPlaces.find(p=>p.id===id));if(stops.some(p=>!p))throw Error('Unknown stop.');
-      res.setHeader('Content-Type','application/json');res.end(JSON.stringify(createNetworkWalkingRoute('interest-tour',stops,true)));
+      // Routing failure must not erase the requested stops or prevent artwork review.
+      let geographicRoute=null,geographicError=null;
+      try{geographicRoute=createNetworkWalkingRoute('interest-tour',stops,true);}catch(error){geographicError=error.message;}
+      const ordered=geographicRoute?geographicRoute.stopOrder.map(id=>stops.find(s=>s.id===id)):stops;
+      const artworkRoute=createArtworkRoute(ordered,await mapLayout(),undefined,!!geographicError);
+      res.setHeader('Content-Type','application/json');res.end(JSON.stringify({...artworkRoute,geographicError,
+        geographicDistanceMeters:geographicRoute?.distanceMeters??null}));
     }catch(error){res.writeHead(422,{'Content-Type':'application/json'});res.end(JSON.stringify({error:error.message}));}return;
   }
   if (req.url === '/map-layout') {
@@ -69,9 +79,9 @@ http.createServer(async (req, res) => {
     res.end(JSON.stringify({ places: campusPlaces, programs: degreeTourPrograms }));
   } else if (req.url === '/' || req.url === '/interests') {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.end(html.replace('<script>','<script src="/mst-map.js"></script><script>'));
-  } else if (req.url === '/mst-map.js') {
+    res.end(html);
+  } else if (req.url === '/mst-map.js' || req.url === '/interests-app.js') {
     res.setHeader('Content-Type', 'application/javascript');
-    res.end(fs.readFileSync(path.join(__dirname, '../preview/mst-map.js')));
+    res.end(fs.readFileSync(path.join(__dirname, '../preview',req.url.slice(1))));
   } else { res.writeHead(404); res.end('Not found'); }
 }).listen(4174, '127.0.0.1', () => console.log('Interest preview: http://localhost:4174/interests'));

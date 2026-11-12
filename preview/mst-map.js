@@ -1,10 +1,10 @@
 // Image-space adapter: only explicit official marker/name matches are plotted.
-// Geographic coordinates are retained separately for the prototype ordering metric.
+// GPS reference ordering stays separate from traced artwork path geometry.
 const originalFetch = window.fetch.bind(window);
 const originalMap = L.map;
 const originalCircle = L.circleMarker;
 const originalPolyline = L.polyline;
-let mstLayout, mstPlaces;
+let mstLayout, mstPlaces, mstGraph, artworkLayers;
 const tourCategories = {
   start: { label: 'Start / Welcome', color: '#e5b94f' },
   academics: { label: 'Academics', color: '#3978d4' },
@@ -29,9 +29,11 @@ const artworkPoint = coordinate => {
 };
 window.fetch = async (url, options) => {
   if (url !== '/data') return originalFetch(url, options);
-  const [dataResponse, layoutResponse] = await Promise.all([originalFetch(url, options), originalFetch('/map-layout')]);
+  const [dataResponse, layoutResponse, graphResponse] = await Promise.all([originalFetch(url, options), originalFetch('/map-layout'),originalFetch('/artwork-network')]);
   if (!layoutResponse.ok) throw Error('Official S&T map could not load. Reload to retry.');
   mstLayout = await layoutResponse.json();
+  if(!graphResponse.ok)throw Error('Traced path data could not load. Reload to retry.');
+  mstGraph=await graphResponse.json();
   const data = await dataResponse.json(); mstPlaces = data.places;
   // Keep unmatched places in the interest cards, never guess their artwork position.
   return new Response(JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } });
@@ -39,7 +41,7 @@ window.fetch = async (url, options) => {
 L.map = (id, options) => {
   const map = originalMap(id, { ...options, crs: L.CRS.Simple, minZoom: -3, maxZoom: 2 });
   const bounds = [[0, 0], [mstLayout.height, mstLayout.width]];
-  L.imageOverlay(mstLayout.image, bounds, { attribution: 'Map artwork © Missouri S&T · <a href="https://www.mst.edu/map/overlay-map/" target="_blank" rel="noopener">Official map</a>' }).addTo(map);
+  L.imageOverlay(mstLayout.image, bounds, { attribution: 'Map artwork © Missouri S&T · <a href="https://www.mst.edu/map/overlay-map/" target="_blank" rel="noopener">Official map</a> · GPS reference © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap / ODbL</a>' }).addTo(map);
   // Existing initial GPS view is replaced with the illustration extent.
   const setView = map.setView;
   map.setView = () => { map.setView = setView; map.fitBounds(bounds); return map; };
@@ -75,4 +77,19 @@ L.circleMarker = (coordinate, options) => {
   }
   return { bindPopup() { return this; }, addTo() { return this; } };
 };
-L.polyline = (coordinates, options) => originalPolyline(coordinates.map(artworkPoint).filter(Boolean), options);
+function drawArtworkRoute(route,showNetwork){
+  if(artworkLayers)map.removeLayer(artworkLayers);
+  artworkLayers=L.layerGroup().addTo(map);
+  const point=p=>[mstGraph.height-p[1],p[0]];
+  if(showNetwork)for(const edge of mstGraph.edges.filter(e=>e.frame==='main'))originalPolyline(edge.points.map(point),{color:'#56756d',weight:2,opacity:.55,dashArray:edge.status==='visible-path-draft'?undefined:'4 6',interactive:false}).addTo(artworkLayers);
+  if(!route)return;
+  for(const leg of route.legs){
+    const place=mstPlaces.find(p=>p.id===leg.toStopId),color=categoryFor(place).color;
+    for(const part of leg.parts){
+      originalPolyline(part.points.map(point),{color:'#fff',weight:7,opacity:.75,interactive:false}).addTo(artworkLayers);
+      originalPolyline(part.points.map(point),{color,weight:4,opacity:1,dashArray:part.candidate?'7 5':undefined}).bindTooltip(part.assumption||part.reviewKey).addTo(artworkLayers);
+    }
+    if(leg.error)for(const p of leg.gapPoints||route.anchors.filter(a=>[leg.fromStopId,leg.toStopId].includes(a.stopId)&&a.point).map(a=>a.point))originalCircle(point(p),{color:'#ff876f',fillOpacity:.1,radius:9,weight:3}).bindTooltip(leg.error).addTo(artworkLayers);
+  }
+}
+function fitArtworkStops(ids){const points=ids.map(id=>mstLayout.positions[id]).filter(Boolean);if(points.length)map.fitBounds(points,{padding:[65,65],maxZoom:1,animate:false});}
