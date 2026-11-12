@@ -37,8 +37,12 @@ The two user-marked tunnels are now explicitly represented in the local preview:
   existing vertex on the residential garden trace to the east-side plaza.
   A disclosed plaza approach connects it to Havener's existing approach. Havener
   to Residential Commons 1 and 2 now connects through this underpass.
-- Thomas Jefferson tunnel: existing E135 was mislabeled as a bridge. It retains
-  its geometry and endpoints, but now carries `structure: tunnel` and `level: -1`.
+- Thomas Jefferson tunnel: the original correction only relabeled E135 and
+  incorrectly retained a lateral road-top alignment. User review caught this.
+  E135/E136/E137 are now removed from the preview overlay and replaced with
+  dedicated south/north portal nodes, a diagonal underground edge and separate
+  ramp approaches. The lower mouth follows the artwork; the concealed bore and
+  partly obscured north mouth remain approximate, pending visual/user review.
   The separate campus-side approach gap remains explicit; adding this tunnel
   does not make the entire illustrated route to Thomas Jefferson complete.
 

@@ -27,6 +27,10 @@ test('Thomas Jefferson tunnel is traversable without hiding the separate approac
  const {graph}=require('./artwork-preview-network.cjs');
  const edges=graph.edges.filter(e=>e.structure==='tunnel');assert.equal(edges.length,2);
  assert(edges.every(e=>e.accessibility==='unverified'&&e.routingEligible===false));
+ assert(!graph.edges.some(e=>['E135','E136','E137'].includes(e.id)),'Old road-top bridge and approach geometry must not remain routable');
+ const tj=edges.find(e=>e.id==='preview-tj-underpass');
+ assert.deepEqual(tj.points,[[2758,797],[2769,782],[2781,767]]);
+ assert.equal(tj.from,'preview-tj-south-portal');assert.equal(tj.to,'preview-tj-north-portal');
 });
 test('preserves traced bends in the artwork frame and splits anchors on one edge',()=>{
  const route=createArtworkRoute(['one','two'].map(stop),layout,graph);
