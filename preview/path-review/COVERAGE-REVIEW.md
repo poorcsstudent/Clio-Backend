@@ -1,6 +1,6 @@
 # Source comparison review — 2026-11-11
 
-Six paired sheets compare the source artwork and trace across twelve regions. This is a visual review record, not a quantitative coverage or accuracy certificate.
+Seven paired sheets compare the source artwork and trace across fourteen regions. This is a visual review record, not a quantitative coverage or accuracy certificate. The seventh sheet covers a transition area omitted from the first twelve-region audit; regional sheet counts do not establish exhaustive coverage.
 
 | Sheet | Regions inspected | Main review concern |
 | --- | --- | --- |
@@ -10,6 +10,7 @@ Six paired sheets compare the source artwork and trace across twelve regions. Th
 | 04 | Residential/bridge; northeast tower | Bridge strips and their approaches are separate segments; several approaches remain candidates. |
 | 05 | Far west; far north | Separate depicted footpaths from gray vehicle/shared-access drives. |
 | 06 | Mine inset; industrial inset | Mine loop/entry joins added as candidates; frames remain separate from the main campus graph. |
+| 07 | West core/roundabout; athletics transition | Clinic frontage, roundabout arcs and Spring Avenue sidewalk added; superseded rough lines removed. Road gaps and obscured entrance approaches are not assumed connected. |
 
 ## Deliberate exclusions
 

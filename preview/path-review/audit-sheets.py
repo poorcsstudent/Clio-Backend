@@ -19,6 +19,8 @@ regions=[
  ('J Far north',(200,0,1100,400)),
  ('K Mine inset',(850,1450,1880,1746)),
  ('L Industrial inset',(2450,1360,3114,1746)),
+ ('M West core / roundabout',(1250,700,1750,1100)),
+ ('N Athletics transition',(850,700,1400,1100)),
 ]
 font=ImageFont.truetype('C:/Windows/Fonts/arial.ttf',22)
 for start in range(0,len(regions),2):
@@ -30,4 +32,4 @@ for start in range(0,len(regions),2):
             crop=image.crop(box);crop.thumbnail((744,430))
             sheet.paste(crop,(column*760+(760-crop.width)//2,y+44+(430-crop.height)//2))
     sheet.save(root/f'audit-{start//2+1:02}.png')
-print('Created six paired source/overlay audit sheets.')
+print(f'Created {len(regions)//2} paired source/overlay audit sheets.')

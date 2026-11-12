@@ -1,6 +1,26 @@
 // Full-resolution source coordinates. Each group is measured within a lossless
 // inspection crop; offsets restore the original artwork frame exactly.
 const groups = [
+ {region:'west-core',offset:[1250,700],frame:'main',traces:[
+  ['west-core-parking-edge',[[100,94],[106,115],[122,134],[147,150],[178,168],[210,181],[244,190],[278,194],[313,192],[345,186],[354,181]],false],
+  ['west-core-clinic-short-walk',[[220,122],[231,115],[242,107]],false],
+  ['west-core-clinic-entrance-approach',[[242,107],[251,110]],true],
+  ['west-core-small-building-front',[[280,137],[306,146],[333,154],[360,163],[374,164]],false],
+  ['west-core-small-building-entry',[[306,146],[311,136]],true],
+  ['west-core-roundabout-south-arc',[[267,281],[290,284],[315,283],[340,279],[360,272],[369,268]],false],
+  ['west-core-roundabout-southeast',[[369,268],[382,274],[395,281]],false],
+  ['west-core-havener-sidewalk',[[399,188],[401,211],[400,231],[393,251]],false],
+  ['west-core-havener-sidewalk-branch',[[393,251],[418,260],[442,269],[461,277]],false],
+  ['west-core-plaza-stair',[[461,277],[447,287],[436,296]],false],
+  ['west-core-roundabout-west-verge',[[235,263],[228,246],[219,226],[207,209],[193,195],[176,183]],false],
+  ['west-core-eleventh-sidewalk',[[94,350],[109,355],[114,361],[109,368],[94,381]],false],
+ ]},
+ {region:'middle-west',offset:[850,700],frame:'main',traces:[
+  ['middle-west-north-lawn-edge',[[293,44],[325,55],[358,61],[395,65],[432,65],[463,62]],false],
+  ['middle-west-spring-sidewalk',[[425,193],[401,213],[375,235],[349,257],[323,279]],false],
+  ['middle-west-spring-lower',[[323,279],[304,294],[282,313],[264,328]],false],
+  ['middle-west-athletics-north-spur',[[264,328],[256,327]],false],
+ ]},
  {region:'far-north',offset:[200,0],frame:'main',traces:[
   ['far-north-curved-shared-access',[[174,273],[192,261],[217,254],[246,251],[274,248],[302,242],[326,232],[345,218],[356,203],[357,188],[348,173],[335,157],[327,144],[327,132],[333,120],[346,109],[365,102]],true],
   ['far-north-front-access',[[365,102],[391,106],[421,115],[455,126],[491,140],[530,154],[566,166],[603,179],[641,193],[681,207],[717,218]],true],

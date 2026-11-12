@@ -16,6 +16,8 @@ regions = {
     'northeast': (2550,570,3114,880),
     'far-west': (0,500,850,1000),
     'academic-north': (1750,650,2450,900),
+    'west-core': (1250,700,1750,1100),
+    'middle-west': (850,700,1400,1100),
 }
 for name, box in regions.items():
     image.crop(box).save(root / f'inspect-{name}.png')

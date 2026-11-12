@@ -222,6 +222,24 @@
     "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
   },
   {
+    "label": "havener-south-approach",
+    "points": [
+      [
+        1654.31,
+        971.6
+      ],
+      [
+        1674.08,
+        948.8
+      ],
+      [
+        1692.33,
+        935.11
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
     "label": "quad-south-small-building-approach",
     "points": [
       [

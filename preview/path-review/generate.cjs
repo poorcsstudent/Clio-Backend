@@ -132,6 +132,7 @@ const refined = [
 // Move shared junctions with refinements rather than leaving the old endpoints
 // disconnected. These are explicit correspondences, not proximity snapping.
 const movedJunctions = new Map(Object.entries({
+ '940,581':[1426,883],
  '847,386':[1291,589],
  '1105,646':[1670,977], '1170,640':[1777,972], '1215,647':[1859,996],
  '1127,653':[1710,990], '1130,671':[1719,1020], '1170,702':[1806,1077],
@@ -160,12 +161,13 @@ for(const t of regionalTraces){lines.push([t.label,t.points.map(p=>p.map(v=>v/sc
 // These segments were replaced by regional full-resolution traces. Remove
 // them after both source sets are assembled so a refinement cannot re-add one.
 const superseded=new Set(['south-tree-walk-west','south-tree-walk-east','cs-east','bridge-deck-candidate',
+ 'plaza-west','plaza-north','havener-west-verge','roundabout-south-verge','athletics-north-path','roundabout-northwest-verge',
  'southwest-residence-walk','south-boundary-walk','south-east-quad-cross',
  'stadium-northwest-walk','stadium-neighborhood-front']);
 for(let i=lines.length-1;i>=0;i--)if(superseded.has(lines[i][0]))lines.splice(i,1);
 // Source-image review confirms this crossing as the same sidewalk junction.
 // Insert the exact segment intersection into both polylines; no global snapping.
-const junctionPairs=[['southwest-diagonal','southwest-house-front'],['far-north-front-access','far-north-eastern-drive'],['southwest-gallery-west','south-gallery-south-entry'],['north-academic-garden-edge','north-sculpture-side-entry']];
+const junctionPairs=[['southwest-diagonal','southwest-house-front'],['far-north-front-access','far-north-eastern-drive'],['southwest-gallery-west','south-gallery-south-entry'],['north-academic-garden-edge','north-sculpture-side-entry'],['oval-north-approach','west-core-plaza-stair']];
 for(const [aName,bName] of junctionPairs){
  const a=lines.find(l=>l[0]===aName),b=lines.find(l=>l[0]===bName);
  for(let i=1;i<a[1].length;i++)for(let j=1;j<b[1].length;j++){
@@ -186,7 +188,7 @@ for(const [aName,bName] of junctionPairs){
 // plausible routing links. Keep their source geometry in a separate audit file.
 const rejectedLabels=new Set(['library-front','library-east','library-cs',
  'east-court-north','east-cross','south-quad','south-court',
- 'east-south-court','east-green','residential-north-link','quad-diagonal-ne','quad-south-small-building-approach']);
+ 'east-south-court','east-green','residential-north-link','quad-diagonal-ne','quad-south-small-building-approach','havener-south-approach']);
 const rejected=lines.filter(line=>rejectedLabels.has(line[0])).map(([label,points])=>({
  label,points:points.map(p=>p.map(v=>+(v*scale).toFixed(2))),
  reason:'Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval.'
