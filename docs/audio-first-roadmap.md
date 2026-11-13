@@ -1,6 +1,8 @@
 # Audio-first walking tour implementation
 
-Approved 2026-11-12. Local review only; no production push or Expo submission.
+Implementation approved 2026-11-12. Production release approved 2026-11-13;
+see `release-2026-11-13.md` for actual deployment and iPhone build status.
+The local-review notes below are historical; physical acceptance remains open.
 
 ## Milestones
 

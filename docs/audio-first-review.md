@@ -1,6 +1,8 @@
 # Audio-first review and physical acceptance
 
-Local implementation candidate. Nothing has been deployed or submitted to Expo.
+Originally a local implementation candidate. Production release was approved
+2026-11-13; see `release-2026-11-13.md` for live deployment/build status. Browser
+review is not physical-device acceptance.
 
 ## Observed browser results — 2026-11-12
 
@@ -32,7 +34,7 @@ Open http://localhost:4176/audio-test after `npm run preview:audio`.
 8. Expand the optional campus illustration. It is a visual aid only; no fake
    live GPS dot or geographic route is projected onto the unscaled artwork.
 
-## Native build prerequisites (approval still required)
+## Native build prerequisites (release approved 2026-11-13)
 
 - The new Expo TaskManager dependency and background-location entitlements
   require a new binary. This cannot be validated through an old installed app.
@@ -77,4 +79,4 @@ The native app still uses its existing degree-tour catalog; the interest-driven
 artwork editor remains a separate web prototype. This roadmap adds audio-first
 navigation and camera context, not a hidden migration of that prototype into
 the native catalog. Illustrations are not route geometry. The website and
-production app remain unchanged until explicit release approval.
+production app change only through the explicitly approved release workflow.
