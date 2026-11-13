@@ -48,5 +48,7 @@ export function validSavedRoute(value: any, tourId: string): boolean {
       && path(leg.path) && metric(leg.distanceMeters) && metric(leg.durationSeconds)
       && Array.isArray(leg.steps) && leg.steps.every((step: any) => step
         && typeof step.instruction === 'string' && optionalText(step.maneuver) && path(step.path)
+        && (step.kind === undefined || ['depart','turn','tunnel','crossing','stairs','continue'].includes(step.kind))
+        && (step.offsetMeters === undefined || metric(step.offsetMeters))
         && metric(step.distanceMeters) && metric(step.durationSeconds))));
 }

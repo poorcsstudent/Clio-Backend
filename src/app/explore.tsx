@@ -1,57 +1,18 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import * as Location from 'expo-location';
+import { useCampusTour } from '@/services/tourController';
 import { visibleTours } from '@/services/visibleTours';
-import {
-  ActivityIndicator,
-  Linking,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
-import { CampusRouteMap, type MapCoordinate } from '@/components/campus-route-map';
+import { CampusRouteMap } from '@/components/campus-route-map';
+import { CampusIllustration } from '@/components/campus-illustration';
 import { BottomTabInset } from '@/constants/theme';
-import { subscribeCacheNotice } from '@/services/publicCache';
-import { loadTourProgress, saveTourProgress } from '@/services/tourProgress';
-import {
-  getCampusTours,
-  apiBaseUrl,
-  endTour,
-  getTourStops,
-  getWalkingRoute,
-  startTour,
-  type CampusWalkingRoute,
-  type CampusTour,
-  type CampusTourCatalog,
-  type TourSession,
-  type TourStop,
-} from '@/services/api';
-import {
-  distanceBetweenCoordinatesMeters,
-  createArrivalTracker,
-  TOUR_ARRIVAL_RADIUS_METERS,
-} from '@/services/tourLocation';
-import {
-  distanceToWalkingPathMeters,
-  isOffPilotRoute,
-  nearestWalkingStepIndex,
-  TOUR_OFF_ROUTE_THRESHOLD_METERS,
-} from '@/services/walkingNavigation';
-import {
-  addNativeSpeechStateListener,
-  startNativeAnswerSpeech,
-  stopNativeSpeech,
-} from '@/services/wake-phrase';
+import { TOUR_ARRIVAL_RADIUS_METERS } from '@/services/tourLocation';
+import { isOffPilotRoute, TOUR_OFF_ROUTE_THRESHOLD_METERS } from '@/services/walkingNavigation';
 
 type GpsStatus =
   | 'idle'
   | 'requesting'
   | 'tracking'
+  | 'uncertain'
   | 'paused'
   | 'denied'
   | 'disabled'
@@ -64,6 +25,8 @@ function gpsStatusCopy(
   accuracyMeters: number | null,
 ) {
   switch (status) {
+    case 'uncertain':
+      return 'Position or route progress is uncertain. Turn prompts are on hold; follow posted pedestrian signs.';
     case 'tracking':
       return distanceMeters === null
         ? 'Waiting for a precise GPS fix…'
@@ -101,436 +64,7 @@ function tourSpeechStatusCopy(status: TourSpeechStatus) {
 }
 
 export default function CampusScreen() {
-  const [cacheNotice, setCacheNotice] = useState('');
-  useEffect(() => subscribeCacheNotice(setCacheNotice), []);
-  const { width } = useWindowDimensions();
-  const [catalog, setCatalog] = useState<CampusTourCatalog | null>(null);
-  const [selectedTourId, setSelectedTourId] = useState('');
-  const [routesByTourId, setRoutesByTourId] = useState<Record<string, TourStop[]>>({});
-  const [walkingRoutesByTourId, setWalkingRoutesByTourId] = useState<
-    Record<string, CampusWalkingRoute>
-  >({});
-  const [loadingCatalog, setLoadingCatalog] = useState(true);
-  const [loadingTourId, setLoadingTourId] = useState<string | null>(null);
-  const [startingTourId, setStartingTourId] = useState<string | null>(null);
-  const [activeTour, setActiveTour] = useState<TourSession | null>(null);
-  const [activeStopIndex, setActiveStopIndex] = useState(0);
-  const [activeWalkingStepIndex, setActiveWalkingStepIndex] = useState(0);
-  const [tourPaused, setTourPaused] = useState(false);
-  const [endingTour, setEndingTour] = useState(false);
-  const endingTourRef = useRef(false);
-  const [tourNotice, setTourNotice] = useState('');
-  const [tourSpeechStatus, setTourSpeechStatus] =
-    useState<TourSpeechStatus>('idle');
-  const [gpsStatus, setGpsStatus] = useState<GpsStatus>('idle');
-  const [distanceToCurrentStop, setDistanceToCurrentStop] = useState<number | null>(null);
-  const [distanceToActivePath, setDistanceToActivePath] = useState<number | null>(null);
-  const [gpsAccuracy, setGpsAccuracy] = useState<number | null>(null);
-  const [userCoordinate, setUserCoordinate] = useState<MapCoordinate | null>(null);
-  const [error, setError] = useState('');
-  const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
-  const tourNarrationPending = useRef(false);
-  const [progressLoaded, setProgressLoaded] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    void loadTourProgress(apiBaseUrl).then(saved => {
-      if (!active) return;
-      if (saved) {
-        setTourPaused(true);
-        setGpsStatus('paused');
-        setActiveTour(saved.session);
-        setActiveStopIndex(saved.stopIndex);
-        setSelectedTourId(saved.session.tour.id);
-        setRoutesByTourId(current => ({ ...current, [saved.session.tour.id]: saved.session.stops }));
-        if (saved.route?.provider === 'clio-pedestrian-network') {
-          setWalkingRoutesByTourId(current => ({ ...current, [saved.session.tour.id]: saved.route! }));
-        } else {
-          // Never restore an old straight-line or hand-curated route as network guidance.
-          void getWalkingRoute(saved.session.tour.id).then(route => {
-            if (active) setWalkingRoutesByTourId(current => ({ ...current, [saved.session.tour.id]: route }));
-          }).catch(() => {
-            if (active) setError('Saved stops were restored, but an updated pedestrian route is unavailable. No old route has been substituted.');
-          });
-        }
-        setTourNotice(`Saved tour restored paused at stop ${saved.stopIndex + 1}. Check your surroundings before resuming. Saved information may be outdated.`);
-      }
-      setProgressLoaded(true);
-    });
-    return () => { active = false; };
-  }, []);
-
-  useEffect(() => {
-    if (!progressLoaded) return;
-    void saveTourProgress(activeTour ? {
-      origin: apiBaseUrl, savedAt: Date.now(), session: activeTour,
-      stopIndex: activeStopIndex, route: walkingRoutesByTourId[activeTour.tour.id] ?? null,
-    } : null).catch(() => setTourNotice('Tour progress could not be saved on this device. Keep the app open to preserve this session.'));
-  }, [progressLoaded, activeTour, activeStopIndex, walkingRoutesByTourId]);
-
-  async function speakTourGuidance(text: string) {
-    if (Platform.OS !== 'ios' || !text.trim()) return;
-
-    tourNarrationPending.current = true;
-    setTourSpeechStatus('queued');
-    try {
-      await startNativeAnswerSpeech(text.trim());
-    } catch {
-      tourNarrationPending.current = false;
-      setTourSpeechStatus('unavailable');
-    }
-  }
-
-  function arrivalNarration(
-    stop: TourStop,
-    nextStop: TourStop | undefined,
-    finalStop: boolean,
-  ) {
-    const stopNarration =
-      stop.audioScript ?? `You have arrived at ${stop.name}. ${stop.relevance ?? stop.description}`;
-    if (finalStop) {
-      return `${stopNarration} You have completed this walking pilot.`;
-    }
-    return `${stopNarration} Next, continue to ${nextStop?.name}.`;
-  }
-
-  useEffect(() => {
-    if (Platform.OS !== 'ios') return;
-
-    const subscription = addNativeSpeechStateListener(event => {
-      if (event.kind !== 'answer' || !tourNarrationPending.current) return;
-      if (event.stage === 'queued') {
-        setTourSpeechStatus('queued');
-      } else if (event.stage === 'started') {
-        setTourSpeechStatus('speaking');
-      } else if (event.stage === 'finished') {
-        tourNarrationPending.current = false;
-        setTourSpeechStatus('finished');
-        // The Ask Clio screen owns the user's wake-listening preference.
-        // Finishing tour narration must not enable the microphone on its own.
-      } else if (event.stage === 'cancelled') {
-        setTourSpeechStatus('idle');
-      }
-    });
-
-    return () => subscription.remove();
-  }, []);
-
-  useEffect(() => {
-    let active = true;
-    getCampusTours()
-      .then(result => {
-        if (active) setCatalog(result);
-      })
-      .catch(reason => {
-        if (active) {
-          setError(reason instanceof Error ? reason.message : 'Could not load degree tours');
-        }
-      })
-      .finally(() => {
-        if (active) setLoadingCatalog(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const columnCount = width >= 980 ? 3 : width >= 640 ? 2 : 1;
-  const tourGridWidth = Math.max(0, width - 70);
-  const tourCardWidth = useMemo(
-    () => Math.max(0, (tourGridWidth - (columnCount - 1) * 10) / columnCount),
-    [columnCount, tourGridWidth],
-  );
-
-  async function toggleTour(tour: CampusTour) {
-    if (tour.id === selectedTourId) {
-      setSelectedTourId('');
-      setSelectedStopId(null);
-      return;
-    }
-
-    setError('');
-    setSelectedStopId(null);
-    setSelectedTourId(tour.id);
-    if (!walkingRoutesByTourId[tour.id]) {
-      void getWalkingRoute(tour.id)
-        .then(walkingRoute => {
-          setWalkingRoutesByTourId(current => ({
-            ...current,
-            [tour.id]: walkingRoute,
-          }));
-        })
-        .catch(reason => setError(reason instanceof Error ? reason.message : 'Pedestrian route unavailable'));
-    }
-    if (routesByTourId[tour.id]) return;
-
-    setLoadingTourId(tour.id);
-    try {
-      const route = await getTourStops(tour.id);
-      setRoutesByTourId(current => ({ ...current, [tour.id]: route }));
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Could not load this route');
-    } finally {
-      setLoadingTourId(current => (current === tour.id ? null : current));
-    }
-  }
-
-  async function beginTour(tour: CampusTour) {
-    if (!progressLoaded) return;
-    setStartingTourId(tour.id);
-    setError('');
-    setTourNotice('');
-
-    try {
-      const walkingRoute = walkingRoutesByTourId[tour.id] ?? await getWalkingRoute(tour.id);
-      if (activeTour) {
-        await endTour(activeTour.sessionId);
-      }
-      const session = await startTour(tour.id);
-      setActiveTour(session);
-      setActiveStopIndex(0);
-      setActiveWalkingStepIndex(0);
-      setTourPaused(false);
-      setGpsStatus('requesting');
-      setDistanceToCurrentStop(null);
-      setDistanceToActivePath(null);
-      setGpsAccuracy(null);
-      setUserCoordinate(null);
-      setTourSpeechStatus('idle');
-      setSelectedTourId(tour.id);
-      setSelectedStopId(null);
-      setRoutesByTourId(current => ({ ...current, [tour.id]: session.stops }));
-      setWalkingRoutesByTourId(current => ({
-        ...current,
-        [tour.id]: walkingRoute,
-      }));
-      void speakTourGuidance(
-        `${tour.name} walking pilot started. Begin at Havener Center. Clio will advance after several fresh location readings within ${TOUR_ARRIVAL_RADIUS_METERS} meters over at least eight seconds.`,
-      );
-    } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'Could not start this tour');
-    } finally {
-      setStartingTourId(null);
-    }
-  }
-
-  async function closeActiveTour(completed: boolean) {
-    if (!activeTour || endingTourRef.current) return;
-    endingTourRef.current = true;
-    setEndingTour(true);
-    setError('');
-    setTourPaused(true);
-    setGpsStatus('paused');
-    if (!completed) {
-      tourNarrationPending.current = false;
-      setTourSpeechStatus('idle');
-      await stopNativeSpeech().catch(() => false);
-    }
-
-    try {
-      await endTour(activeTour.sessionId);
-      setTourNotice(
-        completed
-          ? `${activeTour.tour.name} completed.`
-          : `${activeTour.tour.name} ended at stop ${activeStopIndex + 1}.`,
-      );
-    } catch {
-      setTourNotice('Tour ended on this phone. The backend could not confirm the end request; no automatic retry is queued.');
-    } finally {
-      // A network failure must not trap the user in a restored/offline tour.
-      setActiveTour(null);
-      setActiveStopIndex(0);
-      setActiveWalkingStepIndex(0);
-      setTourPaused(false);
-      setGpsStatus('idle');
-      setDistanceToCurrentStop(null);
-      setDistanceToActivePath(null);
-      setGpsAccuracy(null);
-      setUserCoordinate(null);
-      endingTourRef.current = false;
-      setEndingTour(false);
-    }
-  }
-
-  async function advanceTour() {
-    if (!activeTour || endingTourRef.current) return;
-    const currentStop = activeTour.stops[activeStopIndex];
-    const finalStop = activeStopIndex >= activeTour.stops.length - 1;
-    const nextStop = activeTour.stops[activeStopIndex + 1];
-    if (currentStop) {
-      void speakTourGuidance(
-        arrivalNarration(currentStop, nextStop, finalStop),
-      );
-    }
-    if (finalStop) {
-      await closeActiveTour(true);
-      return;
-    }
-    setActiveStopIndex(current => current + 1);
-    setActiveWalkingStepIndex(0);
-    setDistanceToCurrentStop(null);
-    setDistanceToActivePath(null);
-    setGpsAccuracy(null);
-    setSelectedStopId(null);
-  }
-
-  function toggleTourPaused() {
-    if (endingTourRef.current) return;
-    const nextPaused = !tourPaused;
-    setTourPaused(nextPaused);
-    setGpsStatus(nextPaused ? 'paused' : 'requesting');
-    if (nextPaused && tourNarrationPending.current) {
-      tourNarrationPending.current = false;
-      setTourSpeechStatus('idle');
-      void stopNativeSpeech().catch(() => {
-        setError('The tour is paused, but audio could not be stopped. Check the phone audio controls.');
-      });
-    }
-    if (!nextPaused) {
-      setDistanceToCurrentStop(null);
-      setDistanceToActivePath(null);
-      setGpsAccuracy(null);
-    }
-  }
-
-  async function openWalkingDirections(stop: TourStop) {
-    const destination = `${stop.latitude},${stop.longitude}`;
-    const url =
-      Platform.OS === 'ios'
-        ? `http://maps.apple.com/?daddr=${destination}&dirflg=w`
-        : `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=walking`;
-    await Linking.openURL(url);
-  }
-
-  const activeWalkingRoute = activeTour
-    ? walkingRoutesByTourId[activeTour.tour.id] ?? null
-    : null;
-
-  useEffect(() => {
-    if (!activeTour || Platform.OS === 'web' || tourPaused) return;
-
-    const tourSession = activeTour;
-    const stop = tourSession.stops[activeStopIndex];
-    if (!stop) return;
-    const activeWalkingLeg =
-      activeStopIndex > 0
-        ? activeWalkingRoute?.legs[
-            Math.min(activeStopIndex - 1, activeWalkingRoute.legs.length - 1)
-          ]
-        : undefined;
-
-    let cancelled = false;
-    let subscription: Location.LocationSubscription | null = null;
-    const checkArrival = createArrivalTracker();
-    let arrivalHandled = false;
-
-    function handleLocation(location: Location.LocationObject) {
-      if (cancelled || arrivalHandled || endingTourRef.current) return;
-
-      const accuracy = location.coords.accuracy;
-      const currentCoordinate = {
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      };
-      const distance = distanceBetweenCoordinatesMeters(
-        currentCoordinate,
-        { latitude: stop.latitude, longitude: stop.longitude },
-      );
-
-      setGpsStatus('tracking');
-      setDistanceToCurrentStop(distance);
-      setGpsAccuracy(accuracy);
-      setUserCoordinate(currentCoordinate);
-      if (activeWalkingLeg) {
-        setDistanceToActivePath(
-          distanceToWalkingPathMeters(currentCoordinate, activeWalkingLeg.path),
-        );
-        setActiveWalkingStepIndex(
-          nearestWalkingStepIndex(currentCoordinate, activeWalkingLeg.steps),
-        );
-      } else {
-        setDistanceToActivePath(null);
-        setActiveWalkingStepIndex(0);
-      }
-
-      if (endingTourRef.current || !checkArrival(distance, accuracy, location.timestamp)) return;
-      arrivalHandled = true;
-
-      const finalStop = activeStopIndex === tourSession.stops.length - 1;
-      const nextStop = tourSession.stops[activeStopIndex + 1];
-      void speakTourGuidance(
-        arrivalNarration(stop, nextStop, finalStop),
-      );
-      if (!finalStop) {
-        setTourNotice(`Arrived at ${stop.name}. Advancing to ${nextStop.name}.`);
-        setActiveStopIndex(current => (current === activeStopIndex ? current + 1 : current));
-        setActiveWalkingStepIndex(0);
-        setSelectedStopId(null);
-        setDistanceToCurrentStop(null);
-        setDistanceToActivePath(null);
-        setGpsAccuracy(null);
-        return;
-      }
-
-      setTourNotice(`Arrived at ${stop.name}. Completing ${tourSession.tour.name}…`);
-      // Completion belongs to the session, not this GPS subscription's lifetime.
-      // Pausing tracking cleans up this effect; it must not discard end cleanup.
-      void closeActiveTour(true);
-    }
-
-    async function startTracking() {
-      try {
-        const servicesEnabled = await Location.hasServicesEnabledAsync();
-        if (cancelled) return;
-        if (!servicesEnabled) {
-          setGpsStatus('disabled');
-          return;
-        }
-
-        let permission = await Location.getForegroundPermissionsAsync();
-        if (!permission.granted) {
-          permission = await Location.requestForegroundPermissionsAsync();
-        }
-        if (cancelled) return;
-        if (!permission.granted) {
-          setGpsStatus('denied');
-          return;
-        }
-
-        const createdSubscription = await Location.watchPositionAsync(
-          {
-            accuracy: Location.Accuracy.BestForNavigation,
-            // Dwell confirmation needs updates even while standing at a stop.
-            distanceInterval: 0,
-            timeInterval: 2_000,
-          },
-          handleLocation,
-          () => {
-            if (!cancelled) setGpsStatus('error');
-          },
-        );
-        if (cancelled) {
-          createdSubscription.remove();
-          return;
-        }
-        subscription = createdSubscription;
-
-        const currentLocation = await Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.High,
-        });
-        handleLocation(currentLocation);
-      } catch {
-        if (!cancelled) setGpsStatus('error');
-      }
-    }
-
-    void startTracking();
-    return () => {
-      cancelled = true;
-      subscription?.remove();
-    };
-  }, [activeStopIndex, activeTour, activeWalkingRoute, tourPaused]);
+  const { cacheNotice, catalog, selectedTourId, routesByTourId, walkingRoutesByTourId, loadingCatalog, loadingTourId, startingTourId, activeTour, activeStopIndex, activeWalkingStepIndex, tourPaused, endingTour, tourNotice, tourSpeechStatus, gpsStatus, distanceToCurrentStop, distanceToActivePath, gpsAccuracy, userCoordinate, error, selectedStopId, backgroundEnabled, showMap, columnCount, tourGridWidth, tourCardWidth, previousStop, setSelectedStopId, setShowMap, toggleTour, beginTour, closeActiveTour, advanceTour, toggleTourPaused, openWalkingDirections, speakTourGuidance, toggleBackground } = useCampusTour();
 
   return (
     <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
@@ -681,7 +215,9 @@ export default function CampusScreen() {
                           ) : null}
                         </View>
 
-                        {!loadingRoute && route.length ? (
+                        {!loadingRoute && route.length ? <Pressable accessibilityRole="button" style={styles.speechButton} onPress={() => setShowMap(value => !value)}><Text style={styles.speechButtonText}>{showMap ? 'Hide visual map' : 'Show optional visual map'}</Text></Pressable> : null}
+                        {!loadingRoute && route.length && showMap ? (
+                          <View><CampusIllustration />
                           <CampusRouteMap
                             stops={route}
                             walkingRoute={walkingRoute}
@@ -695,7 +231,7 @@ export default function CampusScreen() {
                             onSelectStop={stopId =>
                               setSelectedStopId(current => (current === stopId ? null : stopId))
                             }
-                          />
+                          /></View>
                         ) : null}
 
                         {isActiveTour && currentStop ? (
@@ -728,6 +264,8 @@ export default function CampusScreen() {
                             <Text style={styles.currentStopDescription}>
                               {currentStop.relevance ?? currentStop.description}
                             </Text>
+                            <Text style={styles.currentStopDescription}>Audio-first pilot: say “Hey Clio”, then “repeat”, “pause the tour”, “resume the tour”, “next stop”, “how far”, or “end the tour”. Wake commands currently require Clio to be open; locked-phone wake listening is not promised.</Text>
+                            {Platform.OS !== 'web' ? <Pressable accessibilityRole="button" style={styles.speechButton} onPress={toggleBackground}><Text style={styles.speechButtonText}>{backgroundEnabled ? 'Disable background tour location' : 'Enable locked-phone tour location'}</Text></Pressable> : null}
                             <View style={styles.speechCard}>
                               <View style={styles.speechCardCopy}>
                                 <Text style={styles.speechCardLabel}>
@@ -774,7 +312,7 @@ export default function CampusScreen() {
                                 />
                                 <Text style={styles.gpsTitle}>
                                   {offPilotRoute
-                                    ? 'Move back toward the pilot path'
+                                    ? 'Check your position before continuing'
                                     : 'Automatic GPS arrival'}
                                 </Text>
                                 <Text style={styles.gpsRadius}>
@@ -839,15 +377,7 @@ export default function CampusScreen() {
                                   pressed && styles.pressed,
                                   (endingTour || activeStopIndex === 0) && styles.disabled,
                                 ]}
-                                onPress={() => {
-                                  if (endingTourRef.current) return;
-                                  setActiveStopIndex(current => Math.max(0, current - 1));
-                                  setActiveWalkingStepIndex(0);
-                                  setDistanceToCurrentStop(null);
-                                  setDistanceToActivePath(null);
-                                  setGpsAccuracy(null);
-                                  setSelectedStopId(null);
-                                }}>
+                                onPress={previousStop}>
                                 <Text style={styles.secondaryControlText}>Back</Text>
                               </Pressable>
                               <Pressable
@@ -878,7 +408,7 @@ export default function CampusScreen() {
                                   endingTour && styles.disabled,
                                   pressed && styles.pressed,
                                 ]}
-                                onPress={advanceTour}>
+                                onPress={() => advanceTour()}>
                                 <Text style={styles.nextControlText}>
                                   {activeStopIndex === activeTour.stops.length - 1
                                     ? 'Finish tour'

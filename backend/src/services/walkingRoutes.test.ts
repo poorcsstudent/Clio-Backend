@@ -17,8 +17,9 @@ test('both campus tunnels retain underground metadata and route instructions',()
  for(const destination of ['residential-commons-1','thomas-jefferson-residence-hall']){
   const stops=['havener-center',destination].map(id=>campusPlaces.find(p=>p.id===id)!);
   const route=createNetworkWalkingRoute('tunnel-test',stops);
-  assert.match(route.legs[0].steps[0].instruction,/underground pedestrian passage/);
-  assert.match(route.legs[0].steps[0].instruction,/not the roadway above/);
+  const instructions=route.legs[0].steps.map(step=>step.instruction).join(' ');
+  assert.match(instructions,/pedestrian tunnel entrance/);
+  assert.match(instructions,/beneath the road/);
   assert.equal(route.fieldVerified,false);
  }
 });

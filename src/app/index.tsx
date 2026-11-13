@@ -31,6 +31,9 @@ import SetupGuide from '@/components/setup-guide';
 import AiStatus from '@/components/ai-status';
 import { diagnosticSummary, type DiagnosticSnapshot } from '@/services/diagnosticSummary';
 import { optionalPositionWithin, reliableVisionCoordinates } from '@/services/visionLocation';
+import { dispatchTourCommand, getTourVoiceContext, parseTourCommand } from '@/services/tourGuidance';
+import { cameraDirectionAnswer } from '@/services/cameraDirections';
+import { getVoiceOwner, setQuestionBusy, subscribeVoiceFocus } from '@/services/voiceFocus';
 import {
   ApiError,
   apiBaseUrl,
@@ -114,6 +117,10 @@ export default function HomeScreen() {
   const [wakeState, setWakeState] = useState<WakePhraseState>(initialWakePhraseState);
   const [wakeEnabled, setWakeEnabled] = useState(false);
   const [appIsActive, setAppIsActive] = useState(true);
+  const [tourSpeaking, setTourSpeaking] = useState(() => getVoiceOwner() === 'tour');
+  const cameraDirectionConsent = useRef(false);
+  useEffect(() => subscribeVoiceFocus(() => setTourSpeaking(getVoiceOwner() === 'tour')), []);
+  useEffect(() => { setQuestionBusy(phase !== 'ready'); }, [phase]);
   const [voiceDiagnostics, setVoiceDiagnostics] = useState<string[]>([]);
 
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
@@ -226,6 +233,7 @@ export default function HomeScreen() {
     });
     const detectedSubscription = addWakePhraseDetectedListener(() => {
       if (!active || !paired) return;
+      setQuestionBusy(true);
       addVoiceDiagnostic('Wake phrase event reached React Native');
       setStatus('Hey Clio heard - local "Hey User" acknowledgement queued; ask your question');
     });
@@ -242,13 +250,16 @@ export default function HomeScreen() {
       } else if (event.stage === 'commandSpeechDetected') {
         setStatus('Question heard - waiting for you to finish…');
       } else if (event.stage === 'commandTimeout') {
+        setQuestionBusy(false);
         setStatus('No question was heard; say “Hey Clio” and try again');
       } else if (event.stage === 'commandCaptureError') {
+        setQuestionBusy(false);
         setStatus('Question capture stopped; say “Hey Clio” and try again');
       }
     });
     const speechSubscription = addNativeSpeechStateListener(event => {
       if (!active) return;
+      if (event.owner === 'tour') return;
       const outputs = event.outputs.filter(Boolean).join(', ') || 'no output route';
       addVoiceDiagnostic(
         `${event.kind === 'answer' ? 'Answer' : 'Acknowledgement'} speech ${
@@ -305,12 +316,13 @@ export default function HomeScreen() {
       wakeEnabled &&
       paired &&
       appIsActive &&
+      !tourSpeaking &&
       phase === 'ready' &&
       !recorderState.isRecording;
 
     const syncWakeListener = async () => {
       try {
-        if (!shouldListen && phase === 'speaking') return;
+        if (!shouldListen && (phase === 'speaking' || tourSpeaking)) return;
         const nextState = shouldListen
           ? await startWakePhraseListening('hey clio')
           : await stopWakePhraseListening();
@@ -326,9 +338,10 @@ export default function HomeScreen() {
     return () => {
       active = false;
     };
-  }, [appIsActive, paired, phase, recorderState.isRecording, wakeEnabled]);
+  }, [appIsActive, paired, phase, recorderState.isRecording, wakeEnabled, tourSpeaking]);
 
   useEffect(() => () => {
+    setQuestionBusy(false);
     void stopWakePhraseListening();
     void stopNativeSpeech();
   }, []);
@@ -417,12 +430,18 @@ export default function HomeScreen() {
   async function submitQuestion(value = question) {
     const cleaned = value.trim();
     if (!cleaned || !paired || requestInFlight.current || phase === 'speaking') return;
+    if (parseTourCommand(cleaned) === 'camera-directions' && getTourVoiceContext()?.active) {
+      await submitVisualQuestion(cleaned, true);
+      return;
+    }
     if (isVisualIdentificationCommand(cleaned)) {
       await submitVisualQuestion(cleaned);
       return;
     }
 
     requestInFlight.current = true;
+    setQuestionBusy(true);
+    if (getVoiceOwner() === 'tour') await stopNativeSpeech().catch(() => false);
     await stopWakePhraseListening().catch(() => undefined);
     addVoiceDiagnostic(`Sending question to Clio: "${cleaned}"`);
     const requestStarted = Date.now();
@@ -434,7 +453,8 @@ export default function HomeScreen() {
     setStatus('Searching verified campus knowledge…');
     let answered = false;
     try {
-      const result = await askCampusQuestion(cleaned);
+      const localCommand = await dispatchTourCommand(cleaned);
+      const result = localCommand ? { answer: localCommand.answer, sources: [] } : await askCampusQuestion(cleaned);
       addVoiceDiagnostic('Text answer received from the backend');
       setAnswer(result.answer);
       setSources(result.sources);
@@ -455,10 +475,20 @@ export default function HomeScreen() {
     }
   }
 
-  async function submitVisualQuestion(value: string) {
+  async function submitVisualQuestion(value: string, forDirections = false) {
     const cleaned = value.trim();
     if (!paired || !cleaned || requestInFlight.current || phase === 'speaking') return;
+    const capturedTourId = getTourVoiceContext()?.tourId ?? '';
+    if (forDirections && !cameraDirectionConsent.current) {
+      const consent = await new Promise<boolean>(resolve => Alert.alert('Camera-assisted directions', 'When you explicitly say “use the camera”, Clio captures one glasses photo and sends it over HTTPS to the backend and its vision provider. The local photo is deleted after the request. This is not a live feed or a crossing-safety check. Allow this for this app session?', [
+        { text: 'Not now', style: 'cancel', onPress: () => resolve(false) },
+        { text: 'Allow requested photos', onPress: () => resolve(true) },
+      ], { cancelable: true, onDismiss: () => resolve(false) }));
+      if (!consent) { setQuestionBusy(false); setStatus('Camera request cancelled. Say “which way do I go” for directions without a photo.'); return; }
+      cameraDirectionConsent.current = true;
+    }
     requestInFlight.current = true;
+    setQuestionBusy(true);
 
     await stopWakePhraseListening().catch(() => undefined);
     await stopNativeSpeech().catch(() => false);
@@ -520,7 +550,7 @@ export default function HomeScreen() {
         photoUri,
         coordinates,
       );
-      setAnswer(result.identification.name
+      setAnswer(forDirections ? cameraDirectionAnswer(result.identification.name, capturedTourId, getTourVoiceContext()) : result.identification.name
         ? `This is a possible match, not a confirmed identification. ${result.answer}`
         : result.answer);
       setSources(result.sources);

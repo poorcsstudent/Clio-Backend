@@ -1,4 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import '@/services/tourBackground';
+import { TourProvider } from '@/services/tourController';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'react-native';
 
@@ -9,7 +11,7 @@ export default function TabLayout() {
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <StatusBar style="light" />
-      <AppTabs />
+      <TourProvider><AppTabs /></TourProvider>
     </ThemeProvider>
   );
 }

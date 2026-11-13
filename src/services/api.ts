@@ -106,6 +106,8 @@ export interface WalkingCoordinate {
 
 export interface WalkingRouteStep {
   instruction: string;
+  kind?: 'depart' | 'turn' | 'tunnel' | 'crossing' | 'stairs' | 'continue';
+  offsetMeters?: number;
   maneuver?: string;
   distanceMeters: number;
   durationSeconds: number;
@@ -400,7 +402,7 @@ export async function getTourStops(tourId: string) {
 
 export async function getWalkingRoute(tourId: string) {
   // Separate this generation from cached legacy pilot/straight-line routes.
-  const route = await publicTourData<CampusWalkingRoute>(`/navigation/walking-route/${encodeURIComponent(tourId)}?campusId=missouri-s-and-t&routing=pedestrian-network-v1`);
+  const route = await publicTourData<CampusWalkingRoute>(`/navigation/walking-route/${encodeURIComponent(tourId)}?campusId=missouri-s-and-t&routing=pedestrian-maneuvers-v2`);
   if (route.provider !== 'clio-pedestrian-network') {
     throw new Error('The backend has not enabled pedestrian-network routing yet. No legacy route has been substituted.');
   }
