@@ -1,0 +1,260 @@
+[
+  {
+    "label": "quad-diagonal-ne",
+    "points": [
+      [
+        1939,
+        862
+      ],
+      [
+        1946,
+        902
+      ],
+      [
+        1957,
+        941
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "library-front",
+    "points": [
+      [
+        2023,
+        918
+      ],
+      [
+        2044,
+        927
+      ],
+      [
+        2053,
+        948
+      ],
+      [
+        2069,
+        965
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "library-east",
+    "points": [
+      [
+        2069,
+        965
+      ],
+      [
+        2171.29,
+        965.52
+      ],
+      [
+        2212.34,
+        977.69
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "library-cs",
+    "points": [
+      [
+        2023,
+        918
+      ],
+      [
+        2055.73,
+        895.58
+      ],
+      [
+        2099.82,
+        877.33
+      ],
+      [
+        2131.75,
+        872.77
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "east-court-north",
+    "points": [
+      [
+        2268.6,
+        950.32
+      ],
+      [
+        2282.28,
+        929.03
+      ],
+      [
+        2303.57,
+        922.95
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "east-cross",
+    "points": [
+      [
+        2303.57,
+        922.95
+      ],
+      [
+        2344.62,
+        935.11
+      ],
+      [
+        2371.99,
+        954.88
+      ],
+      [
+        2408.48,
+        967.04
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "south-court",
+    "points": [
+      [
+        1945,
+        1082
+      ],
+      [
+        1976.66,
+        1088.68
+      ],
+      [
+        2017.71,
+        1094.77
+      ],
+      [
+        2064.85,
+        1108.45
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "south-quad",
+    "points": [
+      [
+        1713.61,
+        1151.02
+      ],
+      [
+        1760.75,
+        1170.79
+      ],
+      [
+        1810.92,
+        1192.08
+      ],
+      [
+        1859.58,
+        1216.41
+      ],
+      [
+        1912.8,
+        1233.13
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "east-south-court",
+    "points": [
+      [
+        2159.12,
+        1128.22
+      ],
+      [
+        2197.13,
+        1151.02
+      ],
+      [
+        2238.19,
+        1170.79
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "east-green",
+    "points": [
+      [
+        2238.19,
+        1170.79
+      ],
+      [
+        2291.41,
+        1184.48
+      ],
+      [
+        2343.1,
+        1204.24
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "residential-north-link",
+    "points": [
+      [
+        1664.96,
+        743.53
+      ],
+      [
+        1681.68,
+        710.08
+      ],
+      [
+        1706.01,
+        687.27
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "havener-south-approach",
+    "points": [
+      [
+        1654.31,
+        971.6
+      ],
+      [
+        1674.08,
+        948.8
+      ],
+      [
+        1692.33,
+        935.11
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  },
+  {
+    "label": "quad-south-small-building-approach",
+    "points": [
+      [
+        1932,
+        977
+      ],
+      [
+        1950,
+        984
+      ],
+      [
+        1964,
+        990
+      ]
+    ],
+    "reason": "Overview approximation crosses roof artwork or lacks a continuously visible path; requires a new trace, not automatic approval."
+  }
+]

@@ -1,10 +1,10 @@
-import dotenv from "dotenv";
+import "dotenv/config";
+
 import app from "./app";
+import { assertServerConfig, config } from "./config";
 
-dotenv.config();
+assertServerConfig();
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`ClioVision API running on http://localhost:${PORT}`);
+app.listen(config.port, () => {
+  console.log(`ClioVision API running on port ${config.port}`);
 });

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clio pedestrian network review</title>
+<style>
+body{font:16px system-ui;margin:24px;background:#f7faf9;color:#153447}h1{margin-bottom:8px}button,select{padding:9px;margin:3px}#sheet{border:1px solid #789;overflow:auto}svg{width:100%;min-width:580px;height:auto;display:block}polyline{fill:none;stroke:#007e85;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}.uncertain{stroke:#cc6500;stroke-dasharray:9 6}circle{fill:white;stroke:#143e58;stroke-width:2}text{display:none;font:11px monospace;fill:#153447;paint-order:stroke;stroke:white;stroke-width:3}.labels text{display:block}polyline:hover{stroke:#dc0081;stroke-width:7}#detail{min-height:2em}a{color:#005f67}
+</style>
+<style>.assumed{stroke:#8451a1;stroke-dasharray:5 5}#assumptions li{margin-bottom:12px}</style>
+<h1>Pedestrian network · campus-wide draft 5</h1>
+<p><a href="reference/index.html">Compare with OpenStreetMap, official entrances and aerial imagery</a> — separate geographic reference, not auto-aligned or routing-approved.</p>
+<p id="summary">Loading draft…</p>
+<p id="quality">Accuracy target: 90% · not yet measured or achieved.</p>
+<p id="topology">Loading graph diagnostics…</p>
+<p>Teal: visible-path draft. Orange dashes: closer geometry review needed. Purple dashes: explicitly assumed connection. All accessibility unverified. This is not a navigation map.</p>
+<details><summary>Routing assumptions — reasons and checks</summary><p>Assumptions are permitted for this draft, but are not confirmed paths. Use “Show candidate connections” to see them. No automatic street crossings or geographic links between map insets are inferred.</p><ul id="assumptions"></ul><a href="assumptions.json">Download assumption register</a></details>
+<button id="base">Hide artwork</button><button id="labels">Show IDs</button><button id="candidates" data-hidden="true">Show candidate connections</button>
+<label>Region <select id="region"><option value="0 0 3114 1746">Whole illustration</option><option value="1570 810 920 560">Academic core</option><option value="1290 590 650 220">Residential lawn</option><option value="620 950 650 350">Athletics approaches</option><option value="1490 1110 900 300">Southern campus</option><option value="1570 810 430 270">Havener plaza</option></select></label>
+<label>Artwork opacity <input id="opacity" type="range" min="0" max="100" value="65"></label>
+<p>Shared roads and driveways are candidate geometry, not confirmed sidewalks. Map insets remain separate coordinate frames. No automatic cross-frame connections.</p>
+<p>Regional comparison sheets: <a href="overlay-north.png">North</a> · <a href="overlay-south.png">South</a> · <a href="overlay-east.png">East</a> · <a href="overlay-athletics.png">Athletics</a></p>
+<p>Separate original-size layers: <a href="edges-only.svg">Edges only</a> · <a href="points-only.svg">Points only</a>. Both preserve the same 3,114 × 1,746 coordinate frame.</p>
+<details><summary>Source-versus-trace review sheets (16 regions)</summary><p><a href="audit-01.png">Academic core / academic north</a> · <a href="audit-02.png">South / east</a> · <a href="audit-03.png">Athletics</a> · <a href="audit-04.png">Residential / tower</a> · <a href="audit-05.png">Far west / far north</a> · <a href="audit-06.png">Both insets</a> · <a href="audit-07.png">West core / athletics transition</a> · <a href="audit-08.png">Inner quad / east garden detail</a></p><p>Not traced as pedestrian paths: rail tracks, sports-field markings, parking stall lines, and ordinary road boundaries. Orange candidates include shared drives and obscured connections. Blank areas are not proof of no pedestrian access.</p></details>
+<p><a href="visible-network.svg">Visible paths only SVG</a> · <a href="network.svg">All draft geometry SVG</a> · <a href="overlay.svg">Overlay SVG</a> · <a href="network-review.png">Network PNG</a> · <a href="overlay-review.png">Overlay PNG</a> · <a href="graph-draft.json">Graph data</a> · <a href="validation.json">Structural review report</a></p>
+<p id="detail" aria-live="polite">Select a segment to inspect its ID. Blank areas are untraced. Distances are not calculated.</p>
+<div id="sheet"><svg id="map" viewBox="0 0 3114 1746" role="img" aria-label="Incomplete traced pedestrian network with optional campus artwork"><image id="art" href="../campus-tracing-source.png" width="3114" height="1746" opacity=".65"/><g id="network"></g></svg></div>
+<script>
+const ns='http://www.w3.org/2000/svg',map=document.querySelector('#map'),art=document.querySelector('#art'),network=document.querySelector('#network');
+for(const [label,value]of [['Inner quad detail','1850 850 200 150'],['East garden detail','2180 920 260 190']]){const option=document.createElement('option');option.textContent=label;option.value=value;document.querySelector('#region').append(option);}
+for(const [label,value]of [['West core / roundabout','1250 700 500 400'],['Athletics transition','850 700 550 400'],['Far west','0 500 850 500'],['Northern campus','1100 150 800 600'],['Far north','200 0 900 400'],['Northeast tower','2550 570 564 310'],['Mine inset','850 1450 1030 296'],['Industrial inset','2450 1360 664 386']]){const option=document.createElement('option');option.textContent=label;option.value=value;document.querySelector('#region').append(option);}
+function el(tag,attrs,parent){const n=document.createElementNS(ns,tag);for(const [k,v]of Object.entries(attrs))n.setAttribute(k,v);parent.append(n);return n;}
+fetch('graph-draft.json').then(r=>{if(!r.ok)throw Error('Cannot load graph');return r.json()}).then(g=>{
+ document.querySelector('#summary').textContent=`${g.nodes.length} nodes / ${g.edges.length} edges · ${g.scope} · NOT APPROVED · Not connected to tour routing`;
+ const visibleNodes=new Set(g.edges.filter(e=>e.status==='visible-path-draft').flatMap(e=>[e.from,e.to]));
+ const explained=new Set();
+ for(const e of g.edges)if(e.assumption&&!explained.has(e.trace)){explained.add(e.trace);const li=document.createElement('li');li.textContent=`${e.trace}: ${e.assumption.rationale} Check: ${e.assumption.verify}`;document.querySelector('#assumptions').append(li);}
+ for(const e of g.edges){const group=el('g',{'data-candidate':e.status==='needs-geometry-review'},network);const p=el('polyline',{points:e.points.map(p=>p.join(',')).join(' '),class:e.status==='needs-geometry-review'?'uncertain':'',tabindex:0,role:'button','aria-label':`${e.id} ${e.label}`},group);el('title',{},p).textContent=e.id+' '+e.label;const inspect=()=>document.querySelector('#detail').textContent=`${e.id} · ${e.reviewKey} · ${e.from} → ${e.to} · ${e.status} · ${e.sampling} · accessibility unverified`;p.onclick=inspect;p.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();inspect();}};const middle=e.points[Math.floor(e.points.length/2)];el('text',{x:middle[0],y:middle[1]-8},group).textContent=e.id;}
+ // Enrich inferred segments without conflating them with visible artwork paths.
+ for(const e of g.edges)if(e.assumption){const p=network.querySelector(`polyline[aria-label="${e.id} ${e.label}"]`);p.classList.add('assumed');p.querySelector('title').textContent+=` — Assumption: ${e.assumption.rationale}`;const inspect=()=>document.querySelector('#detail').textContent=`${e.id} · ${e.reviewKey} · ASSUMED: ${e.assumption.rationale} Check: ${e.assumption.verify} · Not routing-approved`;p.onclick=inspect;p.onkeydown=event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();inspect();}};}
+ for(const n of g.nodes){const group=el('g',{'data-candidate':!visibleNodes.has(n.id)},network);el('circle',{cx:n.x,cy:n.y,r:5},group);el('text',{x:n.x+7,y:n.y+12},group).textContent=n.id;}
+ network.querySelectorAll('[data-candidate="true"]').forEach(n=>n.style.display='none');
+ document.querySelector('#quality').textContent=`Accuracy target: 90% — not measured. ${g.visibleDraftEdgeIds.length} visible draft segments; ${g.candidateEdgeIds.length} candidate segments hidden. Counts do not measure accuracy or campus coverage.`;
+}).catch(e=>document.querySelector('#summary').textContent=e.message);
+document.querySelector('#base').onclick=function(){art.style.display=art.style.display==='none'?'':'none';this.textContent=art.style.display==='none'?'Show artwork':'Hide artwork'};
+document.querySelector('#labels').onclick=function(){map.classList.toggle('labels');this.textContent=map.classList.contains('labels')?'Hide IDs':'Show IDs'};
+document.querySelector('#region').onchange=e=>map.setAttribute('viewBox',e.target.value);
+document.querySelector('#opacity').oninput=e=>art.setAttribute('opacity',e.target.value/100);
+fetch('validation.json').then(r=>{if(!r.ok)throw Error();return r.json()}).then(v=>{document.querySelector('#topology').textContent=`Graph checks: ${v.unresolvedCrossings.length} crossing flags; ${v.topologyAudit.endpointOnEdge.length} endpoint-on-edge flags; ${v.topologyAudit.nearEndpoints.length} nearby unjoined endpoint pairs; ${v.components.length} disconnected groups. Checks do not establish geographic accuracy or completeness.`}).catch(()=>document.querySelector('#topology').textContent='Graph diagnostics unavailable; regenerate validation before review.');
+document.querySelector('#candidates').onclick=function(){const hidden=this.dataset.hidden!=='true';this.dataset.hidden=hidden;network.querySelectorAll('[data-candidate="true"]').forEach(n=>n.style.display=hidden?'none':'');this.textContent=hidden?'Show candidate connections':'Hide candidate connections'};
+</script></html>

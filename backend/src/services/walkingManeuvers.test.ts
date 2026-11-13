@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {walkingManeuvers} from './walkingManeuvers';
+const p=[{latitude:0,longitude:0},{latitude:.001,longitude:0},{latitude:.001,longitude:.001},{latitude:.002,longitude:.001}];
+test('geographic turns are segmented with contiguous paths',()=>{const s=walkingManeuvers(p,[1,2,3].map(()=>({lengthMeters:111,steps:false})),'Library');assert.equal(s.length,3);assert.match(s[1].instruction,/right/);assert.match(s[2].instruction,/left/);assert.deepEqual(s[0].path.at(-1),s[1].path[0]);assert.equal(s[2].offsetMeters,222);});
+test('tunnel and crossing instructions supersede geometric turns',()=>{const s=walkingManeuvers(p,[{lengthMeters:111,steps:false},{lengthMeters:111,steps:false,tunnel:true},{lengthMeters:111,steps:false,crossing:true}],'Library');assert.equal(s[1].kind,'tunnel');assert.match(s[1].instruction,/beneath the road/);assert.match(s[2].instruction,/cannot determine/);});
+test('invalid geometry cannot produce instructions',()=>assert.throws(()=>walkingManeuvers(p,[],'Library')));
+test('shared approach nodes do not fabricate a walking segment or arrival',()=>{const steps=walkingManeuvers([p[0]],[],'Library');assert.equal(steps[0].distanceMeters,0);assert.match(steps[0].instruction,/not confirmation of arrival/);});

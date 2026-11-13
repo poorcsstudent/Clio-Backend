@@ -1,0 +1,434 @@
+import * as Crypto from 'expo-crypto';
+import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
+import { assertRequestActive, withRequestDeadline } from './requestDeadline';
+import { singleFlight } from './singleFlight';
+import { cachedPublicData } from './publicCache';
+import { ApiError, parseResponse } from './apiResponse';
+import { validateDeviceSession, type DeviceSession } from './deviceSession';
+import { validateCampusAnswer } from './campusAnswer';
+import { validateTranscription } from './transcription';
+import { createSessionMutations } from './sessionMutations';
+export { ApiError } from './apiResponse';
+
+export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
+  .replace(/\/$/, '');
+
+const DEVICE_ID_KEY = 'clio.device-id';
+const REFRESH_TOKEN_KEY = 'clio.refresh-token';
+
+let accessToken: string | null = null;
+let accessTokenExpiresAt = 0;
+let webRefreshToken: string | null = null;
+const sessionMutations = createSessionMutations();
+
+export interface KnowledgeSource {
+  id: string;
+  title: string;
+  campusId: string;
+  content: string;
+  score: number;
+}
+
+export interface CampusAnswer {
+  answer: string;
+  provider: 'groq' | 'openai' | 'retrieval-only';
+  sources: KnowledgeSource[];
+}
+
+export interface TourStop {
+  id: string;
+  campusId: string;
+  name: string;
+  tourTags: string[];
+  order: number;
+  description: string;
+  latitude: number;
+  longitude: number;
+  relevance?: string;
+  audioScript?: string;
+  distanceFromPreviousMeters?: number;
+  programCatalogUrl?: string;
+  suggestedQuestions?: string[];
+}
+
+export interface CampusVisionResult {
+  answer: string;
+  identification: {
+    placeId: string | null;
+    name: string | null;
+    confidence: number;
+    visualEvidence: string;
+  };
+  profile: {
+    history: string;
+    use: string;
+    funFacts: string[];
+  } | null;
+  sources: KnowledgeSource[];
+}
+
+export interface CampusTour {
+  id: string;
+  name: string;
+  description: string;
+  audience: 'all-visitors' | 'undergraduate-degree';
+  degreeTypes?: string[];
+  emphasisAreas?: string[];
+  catalogUrl?: string;
+  rootStopId: string;
+  routeStrategy: 'curated' | 'best-first-proximity';
+  stopCount: number;
+}
+
+export interface CampusTourCatalog {
+  metadata: {
+    lastVerified: string;
+    degreeProgramCount: number;
+    totalTourCount: number;
+    routedPlaceCount: number;
+  };
+  tours: CampusTour[];
+}
+
+export interface TourSession {
+  sessionId: string;
+  campusId: string;
+  tour: CampusTour;
+  stopCount: number;
+  stops: TourStop[];
+}
+
+export interface WalkingCoordinate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface WalkingRouteStep {
+  instruction: string;
+  kind?: 'depart' | 'turn' | 'tunnel' | 'crossing' | 'stairs' | 'continue';
+  offsetMeters?: number;
+  maneuver?: string;
+  distanceMeters: number;
+  durationSeconds: number;
+  path: WalkingCoordinate[];
+}
+
+export interface WalkingRouteLeg {
+  fromStopId: string;
+  toStopId: string;
+  distanceMeters: number;
+  durationSeconds: number;
+  path: WalkingCoordinate[];
+  steps: WalkingRouteStep[];
+}
+
+export interface CampusWalkingRoute {
+  campusId: string;
+  tourId: string;
+  travelMode: 'WALK';
+  provider: 'clio-campus-pilot' | 'clio-coordinate-fallback' | 'clio-pedestrian-network';
+  providerConfigured: boolean;
+  fieldVerified: boolean;
+  distanceMeters: number;
+  durationSeconds: number;
+  path: WalkingCoordinate[];
+  legs: WalkingRouteLeg[];
+  generatedAt: string;
+  warning?: string;
+  attribution?: string;
+  lastReviewed?: string;
+  sourceUrls?: string[];
+  networkVersion?: string;
+  stopOrder?: string[];
+  approachAssumptions?: string[];
+  approaches?: Array<{stopId:string;coordinate:WalkingCoordinate;gapMeters:number}>;
+}
+
+async function readStoredValue(key: string) {
+  if (Platform.OS === 'web') {
+    if (key === REFRESH_TOKEN_KEY) return webRefreshToken;
+    return typeof localStorage === 'undefined' ? null : localStorage.getItem(key);
+  }
+  return SecureStore.getItemAsync(key);
+}
+
+async function writeStoredValue(key: string, value: string) {
+  if (Platform.OS === 'web') {
+    if (key === REFRESH_TOKEN_KEY) {
+      webRefreshToken = value;
+      return;
+    }
+    if (typeof localStorage !== 'undefined') localStorage.setItem(key, value);
+    return;
+  }
+  await SecureStore.setItemAsync(key, value, {
+    keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+  });
+}
+
+async function deleteStoredValue(key: string) {
+  if (Platform.OS === 'web') {
+    if (key === REFRESH_TOKEN_KEY) webRefreshToken = null;
+    if (typeof localStorage !== 'undefined') localStorage.removeItem(key);
+    return;
+  }
+  await SecureStore.deleteItemAsync(key);
+}
+
+async function getDeviceId() {
+  const saved = await readStoredValue(DEVICE_ID_KEY);
+  if (saved) return saved;
+  const created = `mobile-${Crypto.randomUUID()}`;
+  await writeStoredValue(DEVICE_ID_KEY, created);
+  return created;
+}
+
+async function saveSession(session: DeviceSession, ticket: number, signal: AbortSignal) {
+  session = validateDeviceSession(session);
+  await sessionMutations.enqueue(async () => {
+    sessionMutations.assertCurrent(ticket);
+    await writeStoredValue(REFRESH_TOKEN_KEY, session.refreshToken);
+    sessionMutations.assertCurrent(ticket);
+    accessToken = session.accessToken;
+    accessTokenExpiresAt = Date.now() + (session.accessTokenExpiresInSeconds - 30) * 1000;
+  }, signal);
+}
+
+const createRefreshAttempt = (ticket: number) => singleFlight(() => withRequestDeadline(async signal => {
+  sessionMutations.assertAvailable();
+  sessionMutations.assertCurrent(ticket);
+  await sessionMutations.enqueue(async () => undefined);
+  sessionMutations.assertCurrent(ticket);
+  const refreshToken = await readStoredValue(REFRESH_TOKEN_KEY);
+  if (!refreshToken) throw new ApiError('This device is not paired', 401);
+
+  const response = await fetch(`${apiBaseUrl}/auth/refresh`, {
+    signal,
+    method: 'POST',
+    headers: { Authorization: `Bearer ${refreshToken}` },
+  });
+  const session = await parseResponse<DeviceSession>(response);
+  if (signal.aborted) throw new Error('Session refresh was cancelled');
+  await saveSession(session, ticket, signal);
+  return session.accessToken;
+}, 15000));
+
+let refreshGeneration = -1;
+let refreshAttempt: (() => Promise<string>) | null = null;
+function refreshSession() {
+  sessionMutations.assertAvailable();
+  const ticket = sessionMutations.current();
+  if (ticket !== refreshGeneration || !refreshAttempt) {
+    refreshGeneration = ticket;
+    refreshAttempt = createRefreshAttempt(ticket);
+  }
+  return refreshAttempt();
+}
+
+async function getAccessToken() {
+  sessionMutations.assertAvailable();
+  if (accessToken && Date.now() < accessTokenExpiresAt) return accessToken;
+  return refreshSession();
+}
+
+async function authorizedFetch(path: string, init: RequestInit = {}, retry = true) {
+  assertRequestActive(init.signal);
+  const ticket = sessionMutations.current();
+  const token = await getAccessToken();
+  assertRequestActive(init.signal);
+  sessionMutations.assertCurrent(ticket);
+  const headers = new Headers(init.headers);
+  headers.set('Authorization', `Bearer ${token}`);
+
+  const response = await fetch(`${apiBaseUrl}${path}`, { ...init, headers });
+  assertRequestActive(init.signal);
+  sessionMutations.assertCurrent(ticket);
+  if (response.status === 401 && retry) {
+    accessToken = null;
+    accessTokenExpiresAt = 0;
+    await refreshSession();
+    return authorizedFetch(path, init, false);
+  }
+  return response;
+}
+
+export async function restoreDeviceSession() {
+  const ticket = sessionMutations.current();
+  try {
+    await refreshSession();
+    return true;
+  } catch (error) {
+    sessionMutations.assertCurrent(ticket);
+    // Only an explicit authentication rejection invalidates pairing. A network
+    // outage or provider failure must not delete a still-valid refresh token.
+    if (error instanceof ApiError && error.status === 401) {
+      await disconnectDevice();
+      return false;
+    }
+    throw error;
+  }
+}
+
+export async function pairDevice(enrollmentCode: string) {
+  const ticket = sessionMutations.beginPairing();
+  try {
+  return await withRequestDeadline(async signal => {
+  const response = await fetch(`${apiBaseUrl}/auth/device-session`, {
+    signal,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ deviceId: await getDeviceId(), enrollmentCode }),
+  });
+  const session = await parseResponse<DeviceSession>(response);
+  if (signal.aborted) throw new Error('Pairing request was cancelled');
+  await saveSession(session, ticket, signal);
+  }, 15000);
+  } finally {
+    sessionMutations.finishPairing(ticket);
+  }
+}
+
+export async function disconnectDevice() {
+  sessionMutations.invalidate();
+  accessToken = null;
+  accessTokenExpiresAt = 0;
+  await sessionMutations.enqueue(() => deleteStoredValue(REFRESH_TOKEN_KEY));
+}
+
+export async function getAiStatus(): Promise<unknown> {
+  return withRequestDeadline(async signal => {
+    const response = await authorizedFetch('/ai-guide/status', { signal });
+    return parseResponse<unknown>(response);
+  }, 15000);
+}
+
+export async function askCampusQuestion(question: string, currentStopId?: string) {
+  return withRequestDeadline(async signal => {
+  const response = await authorizedFetch('/ai-guide/question', {
+    signal,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      question,
+      campusId: 'missouri-s-and-t',
+      currentStopId,
+    }),
+  });
+  return validateCampusAnswer(await parseResponse<unknown>(response));
+  });
+}
+
+export async function transcribeQuestion(uri: string) {
+  return withRequestDeadline(async signal => {
+  const form = new FormData();
+  if (Platform.OS === 'web') {
+    const blob = await fetch(uri, { signal }).then(response => response.blob());
+    form.append('audio', blob, 'question.webm');
+  } else {
+    form.append('audio', {
+      uri,
+      name: 'question.m4a',
+      type: 'audio/mp4',
+    } as unknown as Blob);
+  }
+
+  const response = await authorizedFetch('/voice/transcribe', {
+    signal,
+    method: 'POST',
+    body: form,
+  });
+  return validateTranscription(await parseResponse<unknown>(response));
+  });
+}
+
+export async function createSpeechSource(text: string) {
+  return withRequestDeadline(async signal => {
+  const response = await authorizedFetch('/voice/speech', {
+    signal,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  });
+  const result = await parseResponse<{ audioPath: string }>(response);
+  return {
+    uri: `${apiBaseUrl}${result.audioPath}`,
+    headers: { Authorization: `Bearer ${await getAccessToken()}` },
+    name: 'Clio campus guide',
+  };
+  });
+}
+
+export async function getCampusTours() {
+  return publicTourData<CampusTourCatalog>('/campuses/missouri-s-and-t/tours');
+}
+
+function publicTourData<T>(path: string) {
+  return cachedPublicData(`${apiBaseUrl}${path}`, () => withRequestDeadline(async signal => {
+    const response = await fetch(`${apiBaseUrl}${path}`, { signal });
+    return parseResponse<T>(response);
+  }, 10000));
+}
+
+export async function identifyCampusView(
+  uri: string,
+  location?: { latitude: number; longitude: number },
+) {
+  const form = new FormData();
+  form.append('campusId', 'missouri-s-and-t');
+  if (location) {
+    form.append('latitude', String(location.latitude));
+    form.append('longitude', String(location.longitude));
+  }
+  form.append('image', {
+    uri,
+    name: 'clio-campus-view.jpg',
+    type: 'image/jpeg',
+  } as unknown as Blob);
+
+  return withRequestDeadline(async signal => {
+  const response = await authorizedFetch('/vision/identify', {
+    signal,
+    method: 'POST',
+    body: form,
+  });
+  return parseResponse<CampusVisionResult>(response);
+  });
+}
+
+export async function getTourStops(tourId: string) {
+  return publicTourData<TourStop[]>(`/campuses/missouri-s-and-t/stops?tourId=${encodeURIComponent(tourId)}`);
+}
+
+export async function getWalkingRoute(tourId: string) {
+  // Separate this generation from cached legacy pilot/straight-line routes.
+  const route = await publicTourData<CampusWalkingRoute>(`/navigation/walking-route/${encodeURIComponent(tourId)}?campusId=missouri-s-and-t&routing=pedestrian-maneuvers-v2`);
+  if (route.provider !== 'clio-pedestrian-network') {
+    throw new Error('The backend has not enabled pedestrian-network routing yet. No legacy route has been substituted.');
+  }
+  return route;
+}
+
+export async function startTour(tourId: string) {
+  return withRequestDeadline(async signal => {
+  const response = await fetch(`${apiBaseUrl}/tour/start`, {
+    signal,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ campusId: 'missouri-s-and-t', tourId }),
+  });
+  return parseResponse<TourSession>(response);
+  }, 15000);
+}
+
+export async function endTour(sessionId: string) {
+  return withRequestDeadline(async signal => {
+  const response = await fetch(`${apiBaseUrl}/tour/end`, {
+    signal,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ sessionId }),
+  });
+  return parseResponse<{ sessionId: string; status: 'ended' }>(response);
+  }, 15000);
+}

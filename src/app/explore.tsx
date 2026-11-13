@@ -1,180 +1,924 @@
-import { Image } from 'expo-image';
-import { SymbolView } from 'expo-symbols';
-import { Platform, Pressable, ScrollView, StyleSheet } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useCampusTour } from '@/services/tourController';
+import { visibleTours } from '@/services/visibleTours';
+import { ActivityIndicator, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { CampusRouteMap } from '@/components/campus-route-map';
+import { CampusIllustration } from '@/components/campus-illustration';
+import { BottomTabInset } from '@/constants/theme';
+import { TOUR_ARRIVAL_RADIUS_METERS } from '@/services/tourLocation';
+import { isOffPilotRoute, TOUR_OFF_ROUTE_THRESHOLD_METERS } from '@/services/walkingNavigation';
 
-import { ExternalLink } from '@/components/external-link';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Collapsible } from '@/components/ui/collapsible';
-import { WebBadge } from '@/components/web-badge';
-import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
+type GpsStatus =
+  | 'idle'
+  | 'requesting'
+  | 'tracking'
+  | 'uncertain'
+  | 'paused'
+  | 'denied'
+  | 'disabled'
+  | 'error';
+type TourSpeechStatus = 'idle' | 'queued' | 'speaking' | 'finished' | 'unavailable';
 
-export default function TabTwoScreen() {
-  const safeAreaInsets = useSafeAreaInsets();
-  const insets = {
-    ...safeAreaInsets,
-    bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
-  };
-  const theme = useTheme();
+function gpsStatusCopy(
+  status: GpsStatus | 'preview',
+  distanceMeters: number | null,
+  accuracyMeters: number | null,
+) {
+  switch (status) {
+    case 'uncertain':
+      return 'Position or route progress is uncertain. Turn prompts are on hold; follow posted pedestrian signs.';
+    case 'tracking':
+      return distanceMeters === null
+        ? 'Waiting for a precise GPS fix…'
+        : `${Math.round(distanceMeters)} m away · accuracy ±${Math.round(accuracyMeters ?? 0)} m`;
+    case 'paused':
+      return 'Tour paused. Resume when you are ready to continue walking.';
+    case 'requesting':
+      return 'Requesting precise location…';
+    case 'denied':
+      return 'Location permission is required for automatic arrivals.';
+    case 'disabled':
+      return 'Location Services are turned off on this iPhone.';
+    case 'error':
+      return 'GPS tracking paused. Manual tour controls still work.';
+    case 'preview':
+      return `Activates on iPhone within ${TOUR_ARRIVAL_RADIUS_METERS} m of a stop.`;
+    default:
+      return 'GPS activates when the tour starts.';
+  }
+}
 
-  const contentPlatformStyle = Platform.select({
-    android: {
-      paddingTop: insets.top,
-      paddingLeft: insets.left,
-      paddingRight: insets.right,
-      paddingBottom: insets.bottom,
-    },
-    web: {
-      paddingTop: Spacing.six,
-      paddingBottom: Spacing.four,
-    },
-  });
+function tourSpeechStatusCopy(status: TourSpeechStatus) {
+  switch (status) {
+    case 'queued':
+      return 'Tour narration queued for the active iOS audio route.';
+    case 'speaking':
+      return 'Speaking the stop narration through the active audio route.';
+    case 'finished':
+      return 'Stop narration finished. Replay it at any time.';
+    case 'unavailable':
+      return 'Native tour narration is unavailable; the same text remains visible.';
+    default:
+      return 'Arrival narration will play through the active iOS audio route.';
+  }
+}
+
+export default function CampusScreen() {
+  const { cacheNotice, catalog, selectedTourId, routesByTourId, walkingRoutesByTourId, loadingCatalog, loadingTourId, startingTourId, activeTour, activeStopIndex, activeWalkingStepIndex, tourPaused, endingTour, tourNotice, tourSpeechStatus, gpsStatus, distanceToCurrentStop, distanceToActivePath, gpsAccuracy, userCoordinate, error, selectedStopId, backgroundEnabled, showMap, columnCount, tourGridWidth, tourCardWidth, previousStop, setSelectedStopId, setShowMap, toggleTour, beginTour, closeActiveTour, advanceTour, toggleTourPaused, openWalkingDirections, speakTourGuidance, toggleBackground } = useCampusTour();
 
   return (
-    <ScrollView
-      style={[styles.scrollView, { backgroundColor: theme.background }]}
-      contentInset={insets}
-      contentContainerStyle={[styles.contentContainer, contentPlatformStyle]}>
-      <ThemedView style={styles.container}>
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText type="subtitle">Explore</ThemedText>
-          <ThemedText style={styles.centerText} themeColor="textSecondary">
-            This starter app includes example{'\n'}code to help you get started.
-          </ThemedText>
+    <SafeAreaView style={styles.screen} edges={['top', 'left', 'right']}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <Text style={styles.eyebrow}>DEGREE TOUR GRID</Text>
+        <Text style={styles.title}>
+          {catalog?.metadata.degreeProgramCount ?? 33} degree tours.{`\n`}One campus graph.
+        </Text>
+        <Text style={styles.subtitle}>
+          Every route starts at Havener Center. Open any program below to see the campus stops
+          connected to that degree.
+        </Text>
 
-          <ExternalLink href="https://docs.expo.dev" asChild>
-            <Pressable style={({ pressed }) => pressed && styles.pressed}>
-              <ThemedView type="backgroundElement" style={styles.linkButton}>
-                <ThemedText type="link">Expo documentation</ThemedText>
-                <SymbolView
-                  tintColor={theme.text}
-                  name={{ ios: 'arrow.up.right.square', android: 'link', web: 'link' }}
-                  size={12}
-                />
-              </ThemedView>
-            </Pressable>
-          </ExternalLink>
-        </ThemedView>
+        {cacheNotice ? <Text accessibilityLiveRegion="polite" style={styles.tourNotice}>{cacheNotice}</Text> : null}
+        {loadingCatalog ? (
+          <ActivityIndicator color="#7EE2AE" size="large" style={styles.loader} />
+        ) : null}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+        {tourNotice ? <Text style={styles.tourNotice}>{tourNotice}</Text> : null}
 
-        <ThemedView style={styles.sectionsWrapper}>
-          <Collapsible title="File-based routing">
-            <ThemedText type="small">
-              This app has two screens: <ThemedText type="code">src/app/index.tsx</ThemedText> and{' '}
-              <ThemedText type="code">src/app/explore.tsx</ThemedText>
-            </ThemedText>
-            <ThemedText type="small">
-              The layout file in <ThemedText type="code">src/app/_layout.tsx</ThemedText> sets up
-              the tab navigator.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/router/introduction">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+        {catalog || activeTour ? (
+          <View style={styles.tourWindow}>
+            <View style={styles.tourWindowHeader}>
+              <View style={styles.tourWindowHeaderCopy}>
+                <Text style={styles.tourWindowEyebrow}>{catalog ? 'AVAILABLE TOURS' : 'SAVED TOUR'}</Text>
+                <Text style={styles.tourWindowTitle}>Tap a program to reveal its stops</Text>
+              </View>
+              <View style={styles.tourCountPill}>
+                <Text style={styles.tourCountText}>{visibleTours(catalog?.tours, activeTour?.tour).length} tours</Text>
+              </View>
+            </View>
 
-          <Collapsible title="Android, iOS, and web support">
-            <ThemedView type="backgroundElement" style={styles.collapsibleContent}>
-              <ThemedText type="small">
-                You can open this project on Android, iOS, and the web. To open the web version,
-                press <ThemedText type="smallBold">w</ThemedText> in the terminal running this
-                project.
-              </ThemedText>
-              <Image
-                source={require('@/assets/images/tutorial-web.png')}
-                style={styles.imageTutorial}
-              />
-            </ThemedView>
-          </Collapsible>
+            <View style={styles.tourGrid}>
+              {visibleTours(catalog?.tours, activeTour?.tour).map(tour => {
+                const expanded = tour.id === selectedTourId;
+                const route = routesByTourId[tour.id] ?? [];
+                const loadingRoute = loadingTourId === tour.id;
+                const walkingRoute = walkingRoutesByTourId[tour.id] ?? null;
+                const isActiveTour = activeTour?.tour.id === tour.id;
+                const currentStop = isActiveTour ? activeTour.stops[activeStopIndex] : null;
+                const tourProgress = isActiveTour
+                  ? ((activeStopIndex + 1) / activeTour.stops.length) * 100
+                  : 0;
+                const displayedGpsStatus: GpsStatus | 'preview' =
+                  Platform.OS === 'web' && isActiveTour ? 'preview' : gpsStatus;
+                const displayedUserCoordinate =
+                  isActiveTour && Platform.OS === 'web' && currentStop
+                    ? {
+                        latitude:
+                          activeTour.stops[Math.max(0, activeStopIndex - 1)]?.latitude ??
+                          currentStop.latitude,
+                        longitude:
+                          activeTour.stops[Math.max(0, activeStopIndex - 1)]?.longitude ??
+                          currentStop.longitude,
+                      }
+                    : isActiveTour
+                      ? userCoordinate
+                      : null;
+                const offPilotRoute =
+                  isActiveTour &&
+                  (walkingRoute?.provider === 'clio-campus-pilot' || walkingRoute?.provider === 'clio-pedestrian-network') &&
+                  isOffPilotRoute(distanceToActivePath, gpsAccuracy);
 
-          <Collapsible title="Images">
-            <ThemedText type="small">
-              For static images, you can use the <ThemedText type="code">@2x</ThemedText> and{' '}
-              <ThemedText type="code">@3x</ThemedText> suffixes to provide files for different
-              screen densities.
-            </ThemedText>
-            <Image source={require('@/assets/images/react-logo.png')} style={styles.imageReact} />
-            <ExternalLink href="https://reactnative.dev/docs/images">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+                return (
+                  <View
+                    key={tour.id}
+                    style={[
+                      styles.tourCard,
+                      { width: expanded ? tourGridWidth : tourCardWidth },
+                      expanded && styles.tourCardExpanded,
+                    ]}>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityState={{ expanded }}
+                      style={({ pressed }) => [
+                        styles.tourCardButton,
+                        pressed && styles.pressed,
+                      ]}
+                      onPress={() => toggleTour(tour)}>
+                      <View style={styles.tourCardCopy}>
+                        <Text style={styles.tourCardMeta}>
+                          {tour.degreeTypes?.join(' / ') ?? 'CAMPUS'} · {tour.stopCount} STOPS
+                        </Text>
+                        <Text style={styles.tourCardName}>{tour.name.replace(/ Tour$/, '')}</Text>
+                      </View>
+                      <View style={[styles.expandButton, expanded && styles.expandButtonActive]}>
+                        <Text
+                          style={[
+                            styles.expandButtonText,
+                            expanded && styles.expandButtonTextActive,
+                          ]}>
+                          {expanded ? '−' : '+'}
+                        </Text>
+                      </View>
+                    </Pressable>
 
-          <Collapsible title="Light and dark mode components">
-            <ThemedText type="small">
-              This template has light and dark mode support. The{' '}
-              <ThemedText type="code">useColorScheme()</ThemedText> hook lets you inspect what the
-              user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-            </ThemedText>
-            <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-              <ThemedText type="linkPrimary">Learn more</ThemedText>
-            </ExternalLink>
-          </Collapsible>
+                    {expanded ? (
+                      <View style={styles.expandedTour}>
+                        <View style={styles.programSummary}>
+                          <Text style={styles.programDescription}>{tour.description}</Text>
+                          {tour.emphasisAreas?.length ? (
+                            <Text style={styles.emphasisText}>
+                              Emphasis areas: {tour.emphasisAreas.join(' · ')}
+                            </Text>
+                          ) : null}
+                          <View style={styles.routeRule}>
+                            <Text style={styles.routeRuleLabel}>ROUTE LOGIC</Text>
+                            <Text style={styles.routeRuleText}>
+                              Havener root · {tour.routeStrategy.replaceAll('-', ' ')}
+                            </Text>
+                          </View>
+                          {tour.catalogUrl ? (
+                            <Pressable
+                              accessibilityRole="link"
+                              style={({ pressed }) => [
+                                styles.catalogButton,
+                                pressed && styles.pressed,
+                              ]}
+                              onPress={() => Linking.openURL(tour.catalogUrl!)}>
+                              <Text style={styles.catalogButtonText}>
+                                Open official S&amp;T program page ↗
+                              </Text>
+                            </Pressable>
+                          ) : null}
+                          {!isActiveTour ? (
+                            <Pressable
+                              accessibilityRole="button"
+                              disabled={startingTourId !== null}
+                              style={({ pressed }) => [
+                                styles.startTourButton,
+                                pressed && styles.pressed,
+                                startingTourId !== null && styles.disabled,
+                              ]}
+                              onPress={() => beginTour(tour)}>
+                              {startingTourId === tour.id ? (
+                                <ActivityIndicator color="#071A15" size="small" />
+                              ) : (
+                                <>
+                                  <Text style={styles.startTourButtonText}>
+                                    {activeTour ? 'Switch to this tour' : 'Start this tour'}
+                                  </Text>
+                                  <Text style={styles.startTourButtonMeta}>
+                                    Begin at Havener Center →
+                                  </Text>
+                                </>
+                              )}
+                            </Pressable>
+                          ) : null}
+                        </View>
 
-          <Collapsible title="Animations">
-            <ThemedText type="small">
-              This template includes an example of an animated component. The{' '}
-              <ThemedText type="code">src/components/ui/collapsible.tsx</ThemedText> component uses
-              the powerful <ThemedText type="code">react-native-reanimated</ThemedText> library to
-              animate opening this hint.
-            </ThemedText>
-          </Collapsible>
-        </ThemedView>
-        {Platform.OS === 'web' && <WebBadge />}
-      </ThemedView>
-    </ScrollView>
+                        {!loadingRoute && route.length ? <Pressable accessibilityRole="button" style={styles.speechButton} onPress={() => setShowMap(value => !value)}><Text style={styles.speechButtonText}>{showMap ? 'Hide visual map' : 'Show optional visual map'}</Text></Pressable> : null}
+                        {!loadingRoute && route.length && showMap ? (
+                          <View><CampusIllustration />
+                          <CampusRouteMap
+                            stops={route}
+                            walkingRoute={walkingRoute}
+                            isActive={isActiveTour}
+                            activeStopIndex={isActiveTour ? activeStopIndex : 0}
+                            activeStepIndex={
+                              isActiveTour ? activeWalkingStepIndex : 0
+                            }
+                            userCoordinate={displayedUserCoordinate}
+                            selectedStopId={selectedStopId}
+                            onSelectStop={stopId =>
+                              setSelectedStopId(current => (current === stopId ? null : stopId))
+                            }
+                          /></View>
+                        ) : null}
+
+                        {isActiveTour && currentStop ? (
+                          <View style={styles.activeGuide}>
+                            <View style={styles.activeGuideHeader}>
+                              <View style={styles.activeGuideHeaderCopy}>
+                                <Text style={styles.liveLabel}>
+                                  {walkingRoute?.provider === 'clio-pedestrian-network'
+                                    ? 'PEDESTRIAN-NETWORK TOUR'
+                                    : walkingRoute?.provider === 'clio-campus-pilot'
+                                    ? 'LIVE WALKING PILOT'
+                                    : 'LIVE TOUR'}
+                                </Text>
+                                <Text style={styles.activeGuideTitle}>{tour.name}</Text>
+                              </View>
+                              <Text style={styles.progressLabel} numberOfLines={1}>
+                                {activeStopIndex + 1} / {activeTour.stops.length}
+                              </Text>
+                            </View>
+                            <View style={styles.progressTrack}>
+                              <View
+                                style={[
+                                  styles.progressFill,
+                                  { width: `${tourProgress}%` as `${number}%` },
+                                ]}
+                              />
+                            </View>
+                            <Text style={styles.currentStopEyebrow}>CURRENT STOP</Text>
+                            <Text style={styles.currentStopName}>{currentStop.name}</Text>
+                            <Text style={styles.currentStopDescription}>
+                              {currentStop.relevance ?? currentStop.description}
+                            </Text>
+                            <Text style={styles.currentStopDescription}>Audio-first pilot: say “Hey Clio”, then “repeat”, “pause the tour”, “resume the tour”, “next stop”, “how far”, or “end the tour”. Wake commands currently require Clio to be open; locked-phone wake listening is not promised.</Text>
+                            {Platform.OS !== 'web' ? <Pressable accessibilityRole="button" style={styles.speechButton} onPress={toggleBackground}><Text style={styles.speechButtonText}>{backgroundEnabled ? 'Disable background tour location' : 'Enable locked-phone tour location'}</Text></Pressable> : null}
+                            <View style={styles.speechCard}>
+                              <View style={styles.speechCardCopy}>
+                                <Text style={styles.speechCardLabel}>
+                                  GLASSES NARRATION
+                                </Text>
+                                <Text style={styles.speechCardText}>
+                                  {tourSpeechStatusCopy(tourSpeechStatus)}
+                                </Text>
+                              </View>
+                              <Pressable
+                                accessibilityRole="button"
+                                disabled={tourSpeechStatus === 'speaking'}
+                                style={({ pressed }) => [
+                                  styles.speechButton,
+                                  pressed && styles.pressed,
+                                  tourSpeechStatus === 'speaking' && styles.disabled,
+                                ]}
+                                onPress={() =>
+                                  speakTourGuidance(
+                                    currentStop.audioScript ??
+                                      `This is ${currentStop.name}. ${
+                                        currentStop.relevance ?? currentStop.description
+                                      }`,
+                                  )
+                                }>
+                                <Text style={styles.speechButtonText}>
+                                  {tourSpeechStatus === 'speaking' ? 'Speaking…' : 'Replay'}
+                                </Text>
+                              </Pressable>
+                            </View>
+                            <View style={styles.gpsCard}>
+                              <View style={styles.gpsHeader}>
+                                <View
+                                  style={[
+                                    styles.gpsDot,
+                                    (displayedGpsStatus === 'tracking' ||
+                                      displayedGpsStatus === 'preview') &&
+                                      styles.gpsDotActive,
+                                    (displayedGpsStatus === 'denied' ||
+                                      displayedGpsStatus === 'disabled' ||
+                                      displayedGpsStatus === 'error') &&
+                                      styles.gpsDotError,
+                                  ]}
+                                />
+                                <Text style={styles.gpsTitle}>
+                                  {offPilotRoute
+                                    ? 'Check your position before continuing'
+                                    : 'Automatic GPS arrival'}
+                                </Text>
+                                <Text style={styles.gpsRadius}>
+                                  {TOUR_ARRIVAL_RADIUS_METERS} m radius
+                                </Text>
+                              </View>
+                              <Text style={styles.gpsStatusText}>
+                                {gpsStatusCopy(
+                                  displayedGpsStatus,
+                                  distanceToCurrentStop,
+                                  gpsAccuracy,
+                                )}
+                              </Text>
+                              {offPilotRoute ? (
+                                <Text style={styles.offRouteText}>
+                                  About {Math.round(distanceToActivePath ?? 0)} m from the
+                                  highlighted path. Use posted pedestrian guidance or open
+                                  Apple Maps before continuing.
+                                </Text>
+                              ) : (walkingRoute?.provider === 'clio-campus-pilot' || walkingRoute?.provider === 'clio-pedestrian-network') &&
+                                distanceToActivePath !== null ? (
+                                <Text style={styles.onRouteText}>
+                                  Near mapped path · off-route alert at{' '}
+                                  {TOUR_OFF_ROUTE_THRESHOLD_METERS} m
+                                </Text>
+                              ) : null}
+                              {(displayedGpsStatus === 'denied' ||
+                                displayedGpsStatus === 'disabled') &&
+                              Platform.OS !== 'web' ? (
+                                <Pressable
+                                  accessibilityRole="button"
+                                  style={({ pressed }) => [
+                                    styles.locationSettingsButton,
+                                    pressed && styles.pressed,
+                                  ]}
+                                  onPress={() => Linking.openSettings()}>
+                                  <Text style={styles.locationSettingsButtonText}>
+                                    Open location settings
+                                  </Text>
+                                </Pressable>
+                              ) : null}
+                            </View>
+                            <Pressable
+                              accessibilityRole="link"
+                              style={({ pressed }) => [
+                                styles.directionsButton,
+                                pressed && styles.pressed,
+                              ]}
+                              onPress={() => openWalkingDirections(currentStop)}>
+                              <Text style={styles.directionsButtonText}>
+                                Open walking directions ↗
+                              </Text>
+                            </Pressable>
+                            <View style={styles.tourControls}>
+                              <Pressable
+                                accessibilityRole="button"
+                                accessibilityState={{ disabled: endingTour || activeStopIndex === 0 }}
+                                accessibilityLabel="Go to previous tour stop"
+                                disabled={endingTour || activeStopIndex === 0}
+                                style={({ pressed }) => [
+                                  styles.secondaryControl,
+                                  pressed && styles.pressed,
+                                  (endingTour || activeStopIndex === 0) && styles.disabled,
+                                ]}
+                                onPress={previousStop}>
+                                <Text style={styles.secondaryControlText}>Back</Text>
+                              </Pressable>
+                              <Pressable
+                                accessibilityRole="button"
+                                disabled={endingTour}
+                                accessibilityState={{ disabled: endingTour }}
+                                style={({ pressed }) => [
+                                  styles.secondaryControl,
+                                  tourPaused && styles.pauseControlActive,
+                                  endingTour && styles.disabled,
+                                  pressed && styles.pressed,
+                                ]}
+                                onPress={toggleTourPaused}>
+                                <Text
+                                  style={[
+                                    styles.secondaryControlText,
+                                    tourPaused && styles.pauseControlTextActive,
+                                  ]}>
+                                  {tourPaused ? 'Resume' : 'Pause'}
+                                </Text>
+                              </Pressable>
+                              <Pressable
+                                accessibilityRole="button"
+                                disabled={endingTour}
+                                accessibilityState={{ disabled: endingTour }}
+                                style={({ pressed }) => [
+                                  styles.nextControl,
+                                  endingTour && styles.disabled,
+                                  pressed && styles.pressed,
+                                ]}
+                                onPress={() => advanceTour()}>
+                                <Text style={styles.nextControlText}>
+                                  {activeStopIndex === activeTour.stops.length - 1
+                                    ? 'Finish tour'
+                                    : 'Mark arrived'}
+                                </Text>
+                              </Pressable>
+                            </View>
+                            <Pressable
+                              accessibilityRole="button"
+                              disabled={endingTour}
+                              accessibilityState={{ disabled: endingTour, busy: endingTour }}
+                              accessibilityLabel="End current tour"
+                              style={({ pressed }) => [
+                                styles.endTourButton,
+                                pressed && styles.pressed,
+                                endingTour && styles.disabled,
+                              ]}
+                              onPress={() => closeActiveTour(false)}>
+                              <Text style={styles.endTourButtonText}>
+                                {endingTour ? 'Ending tour…' : 'End tour'}
+                              </Text>
+                            </Pressable>
+                          </View>
+                        ) : null}
+
+                        {loadingRoute ? (
+                          <ActivityIndicator
+                            color="#7EE2AE"
+                            size="large"
+                            style={styles.routeLoader}
+                          />
+                        ) : null}
+
+                        {!loadingRoute && route.length ? (
+                          <View style={styles.timeline}>
+                            {route.map((stop, index) => {
+                              const open = selectedStopId === stop.id;
+                              const current = isActiveTour && index === activeStopIndex;
+                              const completed = isActiveTour && index < activeStopIndex;
+                              return (
+                                <View key={stop.id} style={styles.stopRow}>
+                                  <View style={styles.markerColumn}>
+                                    <View
+                                      style={[
+                                        styles.marker,
+                                        (current || completed) && styles.markerActive,
+                                      ]}>
+                                      <Text
+                                        style={[
+                                          styles.markerText,
+                                          (current || completed) && styles.markerTextActive,
+                                        ]}>
+                                        {index + 1}
+                                      </Text>
+                                    </View>
+                                    {index < route.length - 1 ? (
+                                      <View style={styles.line} />
+                                    ) : null}
+                                  </View>
+                                  <Pressable
+                                    style={({ pressed }) => [
+                                      styles.stopCard,
+                                      current && styles.currentStopCard,
+                                      completed && styles.completedStopCard,
+                                      pressed && styles.pressed,
+                                    ]}
+                                    onPress={() => setSelectedStopId(open ? null : stop.id)}>
+                                    <View style={styles.stopHeader}>
+                                      <Text style={styles.stopName}>{stop.name}</Text>
+                                      {current ? (
+                                        <Text style={styles.currentLabel}>CURRENT</Text>
+                                      ) : completed ? (
+                                        <Text style={styles.completedLabel}>DONE</Text>
+                                      ) : index === 0 ? (
+                                        <Text style={styles.rootLabel}>ROOT</Text>
+                                      ) : null}
+                                    </View>
+                                    <Text style={styles.stopDescription}>
+                                      {stop.relevance ?? stop.description}
+                                    </Text>
+                                    {typeof stop.distanceFromPreviousMeters === 'number' &&
+                                    index > 0 ? (
+                                      <Text style={styles.distance}>
+                                        ≈ {stop.distanceFromPreviousMeters.toLocaleString()} m from
+                                        prior stop
+                                      </Text>
+                                    ) : null}
+                                    {open ? (
+                                      <View style={styles.detail}>
+                                        <Text style={styles.detailLabel}>
+                                          OFFICIAL MAP RECORD
+                                        </Text>
+                                        <Text style={styles.detailText}>{stop.description}</Text>
+                                        <Text style={styles.detailLabel}>COORDINATES</Text>
+                                        <Text style={styles.detailText}>
+                                          {stop.latitude}, {stop.longitude}
+                                        </Text>
+                                        {stop.suggestedQuestions?.map(question => (
+                                          <Text key={question} style={styles.question}>
+                                            • {question}
+                                          </Text>
+                                        ))}
+                                      </View>
+                                    ) : null}
+                                  </Pressable>
+                                </View>
+                              );
+                            })}
+                          </View>
+                        ) : null}
+                      </View>
+                    ) : null}
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        ) : null}
+
+        {catalog ? (
+          <View style={styles.dataCard}>
+            <Text style={styles.dataValue}>{catalog.metadata.routedPlaceCount}</Text>
+            <View style={styles.dataCopy}>
+              <Text style={styles.dataTitle}>permission-mapped campus nodes</Text>
+              <Text style={styles.dataText}>
+                Verified {catalog.metadata.lastVerified}. Routes use the official campus-map places
+                and S&amp;T degree catalog.
+              </Text>
+            </View>
+          </View>
+        ) : null}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
+  screen: { flex: 1, backgroundColor: '#071A15' },
+  content: { paddingHorizontal: 22, paddingTop: 22, paddingBottom: BottomTabInset + 36 },
+  eyebrow: { color: '#7EE2AE', fontSize: 12, fontWeight: '800', letterSpacing: 2.2 },
+  title: { color: '#F5F3EB', fontSize: 38, lineHeight: 44, fontWeight: '800', marginTop: 9 },
+  subtitle: { color: '#9BAAA3', fontSize: 15, lineHeight: 22, marginTop: 12, maxWidth: 620 },
+  loader: { marginTop: 42 },
+  routeLoader: { marginVertical: 34 },
+  error: { color: '#FF9E88', marginTop: 24, lineHeight: 20 },
+  tourNotice: {
+    color: '#071A15',
+    backgroundColor: '#7EE2AE',
+    borderRadius: 14,
+    marginTop: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    fontSize: 12,
+    fontWeight: '800',
   },
-  contentContainer: {
+  tourWindow: {
+    marginTop: 24,
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#285343',
+    backgroundColor: '#0A211A',
+    padding: 12,
+  },
+  tourWindowHeader: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    paddingHorizontal: 4,
+    paddingVertical: 6,
+    marginBottom: 12,
+  },
+  tourWindowHeaderCopy: { flex: 1 },
+  tourWindowEyebrow: { color: '#7EE2AE', fontSize: 9, fontWeight: '900', letterSpacing: 1.6 },
+  tourWindowTitle: { color: '#F5F3EB', fontSize: 17, lineHeight: 22, fontWeight: '800', marginTop: 4 },
+  tourCountPill: {
+    borderRadius: 999,
+    backgroundColor: '#17372D',
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+  },
+  tourCountText: { color: '#9FDDBE', fontSize: 9, fontWeight: '900', textTransform: 'uppercase' },
+  tourGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  tourCard: {
+    minHeight: 92,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: '#285343',
+    backgroundColor: '#102A22',
+    overflow: 'hidden',
+  },
+  tourCardExpanded: { borderColor: '#7EE2AE', backgroundColor: '#0D2A21' },
+  tourCardButton: {
+    minHeight: 92,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 14,
+  },
+  tourCardCopy: { flex: 1 },
+  tourCardMeta: { color: '#74A28F', fontSize: 8, fontWeight: '900', letterSpacing: 1.1 },
+  tourCardName: { color: '#F5F3EB', fontSize: 16, lineHeight: 20, fontWeight: '800', marginTop: 7 },
+  expandButton: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    borderWidth: 1,
+    borderColor: '#3A6857',
+    alignItems: 'center',
     justifyContent: 'center',
   },
-  container: {
-    maxWidth: MaxContentWidth,
-    flexGrow: 1,
+  expandButtonActive: { backgroundColor: '#7EE2AE', borderColor: '#7EE2AE' },
+  expandButtonText: { color: '#9FDDBE', fontSize: 23, lineHeight: 25, fontWeight: '400' },
+  expandButtonTextActive: { color: '#071A15' },
+  expandedTour: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#376253',
+    padding: 12,
   },
-  titleContainer: {
-    gap: Spacing.three,
+  programSummary: {
+    backgroundColor: '#F3F0E6',
+    borderRadius: 16,
+    padding: 16,
+    gap: 11,
+  },
+  programDescription: { color: '#4F6058', fontSize: 13, lineHeight: 19 },
+  emphasisText: { color: '#66756E', fontSize: 11, lineHeight: 17 },
+  routeRule: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#C5CEC8',
+    paddingTop: 11,
+    gap: 3,
+  },
+  routeRuleLabel: { color: '#718078', fontSize: 8, fontWeight: '900', letterSpacing: 1.3 },
+  routeRuleText: { color: '#304A3E', fontSize: 11, textTransform: 'capitalize' },
+  catalogButton: {
+    minHeight: 40,
+    borderRadius: 12,
+    backgroundColor: '#102A22',
     alignItems: 'center',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.six,
+    justifyContent: 'center',
+    paddingHorizontal: 14,
   },
-  centerText: {
+  catalogButtonText: { color: '#7EE2AE', fontSize: 11, fontWeight: '800' },
+  startTourButton: {
+    minHeight: 58,
+    borderRadius: 14,
+    backgroundColor: '#7EE2AE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  startTourButtonText: { color: '#071A15', fontSize: 15, fontWeight: '900' },
+  startTourButtonMeta: { color: '#2E5C4B', fontSize: 9, fontWeight: '800', marginTop: 3 },
+  activeGuide: {
+    marginTop: 12,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#7EE2AE',
+    backgroundColor: '#071A15',
+    padding: 16,
+  },
+  activeGuideHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  activeGuideHeaderCopy: { flex: 1 },
+  liveLabel: { color: '#7EE2AE', fontSize: 9, fontWeight: '900', letterSpacing: 1.6 },
+  activeGuideTitle: {
+    color: '#F5F3EB',
+    fontSize: 18,
+    lineHeight: 23,
+    fontWeight: '900',
+    marginTop: 4,
+  },
+  progressLabel: {
+    minWidth: 42,
+    color: '#071A15',
+    backgroundColor: '#7EE2AE',
+    borderRadius: 999,
+    overflow: 'hidden',
+    paddingHorizontal: 9,
+    paddingVertical: 5,
+    fontSize: 9,
+    fontWeight: '900',
     textAlign: 'center',
+    flexShrink: 0,
   },
-  pressed: {
-    opacity: 0.7,
+  progressTrack: {
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#17372D',
+    overflow: 'hidden',
+    marginTop: 14,
   },
-  linkButton: {
+  progressFill: { height: 6, borderRadius: 3, backgroundColor: '#7EE2AE' },
+  currentStopEyebrow: {
+    color: '#74A28F',
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 1.3,
+    marginTop: 18,
+  },
+  currentStopName: {
+    color: '#F5F3EB',
+    fontSize: 24,
+    lineHeight: 29,
+    fontWeight: '900',
+    marginTop: 5,
+  },
+  currentStopDescription: { color: '#AFC0B7', fontSize: 13, lineHeight: 19, marginTop: 7 },
+  speechCard: {
     flexDirection: 'row',
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-    borderRadius: Spacing.five,
+    alignItems: 'center',
+    gap: 10,
+    borderRadius: 12,
+    backgroundColor: '#172B24',
+    borderWidth: 1,
+    borderColor: '#315A4A',
+    padding: 12,
+    marginTop: 14,
+  },
+  speechCardCopy: { flex: 1 },
+  speechCardLabel: {
+    color: '#7EE2AE',
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 1.1,
+    textTransform: 'uppercase',
+  },
+  speechCardText: { color: '#B8C8C0', fontSize: 10, lineHeight: 15, marginTop: 4 },
+  speechButton: {
+    minHeight: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#4A806A',
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.one,
+    paddingHorizontal: 12,
+  },
+  speechButtonText: { color: '#A6E7C5', fontSize: 10, fontWeight: '900' },
+  gpsCard: {
+    borderRadius: 12,
+    backgroundColor: '#102A22',
+    borderWidth: 1,
+    borderColor: '#285343',
+    padding: 12,
+    marginTop: 14,
+  },
+  gpsHeader: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  gpsDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#D9B56D' },
+  gpsDotActive: { backgroundColor: '#7EE2AE' },
+  gpsDotError: { backgroundColor: '#FF9E88' },
+  gpsTitle: { color: '#E4ECE8', fontSize: 11, fontWeight: '900', flex: 1 },
+  gpsRadius: {
+    color: '#82A695',
+    fontSize: 8,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
+  gpsStatusText: { color: '#8FA99D', fontSize: 10, lineHeight: 15, marginTop: 7 },
+  offRouteText: { color: '#FFB29F', fontSize: 10, lineHeight: 15, marginTop: 7 },
+  onRouteText: { color: '#82CBAA', fontSize: 10, lineHeight: 15, marginTop: 7 },
+  locationSettingsButton: {
+    minHeight: 34,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#3A6857',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 9,
+    paddingHorizontal: 10,
   },
-  sectionsWrapper: {
-    gap: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    paddingTop: Spacing.three,
-  },
-  collapsibleContent: {
+  locationSettingsButtonText: { color: '#9FDDBE', fontSize: 10, fontWeight: '800' },
+  directionsButton: {
+    minHeight: 42,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#3A6857',
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15,
+    paddingHorizontal: 12,
   },
-  imageTutorial: {
-    width: '100%',
-    aspectRatio: 296 / 171,
-    borderRadius: Spacing.three,
-    marginTop: Spacing.two,
+  directionsButtonText: { color: '#9FDDBE', fontSize: 11, fontWeight: '800' },
+  tourControls: { flexDirection: 'row', gap: 9, marginTop: 9 },
+  secondaryControl: {
+    flex: 1,
+    minHeight: 46,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#3A6857',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  imageReact: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
+  secondaryControlText: { color: '#CAD5D0', fontSize: 12, fontWeight: '800' },
+  pauseControlActive: { backgroundColor: '#D9B56D', borderColor: '#D9B56D' },
+  pauseControlTextActive: { color: '#1F1709' },
+  nextControl: {
+    flex: 2,
+    minHeight: 46,
+    borderRadius: 12,
+    backgroundColor: '#7EE2AE',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
+  nextControlText: { color: '#071A15', fontSize: 12, fontWeight: '900' },
+  endTourButton: { alignItems: 'center', justifyContent: 'center', minHeight: 36, marginTop: 7 },
+  endTourButtonText: { color: '#FFAA96', fontSize: 11, fontWeight: '800' },
+  timeline: { marginTop: 18 },
+  stopRow: { flexDirection: 'row', alignItems: 'stretch' },
+  markerColumn: { width: 42, alignItems: 'center' },
+  marker: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#17372D',
+    borderWidth: 1,
+    borderColor: '#32634F',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  markerActive: { backgroundColor: '#7EE2AE', borderColor: '#7EE2AE' },
+  markerText: { color: '#BFD0C8', fontSize: 11, fontWeight: '900' },
+  markerTextActive: { color: '#071A15' },
+  line: { width: 1, flex: 1, minHeight: 30, backgroundColor: '#245142' },
+  stopCard: {
+    flex: 1,
+    backgroundColor: '#102A22',
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#1D4437',
+  },
+  currentStopCard: { borderColor: '#7EE2AE', backgroundColor: '#15382C' },
+  completedStopCard: { opacity: 0.7 },
+  stopHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+  stopName: { color: '#F5F3EB', fontSize: 17, lineHeight: 22, fontWeight: '800', flex: 1 },
+  rootLabel: {
+    color: '#071A15',
+    backgroundColor: '#7EE2AE',
+    borderRadius: 999,
+    overflow: 'hidden',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    fontSize: 8,
+    fontWeight: '900',
+  },
+  currentLabel: {
+    color: '#071A15',
+    backgroundColor: '#7EE2AE',
+    borderRadius: 999,
+    overflow: 'hidden',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    fontSize: 8,
+    fontWeight: '900',
+  },
+  completedLabel: {
+    color: '#9FDDBE',
+    backgroundColor: '#21483A',
+    borderRadius: 999,
+    overflow: 'hidden',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    fontSize: 8,
+    fontWeight: '900',
+  },
+  stopDescription: { color: '#AFC0B7', fontSize: 13, lineHeight: 19, marginTop: 7 },
+  distance: {
+    color: '#6F9182',
+    fontSize: 9,
+    fontWeight: '700',
+    marginTop: 10,
+    textTransform: 'uppercase',
+  },
+  detail: {
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#315247',
+    marginTop: 14,
+    paddingTop: 12,
+    gap: 5,
+  },
+  detailLabel: {
+    color: '#6F8C7F',
+    fontSize: 9,
+    fontWeight: '800',
+    letterSpacing: 1.4,
+    marginTop: 3,
+  },
+  detailText: { color: '#CAD5D0', fontSize: 12, lineHeight: 18, marginBottom: 5 },
+  question: { color: '#AFC4BA', fontSize: 12, lineHeight: 18 },
+  dataCard: {
+    marginTop: 14,
+    backgroundColor: '#7EE2AE',
+    borderRadius: 22,
+    padding: 18,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  dataValue: { color: '#071A15', fontSize: 46, fontWeight: '900' },
+  dataCopy: { flex: 1 },
+  dataTitle: { color: '#071A15', fontSize: 15, fontWeight: '800' },
+  dataText: { color: '#254B3E', fontSize: 11, lineHeight: 16, marginTop: 3 },
+  disabled: { opacity: 0.45 },
+  pressed: { opacity: 0.72, transform: [{ scale: 0.985 }] },
 });
