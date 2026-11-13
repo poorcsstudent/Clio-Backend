@@ -36,6 +36,9 @@ Open http://localhost:4176/audio-test after `npm run preview:audio`.
 
 - The new Expo TaskManager dependency and background-location entitlements
   require a new binary. This cannot be validated through an old installed app.
+- The correlated native speech method also requires that new binary. Do not ship
+  this JavaScript as an OTA to the older bridge. Swift was source-reviewed only;
+  Xcode compilation and device validation are still required.
 - Deploying new backend maneuver generation is a separate approved action.
 - Configure the test build to a suitable backend; do not assume the current
   production API already serves these new maneuver fields.
@@ -55,6 +58,12 @@ Open http://localhost:4176/audio-test after `npm run preview:audio`.
   or the answer. Then verify guidance resumes without stale queued turns.
 - Pause/end from voice and screen, switch tabs, kill/relaunch the app, and confirm
   location stops and restores paused. Verify the OS location indicator.
+- Rapidly pause/resume while location startup or a permission prompt is pending.
+  Old callbacks must not restart tracking or produce arrival cues; a fresh fix is
+  required. Check that a failed background stop produces a visible warning.
+- Interrupt speech, start a new answer, and verify a late cancellation from the
+  old utterance does not clear the new answer. Test cancellation before speech
+  starts, native stop failure, and returning to wake listening after completion.
 - Enter/exit both underpasses. No turn or arrival should advance on stale GPS.
 - Test one requested camera snapshot, denied permission, cancelled consent,
   failed upload, unmatched landmark, and a tour changed during analysis. Check

@@ -132,6 +132,7 @@ export type WakePhraseDiagnosticEvent = WakePhrasePlaybackRoute & {
 export type NativeSpeechKind = 'acknowledgement' | 'answer';
 export type NativeSpeechStage = 'queued' | 'started' | 'finished' | 'cancelled';
 export type NativeSpeechStateEvent = WakePhrasePlaybackRoute & {
+  requestId?: string;
   kind: NativeSpeechKind;
   stage: NativeSpeechStage;
   message: string;
@@ -152,6 +153,7 @@ type NativeWakePhraseModule = {
   stop(): Promise<WakePhraseState>;
   preparePlaybackRoute(): Promise<WakePhrasePlaybackRoute>;
   speakAnswer(text: string): Promise<WakePhrasePlaybackRoute>;
+  speakAnswerWithId?(text: string, requestId: string): Promise<WakePhrasePlaybackRoute>;
   stopSpeaking(): Promise<boolean>;
   addListener(
     eventName: 'onWakePhraseState',
@@ -238,9 +240,14 @@ export async function prepareWakePhrasePlaybackRoute(): Promise<WakePhrasePlayba
 
 export async function startNativeAnswerSpeech(
   text: string,
+  requestId?: string,
 ): Promise<WakePhrasePlaybackRoute> {
   if (!nativeWakePhraseModule) {
     throw new Error('Install the native speech-enabled iOS build first.');
+  }
+  if (requestId) {
+    if (!nativeWakePhraseModule.speakAnswerWithId) throw new Error('Install the updated iOS build for coordinated tour and answer speech.');
+    return nativeWakePhraseModule.speakAnswerWithId(text, requestId);
   }
   return nativeWakePhraseModule.speakAnswer(text);
 }

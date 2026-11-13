@@ -14,6 +14,8 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
   private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
   private lazy var speechDelegate = ClioSpeechSynthesizerDelegate(owner: self)
   private var speechKinds: [ObjectIdentifier: String] = [:]
+  private var speechRequestIds: [ObjectIdentifier: String] = [:]
+  private var activeAnswerIdentifier: ObjectIdentifier?
   private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
   private var recognitionTask: SFSpeechRecognitionTask?
   private var commandTimer: DispatchWorkItem?
@@ -102,48 +104,15 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     }.runOnQueue(.main)
 
     AsyncFunction("speakAnswer") { (text: String) -> [String: Any] in
-      let spokenText = text.trimmingCharacters(in: .whitespacesAndNewlines)
-      guard !spokenText.isEmpty else {
-        throw WakePhraseUnavailableException("The answer text is empty.")
-      }
+      try self.speakAnswer(text: text, requestId: nil)
+    }.runOnQueue(.main)
 
-      self.desiredListening = false
-      self.tearDownRecognition(deactivateAudio: false)
-      self.mode = "processing"
-      self.emitState()
-
-      let route = try self.preparePlaybackRoute()
-      self.speechSynthesizer.delegate = self.speechDelegate
-      self.speechSynthesizer.usesApplicationAudioSession = true
-      self.cancelPendingSpeech()
-      if self.speechSynthesizer.isSpeaking || self.speechSynthesizer.isPaused {
-        self.speechSynthesizer.stopSpeaking(at: .immediate)
-      }
-
-      let utterance = self.makeClioUtterance(spokenText)
-      self.speechKinds[ObjectIdentifier(utterance)] = "answer"
-      self.pendingSpeechUtterance = utterance
-      let workItem = DispatchWorkItem { [weak self] in
-        guard let self, let pendingUtterance = self.pendingSpeechUtterance else { return }
-        self.pendingSpeechWorkItem = nil
-        self.pendingSpeechUtterance = nil
-        self.speechSynthesizer.speak(pendingUtterance)
-        self.emitDiagnostic(
-          stage: "answerSpeechSubmitted",
-          message: "Submitted the committed answer bubble text to AVSpeechSynthesizer."
-        )
-      }
-      self.pendingSpeechWorkItem = workItem
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: workItem)
-      self.emitNativeSpeechState(
-        kind: "answer",
-        stage: "queued",
-        message: "Queued the exact answer bubble text for native iOS speech."
-      )
-      return route
+    AsyncFunction("speakAnswerWithId") { (text: String, requestId: String) -> [String: Any] in
+      try self.speakAnswer(text: text, requestId: requestId)
     }.runOnQueue(.main)
 
     AsyncFunction("stopSpeaking") { () -> Bool in
+      let wasAnswer = self.activeAnswerIdentifier != nil
       let hadPendingSpeech = self.pendingSpeechUtterance != nil
       self.cancelPendingSpeech()
       let wasSpeaking =
@@ -151,8 +120,59 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
       if self.speechSynthesizer.isSpeaking || self.speechSynthesizer.isPaused {
         self.speechSynthesizer.stopSpeaking(at: .immediate)
       }
+      if wasAnswer {
+        self.activeAnswerIdentifier = nil
+        self.mode = "idle"
+        self.emitState()
+      }
       return wasSpeaking
     }.runOnQueue(.main)
+  }
+
+  private func speakAnswer(text: String, requestId: String?) throws -> [String: Any] {
+    let spokenText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !spokenText.isEmpty else {
+      throw WakePhraseUnavailableException("The answer text is empty.")
+    }
+
+    self.desiredListening = false
+    self.tearDownRecognition(deactivateAudio: false)
+    self.mode = "processing"
+    self.emitState()
+
+    let route = try self.preparePlaybackRoute()
+    self.speechSynthesizer.delegate = self.speechDelegate
+    self.speechSynthesizer.usesApplicationAudioSession = true
+    self.cancelPendingSpeech()
+    if self.speechSynthesizer.isSpeaking || self.speechSynthesizer.isPaused {
+      self.speechSynthesizer.stopSpeaking(at: .immediate)
+    }
+
+    let utterance = self.makeClioUtterance(spokenText)
+    let identifier = ObjectIdentifier(utterance)
+    self.speechKinds[identifier] = "answer"
+    self.speechRequestIds[identifier] = requestId
+    self.activeAnswerIdentifier = identifier
+    self.pendingSpeechUtterance = utterance
+    let workItem = DispatchWorkItem { [weak self] in
+      guard let self, let pendingUtterance = self.pendingSpeechUtterance else { return }
+      self.pendingSpeechWorkItem = nil
+      self.pendingSpeechUtterance = nil
+      self.speechSynthesizer.speak(pendingUtterance)
+      self.emitDiagnostic(
+        stage: "answerSpeechSubmitted",
+        message: "Submitted the committed answer bubble text to AVSpeechSynthesizer."
+      )
+    }
+    self.pendingSpeechWorkItem = workItem
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2, execute: workItem)
+    self.emitNativeSpeechState(
+      kind: "answer",
+      stage: "queued",
+      message: "Queued the exact answer bubble text for native iOS speech.",
+      requestId: requestId
+    )
+    return route
   }
 
   private func requestPermissions(promise: Promise) {
@@ -302,7 +322,10 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     pendingSpeechWorkItem?.cancel()
     pendingSpeechWorkItem = nil
     if let pendingSpeechUtterance {
-      speechKinds.removeValue(forKey: ObjectIdentifier(pendingSpeechUtterance))
+      let identifier = ObjectIdentifier(pendingSpeechUtterance)
+      speechKinds.removeValue(forKey: identifier)
+      speechRequestIds.removeValue(forKey: identifier)
+      if activeAnswerIdentifier == identifier { activeAnswerIdentifier = nil }
     }
     pendingSpeechUtterance = nil
   }
@@ -505,23 +528,27 @@ public final class ClioWakePhraseModule: Module, @unchecked Sendable {
     emitNativeSpeechState(
       kind: kind,
       stage: stage,
-      message: messages[stage] ?? "Native iOS speech changed state."
+      message: messages[stage] ?? "Native iOS speech changed state.",
+      requestId: speechRequestIds[identifier]
     )
 
     if stage == "finished" || stage == "cancelled" {
       speechKinds.removeValue(forKey: identifier)
+      speechRequestIds.removeValue(forKey: identifier)
       if kind == "acknowledgement" {
         scheduleCommandCapture(after: stage == "finished" ? 0.2 : 0.4)
-      } else if kind == "answer" {
+      } else if kind == "answer", activeAnswerIdentifier == identifier {
+        activeAnswerIdentifier = nil
         mode = "idle"
         emitState()
       }
     }
   }
 
-  private func emitNativeSpeechState(kind: String, stage: String, message: String) {
+  private func emitNativeSpeechState(kind: String, stage: String, message: String, requestId: String? = nil) {
     var event = routeSnapshot()
     event["kind"] = kind
+    if let requestId { event["requestId"] = requestId }
     event["stage"] = stage
     event["message"] = message
     sendEvent("onNativeSpeechState", event)

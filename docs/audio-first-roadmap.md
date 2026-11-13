@@ -49,6 +49,21 @@ Approved 2026-11-12. Local review only; no production push or Expo submission.
 - Review approval can authorize the next native test build; it is not evidence
   that the hardware/campus acceptance gate has passed.
 
+## Reliability hardening — 2026-11-13
+
+- Serialized background-location ownership prevents delayed cleanup from stopping
+  a replacement session. Failed stops are surfaced instead of silently ignored.
+- Pause, resume, stop and stop changes invalidate old location callbacks. Cached
+  pre-resume fixes and delayed permission results cannot restart an old session.
+- Native answer events carry playback IDs so a late cancellation cannot clear a
+  newer answer. This bridge change requires a new approved native binary, not an
+  OTA update onto the old build.
+- 70 app tests, 39 backend tests and 10 artwork-routing tests pass (119 total).
+  TypeScript, backend compilation and Expo web export pass. The new regression
+  tests cover pure lifecycle/event coordination; they are not native device tests.
+- Swift source was reviewed but cannot be compiled on this Windows host. iPhone,
+  glasses and campus validation remain outstanding. No release was submitted.
+
 ## Restart the local test
 
 From the repository root run `npm run preview:audio`, then open

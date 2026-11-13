@@ -7,6 +7,7 @@ import { loadTourProgress, saveTourProgress } from './tourProgress';
 import { attachBackgroundTour, requestTourBackgroundPermission } from './tourBackground';
 import { createGuidanceTracker, reliableGuidanceFix, registerTourVoice, setTourVoiceContext, type GuidanceFix } from './tourGuidance';
 import { voiceIsBusy } from './voiceFocus';
+import { createLocationEpoch } from './locationEpoch';
 import { getCampusTours, apiBaseUrl, endTour, getTourStops, getWalkingRoute, startTour, type CampusWalkingRoute, type CampusTour, type CampusTourCatalog, type TourSession, type TourStop } from './api';
 import { distanceBetweenCoordinatesMeters, createArrivalTracker, TOUR_ARRIVAL_RADIUS_METERS } from './tourLocation';
 import { distanceToWalkingPathMeters } from './walkingNavigation';
@@ -50,6 +51,14 @@ function useTourController() {
   const latestFix = useRef<GuidanceFix | null>(null);
   const narrationEpoch = useRef(0);
   const guidanceCertain = useRef(false);
+  const locationEpoch = useRef(createLocationEpoch());
+
+  function invalidatePosition() {
+    locationEpoch.current.invalidate();
+    latestFix.current = null;
+    guidanceCertain.current = false;
+    setTourVoiceContext(null);
+  }
 
   useEffect(() => {
     let active = true;
@@ -211,6 +220,7 @@ function useTourController() {
         await endTour(activeTour.sessionId);
       }
       const session = await startTour(tour.id);
+      invalidatePosition();
       narrationEpoch.current++;
       latestFix.current = null;
       setActiveTour(session);
@@ -242,6 +252,7 @@ function useTourController() {
 
   async function closeActiveTour(completed: boolean) {
     if (!activeTour || endingTourRef.current) return;
+    invalidatePosition();
     endingTourRef.current = true;
     setEndingTour(true);
     setError('');
@@ -282,6 +293,7 @@ function useTourController() {
 
   async function advanceTour(narrate = true) {
     if (!activeTour || endingTourRef.current) return;
+    invalidatePosition();
     const currentStop = activeTour.stops[activeStopIndex];
     const finalStop = activeStopIndex >= activeTour.stops.length - 1;
     const nextStop = activeTour.stops[activeStopIndex + 1];
@@ -306,6 +318,7 @@ function useTourController() {
 
   function toggleTourPaused() {
     if (endingTourRef.current) return;
+    invalidatePosition();
     const nextPaused = !tourPaused;
     narrationEpoch.current++;
     cancelPendingTourSpeech();
@@ -336,6 +349,7 @@ function useTourController() {
 
   function previousStop() {
     if (endingTourRef.current) return;
+    invalidatePosition();
     narrationEpoch.current++; cancelPendingTourSpeech();
     setActiveStopIndex(current => Math.max(0, current - 1));
     setActiveWalkingStepIndex(0); setDistanceToCurrentStop(null);
@@ -391,6 +405,9 @@ function useTourController() {
         : undefined;
 
     let cancelled = false;
+    const epoch = locationEpoch.current.begin();
+    latestFix.current = null;
+    setTourVoiceContext(null);
     let subscription: Location.LocationSubscription | null = null;
     const checkArrival = createArrivalTracker();
     const guide = createGuidanceTracker(activeWalkingStepIndex);
@@ -399,7 +416,7 @@ function useTourController() {
     let detachBackground: (() => void) | undefined;
     let lastUncertaintyCue = 0;
     const staleTimer = setInterval(() => {
-      if (cancelled || arrivalHandled || voiceIsBusy()) return;
+      if (cancelled || !epoch.current() || arrivalHandled || voiceIsBusy()) return;
       if ((!latestFix.current || !reliableGuidanceFix(latestFix.current)) && Date.now() - lastUncertaintyCue > 60000) {
         setGpsStatus('uncertain');
         lastUncertaintyCue = Date.now();
@@ -408,7 +425,7 @@ function useTourController() {
     }, 15000);
 
     function handleLocation(location: Location.LocationObject) {
-      if (cancelled || arrivalHandled || endingTourRef.current) return;
+      if (cancelled || !epoch.accepts(location.timestamp) || arrivalHandled || endingTourRef.current) return;
 
       const accuracy = location.coords.accuracy;
       const fix = { latitude: location.coords.latitude, longitude: location.coords.longitude, accuracy, timestamp: location.timestamp };
@@ -474,23 +491,28 @@ function useTourController() {
     async function startTracking() {
       try {
         const servicesEnabled = await Location.hasServicesEnabledAsync();
-        if (cancelled) return;
+        if (cancelled || !epoch.current()) return;
         if (!servicesEnabled) {
           setGpsStatus('disabled');
           return;
         }
 
         let permission = await Location.getForegroundPermissionsAsync();
+        if (cancelled || !epoch.current()) return;
         if (!permission.granted) {
           permission = await Location.requestForegroundPermissionsAsync();
         }
-        if (cancelled) return;
+        if (cancelled || !epoch.current()) return;
         if (!permission.granted) {
           setGpsStatus('denied');
           return;
         }
 
-        if (backgroundEnabled) detachBackground = attachBackgroundTour(handleLocation, () => { if (!cancelled) setGpsStatus('error'); });
+        if (backgroundEnabled) detachBackground = attachBackgroundTour(handleLocation, () => {
+          setBackgroundEnabled(false);
+          if (!cancelled && epoch.current()) setGpsStatus('error');
+          setTourNotice('Background location could not be started or stopped reliably. Keep Clio open for guidance. If the OS location indicator remains after ending the tour, turn off Clio location access in Settings.');
+        });
 
         const createdSubscription = await Location.watchPositionAsync(
           {
@@ -501,10 +523,10 @@ function useTourController() {
           },
           handleLocation,
           () => {
-            if (!cancelled) setGpsStatus('error');
+            if (!cancelled && epoch.current()) setGpsStatus('error');
           },
         );
-        if (cancelled) {
+        if (cancelled || !epoch.current()) {
           createdSubscription.remove();
           return;
         }
@@ -515,13 +537,14 @@ function useTourController() {
         });
         handleLocation(currentLocation);
       } catch {
-        if (!cancelled) setGpsStatus('error');
+        if (!cancelled && epoch.current()) setGpsStatus('error');
       }
     }
 
     void startTracking();
     return () => {
       cancelled = true;
+      epoch.cancel();
       subscription?.remove();
       detachBackground?.();
       clearInterval(staleTimer);
