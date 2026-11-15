@@ -4,8 +4,18 @@ const strings = (value: any) => Array.isArray(value) && value.every(text);
 const optionalText = (value: any) => value === undefined || text(value);
 const optionalStrings = (value: any) => value === undefined || strings(value);
 
+export function validArtwork(value:any):boolean {
+  return Boolean(value && ['complete','incomplete'].includes(value.status) && strings(value.warnings)
+    && Array.isArray(value.legs) && value.legs.every((leg:any)=>identifier(leg?.fromStopId)&&identifier(leg.toStopId)
+      && (leg.error===null||text(leg.error)) && Array.isArray(leg.parts) && leg.parts.every((part:any)=>part
+        && typeof part.candidate==='boolean' && optionalText(part.structure) && Array.isArray(part.points)
+        && part.points.every((p:any)=>Array.isArray(p)&&p.length===2&&p.every((n:any)=>Number.isFinite(n)&&n>=0&&n<=4000)))));
+}
+
 export function validTourProgress(value: any, origin: string, now = Date.now()): boolean {
   return Boolean(value && value.origin === origin && Number.isFinite(value.savedAt)
+    && optionalStrings(value.session?.interestIds) && optionalStrings(value.session?.excludedIds)
+    && (value.session?.illustration===undefined||validArtwork(value.session.illustration))
     && value.savedAt <= now && now - value.savedAt <= 7 * 86400000
     && Array.isArray(value.session?.stops) && value.session.stops.length > 0
     && value.session.stops.every((stop: any) => identifier(stop?.id)

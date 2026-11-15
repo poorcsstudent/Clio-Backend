@@ -75,8 +75,10 @@ Open http://localhost:4176/audio-test after `npm run preview:audio`.
 
 ## Known scope boundaries
 
-The native app still uses its existing degree-tour catalog; the interest-driven
-artwork editor remains a separate web prototype. This roadmap adds audio-first
-navigation and camera context, not a hidden migration of that prototype into
-the native catalog. Illustrations are not route geometry. The website and
-production app change only through the explicitly approved release workflow.
+Release 21 used the existing degree-tour catalog; its interest-driven artwork
+editor was still a separate web prototype. The subsequent local review candidate
+now integrates interest selection into the actual Campus screen; see
+`interest-integration-review.md` for scope and verification. This does not change
+the already-deployed release. Illustrations are not GPS route geometry. The
+website and production app change only through the explicitly approved release
+workflow.

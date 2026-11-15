@@ -8,6 +8,9 @@ import { attachBackgroundTour, requestTourBackgroundPermission } from './tourBac
 import { createGuidanceTracker, reliableGuidanceFix, registerTourVoice, setTourVoiceContext, type GuidanceFix } from './tourGuidance';
 import { voiceIsBusy } from './voiceFocus';
 import { createLocationEpoch } from './locationEpoch';
+import { useInterestPlanner } from './useInterestPlanner';
+import type { InterestPlan } from './interestSelection';
+import { validSavedRoute, validTourProgress } from './tourProgressValidation';
 import { getCampusTours, apiBaseUrl, endTour, getTourStops, getWalkingRoute, startTour, type CampusWalkingRoute, type CampusTour, type CampusTourCatalog, type TourSession, type TourStop } from './api';
 import { distanceBetweenCoordinatesMeters, createArrivalTracker, TOUR_ARRIVAL_RADIUS_METERS } from './tourLocation';
 import { distanceToWalkingPathMeters } from './walkingNavigation';
@@ -16,6 +19,8 @@ type GpsStatus = 'idle'|'requesting'|'tracking'|'uncertain'|'paused'|'denied'|'d
 type TourSpeechStatus = 'idle'|'queued'|'speaking'|'finished'|'unavailable';
 
 function useTourController() {
+  const planner = useInterestPlanner();
+  const startingRef = useRef(false);
   const [cacheNotice, setCacheNotice] = useState('');
   useEffect(() => subscribeCacheNotice(setCacheNotice), []);
   const { width } = useWindowDimensions();
@@ -65,6 +70,7 @@ function useTourController() {
     void loadTourProgress(apiBaseUrl).then(saved => {
       if (!active) return;
       if (saved) {
+        planner.restore(saved.session, saved.route);
         setTourPaused(true);
         setGpsStatus('paused');
         setActiveTour(saved.session);
@@ -208,18 +214,21 @@ function useTourController() {
     }
   }
 
-  async function beginTour(tour: CampusTour) {
-    if (!progressLoaded) return;
+  async function beginTour(tour: CampusTour, generated?: InterestPlan) {
+    if (!progressLoaded || startingRef.current) return;
+    startingRef.current = true;
     setStartingTourId(tour.id);
     setError('');
     setTourNotice('');
 
     try {
-      const walkingRoute = walkingRoutesByTourId[tour.id] ?? await getWalkingRoute(tour.id);
+      const walkingRoute = generated ? generated.walkingRoute : walkingRoutesByTourId[tour.id] ?? await getWalkingRoute(tour.id);
+      if (!walkingRoute || !validSavedRoute(walkingRoute, tour.id)) throw new Error('A complete geographic walking route is required before starting.');
+      if (generated && !validTourProgress({origin:apiBaseUrl,savedAt:Date.now(),session:generated.session,stopIndex:0},apiBaseUrl)) throw new Error('The generated tour could not be validated. Please preview it again.');
       if (activeTour) {
         await endTour(activeTour.sessionId);
       }
-      const session = await startTour(tour.id);
+      const session = generated ? generated.session : await startTour(tour.id);
       invalidatePosition();
       narrationEpoch.current++;
       latestFix.current = null;
@@ -246,6 +255,7 @@ function useTourController() {
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : 'Could not start this tour');
     } finally {
+      startingRef.current = false;
       setStartingTourId(null);
     }
   }
@@ -551,7 +561,7 @@ function useTourController() {
     };
   }, [activeStopIndex, activeTour, activeWalkingRoute, tourPaused, backgroundEnabled]);
 
-  return { cacheNotice, catalog, selectedTourId, routesByTourId, walkingRoutesByTourId, loadingCatalog, loadingTourId, startingTourId, activeTour, activeStopIndex, activeWalkingStepIndex, tourPaused, endingTour, tourNotice, tourSpeechStatus, gpsStatus, distanceToCurrentStop, distanceToActivePath, gpsAccuracy, userCoordinate, error, selectedStopId, backgroundEnabled, showMap, columnCount, tourGridWidth, tourCardWidth, previousStop, setSelectedStopId, setShowMap, toggleTour, beginTour, closeActiveTour, advanceTour, toggleTourPaused, openWalkingDirections, speakTourGuidance, toggleBackground };
+  return { planner, cacheNotice, catalog, selectedTourId, routesByTourId, walkingRoutesByTourId, loadingCatalog, loadingTourId, startingTourId, activeTour, activeStopIndex, activeWalkingStepIndex, tourPaused, endingTour, tourNotice, tourSpeechStatus, gpsStatus, distanceToCurrentStop, distanceToActivePath, gpsAccuracy, userCoordinate, error, selectedStopId, backgroundEnabled, showMap, columnCount, tourGridWidth, tourCardWidth, previousStop, setSelectedStopId, setShowMap, toggleTour, beginTour, closeActiveTour, advanceTour, toggleTourPaused, openWalkingDirections, speakTourGuidance, toggleBackground };
 }
 const TourContext = createContext<ReturnType<typeof useTourController> | null>(null);
 export function TourProvider({ children }: { children: ReactNode }) {

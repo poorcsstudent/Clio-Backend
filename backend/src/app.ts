@@ -14,6 +14,7 @@ import iosInstallRoutes from "./routes/iosInstall";
 import navigationRoutes from "./routes/navigation";
 import voiceRoutes from "./routes/voice";
 import visionRoutes from "./routes/vision";
+import interestRoutes from './routes/interests';
 
 const app = express();
 
@@ -59,6 +60,7 @@ app.use("/auth", authRoutes);
 app.use("/campuses", campusRoutes);
 app.use("/tour", tourRoutes);
 app.use("/navigation", navigationRoutes);
+app.use('/interests', interestRoutes);
 app.use("/ai-guide", aiRoutes);
 app.use("/voice", voiceRoutes);
 app.use("/vision", visionRoutes);

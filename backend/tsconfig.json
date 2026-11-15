@@ -6,6 +6,7 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
+    "allowJs": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "skipLibCheck": true

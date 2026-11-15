@@ -11,6 +11,20 @@ function getApp() {
   return require("../app").default as Express;
 }
 
+test("interest API exposes the catalog and validates personalized plans", async () => {
+  const app = getApp();
+  const catalog = await request(app).get('/interests');
+  assert.equal(catalog.status, 200);
+  assert.equal(new Set(catalog.body.interests.map((i: {id:string}) => i.id)).size, catalog.body.interests.length);
+  const plan = await request(app).post('/interests/plan').send({interestIds:['computer-science','electrical-engineering']});
+  assert.equal(plan.status, 200);
+  assert.equal(plan.headers['cache-control'], 'no-store');
+  assert.equal(plan.body.session.stopCount, 4);
+  assert.equal(plan.body.walkingRoute.provider, 'clio-pedestrian-network');
+  const invalid = await request(app).post('/interests/plan').send({interestIds:['not-a-program']});
+  assert.equal(invalid.status, 400);
+});
+
 test("device enrollment protects the AI route", async () => {
   const app = getApp();
 

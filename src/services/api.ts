@@ -9,6 +9,8 @@ import { validateDeviceSession, type DeviceSession } from './deviceSession';
 import { validateCampusAnswer } from './campusAnswer';
 import { validateTranscription } from './transcription';
 import { createSessionMutations } from './sessionMutations';
+import type { ArtworkRoute, InterestCatalog, InterestPlan } from './interestSelection';
+import { validInterestPlan } from './interestSelection';
 export { ApiError } from './apiResponse';
 
 export const apiBaseUrl = (process.env.EXPO_PUBLIC_CLIO_API_URL ?? 'http://localhost:3000')
@@ -92,6 +94,9 @@ export interface CampusTourCatalog {
 }
 
 export interface TourSession {
+  interestIds?: string[];
+  excludedIds?: string[];
+  illustration?: ArtworkRoute;
   sessionId: string;
   campusId: string;
   tour: CampusTour;
@@ -361,6 +366,16 @@ export async function createSpeechSource(text: string) {
 
 export async function getCampusTours() {
   return publicTourData<CampusTourCatalog>('/campuses/missouri-s-and-t/tours');
+}
+
+export function getInterestCatalog() { return publicTourData<InterestCatalog>('/interests'); }
+export function generateInterestTour(interestIds:string[], excludedIds:string[]) {
+  return withRequestDeadline(async signal => {
+    const response=await fetch(`${apiBaseUrl}/interests/plan`,{signal,method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({interestIds,excludedIds})});
+    const plan=await parseResponse<InterestPlan>(response);
+    if(!validInterestPlan(plan))throw new Error('The personalized route response was incomplete. Please retry.');
+    return plan;
+  },30000);
 }
 
 function publicTourData<T>(path: string) {
