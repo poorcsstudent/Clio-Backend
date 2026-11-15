@@ -30,7 +30,10 @@ GPS arrival, and campus walking tests have not been performed for these changes.
 The geographic pedestrian graph, not image pixels, determines route ordering,
 distances and walking instructions. Small selections use exact open-route
 ordering for mapped approaches; selections above eleven total stops use the
-existing nearest-neighbor heuristic and are not advertised as globally optimal.
+nearest-neighbor seed followed by bounded directed-cost route refinement and are
+not advertised as globally optimal. Refinement never increases the seed's walking
+distance, changes the start, or drops stops. Stop numbers come from the final
+numeric route array, not alphabetical sorting of labels such as 1, 10, 11, 2.
 Missing geographic approaches block walking start but retain selected stops for
 review. Artwork gaps never become invented straight-line shortcuts.
 

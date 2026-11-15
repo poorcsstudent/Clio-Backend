@@ -1,4 +1,5 @@
 import network from '../data/pedestrian-network.json';
+import { refineTourOrder } from './tourOrder';
 
 export interface RouteStop { id:string; name:string; latitude:number; longitude:number }
 type Point={latitude:number;longitude:number};
@@ -65,6 +66,8 @@ export function createPedestrianRouter(data:Network){
     if(next===undefined)throw new PedestrianRouteError('No connected continuation through all selected stops; large-route ordering is heuristic.',[...remaining].map(i=>stops[i].id));
     order.push(next);remaining.delete(next);
    }
+   const distances=anchors.map((_,from)=>anchors.map(to=>tree(from).distances.get(to.nodeId)??Infinity));
+   order=refineTourOrder(order,distances);
   }
   const legs=order.slice(1).map((to,index)=>{const from=order[index],route=leg(from,to);if(!route)throw new PedestrianRouteError(`No connected pedestrian path between ${stops[from].name} and ${stops[to].name}.`,[stops[from].id,stops[to].id]);return {fromStopId:stops[from].id,toStopId:stops[to].id,...route};});
   return {order:order.map(i=>stops[i].id),anchors:order.map(i=>anchors[i]),legs,distanceMeters:legs.reduce((n,l)=>n+l.distanceMeters,0)};

@@ -50,7 +50,7 @@ export function planInterestTour(interestIds: unknown, excludedIds: unknown = []
     interestIds, excludedIds, walkingRoute, artwork, routingError,
     orderExplanation: walkingRoute ? (stops.length <= 11
       ? 'Shortest open route on the mapped pedestrian graph for these building approaches; starts at Havener.'
-      : 'Efficient nearest-neighbor ordering on the pedestrian graph. Every stop is retained; not guaranteed shortest.')
+      : 'Walking-network order refined to reduce backtracking. Every stop is retained; not guaranteed globally shortest.')
       : 'All chosen stops retained. Walking cannot start until the geographic connection gaps are resolved or you remove affected stops.',
     session: { sessionId: `tour_${randomUUID()}`, campusId: root.campusId, interestIds, excludedIds, illustration: artwork,
       tour: { id: tourId, name: 'Your campus tour', description: interests.map(i => i.name).join(' · '), audience: 'all-visitors' as const,
