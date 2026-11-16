@@ -1,6 +1,25 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {interestCatalog,planInterestTour} from './interestTours';
+import {pedestrianRouter} from './pedestrianRouting';
+
+test('housing plus CS and EE has a complete twelve-stop walking tour',()=>{
+  const p=planInterestTour(['housing','computer-science','electrical-engineering']);
+  assert.equal(p.session.stopCount,12);assert.equal(p.routingError,null);
+  assert.equal(p.walkingRoute!.legs.length,11);
+  assert.deepEqual(p.walkingRoute!.stopOrder,p.session.stops.map(s=>s.id));
+  assert.deepEqual(p.session.stops.map(s=>s.order),Array.from({length:12},(_,i)=>i+1));
+});
+
+test('full campus approach audit does not regress to isolated sidewalk fragments',()=>{
+  const root=interestCatalog.places.find(p=>p.id==='havener-center')!;
+  const failures:string[]=[];
+  for(const stop of interestCatalog.places.filter(p=>p.id!==root.id)){
+    try{const route=pedestrianRouter.plan([root,stop],true);assert(route.legs.length===1);}
+    catch{failures.push(stop.id);}
+  }
+  assert.deepEqual(failures.sort(),['209-e-8th-st','allgood-bailey-stadium','athletic-fields','general-services-building','kennedy-experimental-mine','miner-dome-indoor-practice-facility','missouri-protoplex'].sort());
+});
 
 test('campus landmarks and the History degree are separate interests',()=>{
   const ids=interestCatalog.interests.map(i=>i.id);

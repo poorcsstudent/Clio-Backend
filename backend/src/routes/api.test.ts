@@ -179,15 +179,16 @@ test('interest route accepts more than eleven stops without dropping any', async
  assert.match(result.body.warning,/not a guaranteed shortest tour/);
 });
 
-test('disconnected catalog and interest routes return 422 without geometry', async () => {
+test('formerly isolated chemistry approaches route successfully while true coverage gaps remain explicit', async () => {
  const app=getApp();
  const catalog=await request(app).get('/navigation/walking-route/chemistry');
  const custom=await request(app).post('/navigation/walking-route').send({stopIds:['havener-center','straumanis-james-hall']});
  for(const result of [catalog,custom]) {
-   assert.equal(result.status,422);
-   assert.equal(result.body.code,'PEDESTRIAN_ROUTE_UNAVAILABLE');
-   assert.equal(result.body.path,undefined);
+   assert.equal(result.status,200);
+   assert(result.body.path.length>1);
  }
+ const missing=await request(app).post('/navigation/walking-route').send({stopIds:['havener-center','kennedy-experimental-mine']});
+ assert.equal(missing.status,422);assert.equal(missing.body.path,undefined);
 });
 
 test("iOS installer exposes an Apple over-the-air manifest", async () => {

@@ -20,10 +20,10 @@ export function createPedestrianRouter(data:Network){
   if(edge.direction!=='reverse')adjacent.get(edge.from)!.push({to:edge.to,edge});
   if(edge.direction!=='forward')adjacent.get(edge.to)!.push({to:edge.from,edge});
  }
- function anchor(stop:RouteStop){
+ function anchor(stop:RouteStop, reachable?:Set<string>){
   if(!Number.isFinite(stop.latitude)||!Number.isFinite(stop.longitude)||Math.abs(stop.latitude)>90||Math.abs(stop.longitude)>180)throw new PedestrianRouteError('Invalid stop coordinate',[stop.id]);
   let best: typeof data.nodes[number]|undefined, gap=Infinity;
-  for(const node of data.nodes){const d=meters(stop,node);if(d<gap){gap=d;best=node;}}
+  for(const node of data.nodes){if(reachable&&!reachable.has(node.id))continue;const d=meters(stop,node);if(d<gap){gap=d;best=node;}}
   if(!best||gap>80)throw new PedestrianRouteError(`No mapped pedestrian approach within 80 m of ${stop.name}.`,[stop.id]);
   return {stopId:stop.id,nodeId:best.id,coordinate:{latitude:best.latitude,longitude:best.longitude},gapMeters:Math.round(gap),assumption:`${stop.name}: use the nearest mapped pedestrian node (${Math.round(gap)} m from the building reference point). The final entrance connection is not verified or drawn.`};
  }
@@ -42,9 +42,34 @@ export function createPedestrianRouter(data:Network){
   return {distanceMeters:distances.get(to)!,path:ids.reverse().map(id=>({latitude:nodes.get(id)!.latitude,longitude:nodes.get(id)!.longitude})),edges:edges.reverse()};
  }
  function shortest(from:string,to:string){return reconstruct(from,to,search(from));}
- function plan(stops:RouteStop[],optimize=false){
+ function plan(stops:RouteStop[],optimize=false):{order:string[];anchors:ReturnType<typeof anchor>[];legs:Array<NonNullable<ReturnType<typeof shortest>>&{fromStopId:string;toStopId:string}>;distanceMeters:number}{
   if(stops.length<2||new Set(stops.map(s=>s.id)).size!==stops.length)throw new PedestrianRouteError('Choose at least two distinct stops.');
-  const anchors=stops.map(anchor),cache=new Map<string,ReturnType<typeof shortest>>();
+  const start=anchor(stops[0]);
+  const reachable=new Set(search(start.nodeId).distances.keys());
+  // Long mapped segments may pass a building even when neither endpoint is
+  // close. Split the existing segment at its projection, never across a gap.
+  for(const stop of stops.slice(1)){
+   try{anchor(stop,reachable);continue;}catch(error){if(!(error instanceof PedestrianRouteError))throw error;}
+   let projected:{edge:Edge;point:Point;t:number;gap:number}|undefined;
+   for(const edge of data.edges){
+    if(!reachable.has(edge.from)||!reachable.has(edge.to))continue;
+    const a=nodes.get(edge.from)!,b=nodes.get(edge.to)!,c=Math.cos(stop.latitude*Math.PI/180);
+    const dx=(b.longitude-a.longitude)*c,dy=b.latitude-a.latitude;
+    const t=Math.max(0,Math.min(1,((stop.longitude-a.longitude)*c*dx+(stop.latitude-a.latitude)*dy)/(dx*dx+dy*dy)));
+    if(!Number.isFinite(t)||t<=0||t>=1)continue;
+    const point={latitude:a.latitude+t*(b.latitude-a.latitude),longitude:a.longitude+t*(b.longitude-a.longitude)},gap=meters(stop,point);
+    if(gap<=80&&(!projected||gap<projected.gap))projected={edge,point,t,gap};
+   }
+   if(projected){
+    const {edge,point,t}=projected,id=`approach:${stop.id}:${edge.id}`;
+    const split=[{...edge,id:edge.id+':a',to:id,lengthMeters:edge.lengthMeters*t},{...edge,id:edge.id+':b',from:id,lengthMeters:edge.lengthMeters*(1-t)}];
+    return createPedestrianRouter({nodes:[...data.nodes,{id,...point}],edges:[...data.edges.filter(e=>e.id!==edge.id),...split]}).plan(stops,optimize);
+   }
+  }
+  // A closer isolated sidewalk fragment is not a usable tour approach. Select a
+  // nearby node reachable from the start, retaining the same 80 m limit and
+  // explicit unverified final-entrance gap. No connecting edge is fabricated.
+  const anchors=[start,...stops.slice(1).map(stop=>anchor(stop,reachable))],cache=new Map<string,ReturnType<typeof shortest>>();
   // One source search per distinct approach, rather than per pair of stops.
   const trees=new Map<string,ReturnType<typeof search>>();
   const tree=(a:number)=>{const id=anchors[a].nodeId;if(!trees.has(id))trees.set(id,search(id));return trees.get(id)!;};

@@ -23,6 +23,14 @@ test('duplicate stops rejected',()=>{
  assert.throws(()=>router.plan([stop('a'),stop('a')]),PedestrianRouteError);
 });
 
+test('nearby connected approach wins over a closer isolated fragment without inventing edges',()=>{
+ const ns=[{id:'start',latitude:0,longitude:0},{id:'connected',latitude:0,longitude:.001},{id:'fragment',latitude:.0001,longitude:.001}];
+ const r=createPedestrianRouter({nodes:ns,edges:[edge('start','connected',111)]});
+ const p=r.plan([{...ns[0],name:'Start'},{...ns[2],id:'building',name:'Building'}],true);
+ assert.equal(p.anchors[1].nodeId,'connected');assert(p.anchors[1].gapMeters>0);
+ assert.deepEqual(p.legs[0].edges.map(e=>e.id),['startconnected']);
+});
+
 test('large selections retain every stop without the former cap',()=>{
  const nodes=Array.from({length:40},(_,i)=>({id:`n${i}`,latitude:0,longitude:i*.0001}));
  const r=createPedestrianRouter({nodes,edges:nodes.slice(1).map((n,i)=>edge(nodes[i].id,n.id,10))});
@@ -34,4 +42,14 @@ test('large selections retain every stop without the former cap',()=>{
 test('unknown path endpoints fail without dereferencing missing coordinates',()=>{
  assert.equal(router.shortest('missing','missing'),null);
  assert.equal(router.shortest('missing','a'),null);
+});
+
+test('a long existing sidewalk can provide an approach between its endpoints',()=>{
+ const ns=[{id:'west',latitude:0,longitude:0},{id:'east',latitude:0,longitude:.004}];
+ const r=createPedestrianRouter({nodes:ns,edges:[edge('west','east',444)]});
+ const stops=[{...ns[0],name:'Start'},{id:'middle',name:'Middle',latitude:.0001,longitude:.002}];
+ const p=r.plan(stops,true);
+ assert(Math.abs(p.distanceMeters-222)<1);assert(p.anchors[1].gapMeters<12);
+ assert.equal(p.legs[0].path.at(-1)!.latitude,0);
+ assert.equal(r.shortest('west','east')!.distanceMeters,444);
 });
