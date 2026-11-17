@@ -6,6 +6,8 @@ import {pedestrianRouter} from './pedestrianRouting';
 test('housing plus CS and EE has a complete twelve-stop walking tour',()=>{
   const p=planInterestTour(['housing','computer-science','electrical-engineering']);
   assert.equal(p.session.stopCount,12);assert.equal(p.routingError,null);
+  assert.equal(p.artwork.status,'complete');
+  assert(p.artwork.legs.every((leg:{error:string|null;parts:unknown[]})=>leg.error===null&&leg.parts.length>0));
   assert.equal(p.walkingRoute!.legs.length,11);
   assert.deepEqual(p.walkingRoute!.stopOrder,p.session.stops.map(s=>s.id));
   assert.deepEqual(p.session.stops.map(s=>s.order),Array.from({length:12},(_,i)=>i+1));

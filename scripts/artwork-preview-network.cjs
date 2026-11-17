@@ -14,6 +14,28 @@ const baseEdges=source.edges.flatMap(e=>e.id==='E036'?[
   {...e,id:e.id+'-east',from:havenerPortal.id,points:e.points.slice(split)},
 ]:['E135','E136','E137'].includes(e.id)?[]:[e]).map(e=>e.id.startsWith('E036-')?{...e,lengthPixels:e.points.slice(1).reduce((sum,p,i)=>sum+Math.hypot(p[0]-e.points[i][0],p[1]-e.points[i][1]),0)}:e);
 const joins=[
+  // November 16: user-marked walking-preview connections, traced on the artwork.
+  // These joins are schematic visual aids, not new surveyed GPS geometry.
+  {id:'preview-residential-west-walk',from:'N035',to:'N268',points:[[1664.96,743.53],[1610,727],[1620,698],[1540,676],[1460,652],[1515,636],[1570,622],[1600,599]],
+    rationale:'User identifies the residential pedestrian connections. Follow the visible courtyard walks around the housing, with tree-obscured corners approximated; accessibility unverified.'},
+  {id:'preview-commons-bridge-south',from:'N265',to:'N044',points:[[1380,509],[1340,508],[1290,511],[1255,523],[1237,539]],
+    rationale:'User marks the Commons-to-bridge approach. This schematic follows the south-side path around the interchange planting, not an I-44 crossing at grade.'},
+  {id:'preview-i44-pedestrian-bridge',from:'N043',to:'N045',points:[[1186,476],[1174,453],[1158,424],[1138,388]],structure:'bridge',level:1,
+    rationale:'User confirms the pedestrian bridge crossing over I-44. The artwork shows the separate bridge-side walkway; grade and accessibility remain unverified.'},
+  {id:'preview-bridge-north-collegiate',from:'N046',to:'N254',points:[[1123,357],[1155,325],[1210,303],[1270,277],[1345,246],[1402,259],[1460,278],[1515,296]],
+    rationale:'User-marked route from the bridge around the roundabout to Collegiate Boulevard and Miner Village. Sidewalk alignment is schematic, with obscured joins inferred from the illustration.'},
+  {id:'preview-miner-village-court-join',from:'N260',to:'N255',points:[[1556,297],[1546,301],[1536,302]],
+    rationale:'Connect the visible Miner Village courtyard spur to its adjacent frontage walkway; small planting-edge offset is schematic.'},
+  {id:'preview-rolla-west-approach',from:'N218',to:'N252',points:[[2029,1231],[2019,1256],[2052,1272],[2082,1293],[2111,1314]],
+    rationale:'User-marked southern housing approach follows the visible street-side walk around the block. Corner and crossing placement require field review.'},
+  {id:'preview-rolla-between-buildings',from:'N251',to:'N221',points:[[2225,1323],[2244,1305],[2260,1283],[2279,1254]],
+    rationale:'User identifies the walk between the Rolla Suites blocks. Schematic street-side connection follows the illustrated corridor, not a building interior.'},
+  {id:'preview-south-east-block-join',from:'N224',to:'N086',points:[[2425,1206],[2437,1186],[2448,1158]],
+    rationale:'Continue the user-marked street-side walk along the short southern campus block; curb transitions and accessibility unverified.'},
+  {id:'preview-elm-campus-approach',from:'N080',to:'N083',points:[[2470,968],[2482,996],[2487,1020],[2470,1044],[2506,1061],[2550,1075]],
+    rationale:'User-marked Elm housing approach follows the illustrated campus paths and street-side corner around buildings. Tree-obscured bends are approximate.'},
+  {id:'preview-tj-campus-sidewalk',from:'N080',to:'N151',points:[[2470,968],[2500,957],[2530,944],[2553,927],[2576,907],[2600,887],[2630,865],[2660,848],[2690,843]],
+    rationale:'User identifies the continuous campus-side approach toward the TJ tunnel. Follow the illustrated diagonal sidewalk to the existing descending ramp; this does not cross the highway at grade.'},
   // Replace the old lateral bridge trace, not merely its label. Portal locations
   // follow the artwork's lower ramp mouth and opposite, partly obscured mouth.
   {id:'preview-tj-underpass',from:tjSouthPortal.id,to:tjNorthPortal.id,points:[[2758,797],[2769,782],[2781,767]],

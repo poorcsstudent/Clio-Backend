@@ -19,11 +19,12 @@ test('Havener residential routes use the underground passage in both directions'
  }
 });
 
-test('Thomas Jefferson tunnel is traversable without hiding the separate approach gap',()=>{
+test('Thomas Jefferson tunnel and user-marked campus approach are connected',()=>{
  const route=createArtworkRoute(['havener-center','thomas-jefferson-residence-hall'].map(stop),{buildings:{'havener-center':{imageX:1799.3595,imageY:825.8595},'thomas-jefferson-residence-hall':{imageX:2945.7495,imageY:673.8505}}});
  const tunnel=route.legs[0].parts.find(p=>p.structure==='tunnel');
  assert.equal(tunnel.label,'Thomas Jefferson pedestrian tunnel');assert.equal(tunnel.level,-1);
- assert.equal(route.status,'incomplete');assert.equal(route.legs[0].gapPoints.length,2);
+ assert.equal(route.status,'complete');assert.equal(route.legs[0].error,null);
+ assert(route.warnings.some(w=>w.includes('campus-side approach')));
  const {graph}=require('./artwork-preview-network.cjs');
  const edges=graph.edges.filter(e=>e.structure==='tunnel');assert.equal(edges.length,2);
  assert(edges.every(e=>e.accessibility==='unverified'&&e.routingEligible===false));

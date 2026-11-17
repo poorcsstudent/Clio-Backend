@@ -36,5 +36,18 @@ The user's marked illustration is useful evidence of connectivity but is not
 georeferenced sidewalk geometry. Illustration-layer gaps are a separate task;
 these backend repairs do not claim to have traced the marked artwork connectors.
 
+## Illustrated-preview follow-up
+
+The earlier geographic repair did not update the displayed artwork network.
+That omission is now corrected locally: ten explicit schematic joins trace the
+user-marked residential walks, I-44 pedestrian bridge approaches, Miner Village
+courtyard, Rolla Suites walks, Elm approach and campus-side TJ tunnel approach.
+They retain assumption disclosures and do not modify geographic navigation.
+The backend artwork snapshot is refreshed from the prototype network source.
+The housing/CS/EE regression requires all eleven artwork legs to be connected;
+the live local browser regenerated twelve stops without the artwork gap warning.
+73 app, 51 backend and 10 artwork tests passed. Map alignment remains schematic
+and is subject to user visual review, not a claimed survey.
+
 No physical walking or accessibility tests performed. These changes are local
 until explicitly released; build 22 does not include them yet.
